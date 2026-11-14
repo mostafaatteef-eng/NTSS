@@ -8,7 +8,7 @@ const profile=(g,u)=>window.EBDAA_PERFORMANCE[g+"-"+(u+1)];
 function reset(){if(activeWorker)activeWorker.terminate();activeWorker=null;currentKey="";v=4;ans=null;graded=false;out="";numericChecked=false;numericInput="";activeSection=0;}
 function value(x){v=Number(x);numericChecked=false;numericInput="";const route=currentKey.split("-").map(Number);if(route.length===3&&route[0]>=2)window.EBDA_RUBRIC.markManipulation(route[0],route[1],route[2]);render();}
 function pick(i){if(!graded){ans=i;render()}}
-function check(){graded=true;render()}function checkNumeric(g,u,i){const el=document.getElementById("numeric-input");numericInput=el?el.value:"";numericChecked=true;const q=window.EBDAA_NUMERIC(g,u,i,v);const valid=numericInput!==""&&Math.abs(Number(numericInput)-q.answer)<=q.tolerance;window.EBDA_RUBRIC.recordEvidence(g,u,i,valid);render()}
+function check(){if(graded||ans===null)return;graded=true;render()}function isChecked(){return graded}function checkNumeric(g,u,i){const el=document.getElementById("numeric-input");numericInput=el?el.value:"";numericChecked=true;const q=window.EBDAA_NUMERIC(g,u,i,v);const valid=numericInput!==""&&Math.abs(Number(numericInput)-q.answer)<=q.tolerance;window.EBDA_RUBRIC.recordEvidence(g,u,i,valid);render()}
 function select(g,u,i){const key=g+"-"+u+"-"+i;if(currentKey!==key){reset();currentKey=key;v=(i%5)+3;editPython=pythonSample(i);editSQL=sqlSample(i)}}
 function pythonSample(i){const samples=[
 'readings = [3, 5, 8, 13]\nprint("mean:", sum(readings) / len(readings))',
@@ -69,7 +69,7 @@ function moduleView(g,u,i,n,title,subtitle,content){
  '<span class="lab-module__desc">'+esc(subtitle)+'</span></span></summary>'+
  '<div class="lab-module__body">'+content+forward+'</div></details>';
 }
-function session(g,u,i){
+function session(g,u,i,n=0){
  const p=profile(g,u),name=unit(g,u).sessions[i];select(g,u,i);
  const d={family:p.engine,year:g,u,i},mission=window.EBDAA_MISSIONS.find(m=>m.g===g&&m.u===u);
  const q=mission.steps[i%mission.steps.length],guide=window.EBDAA_SESSION_GUIDES[g+"-"+(u+1)+"-"+(i+1)];
@@ -87,22 +87,31 @@ function session(g,u,i){
  '<b>Performance indicators:</b><ul>'+p.kpis.map(x=>'<li>'+esc(x)+'</li>').join("")+'</ul>'+
  '<p class="muted">This is a proposed session alignment to unit indicators, not a certified official assessment.</p></details>';
  const discover=window.EBDA_THEORY.advanced(g,u,i,guide,p,name);
- const experiment=(p.engine==="python"||p.engine==="sql"?program(d):calculated(d))+evidence+window.EBDA_CODE_TESTS.panel(g,u,i);
- const understand=window.EBDA_VISUALIZER.panel(g,u,i)+'<details class="lab-support"><summary>Explore the data yourself <span aria-hidden="true">↗</span></summary><div class="lab-support__body">'+window.EBDA_PLAYGROUND.panel(g,u,i)+'</div></details>';
- const practice=window.EBDAA_PRACTICE.panel(g,u,i)+'<details class="lab-support"><summary>Optional investigation and concept check <span aria-hidden="true">↗</span></summary><div class="lab-support__body">'+check+window.EBDAA_STORIES.panel(g,u,i)+window.EBDAA_CASE.panel(g,u,i)+'</div></details>';
- const reflect=window.EBDA_RUBRIC.panel(g,u,i)+outcomes+
+ const experiment=(p.engine==="python"||p.engine==="sql"?program(d):calculated(d))+
+ '<details class="lab-support"><summary>Check the result with a calculation</summary><div class="lab-support__body">'+evidence+'</div></details>'+
+ window.EBDA_CODE_TESTS.panel(g,u,i);
+ const understand=window.EBDA_VISUALIZER.panel(g,u,i)+
+ '<details class="lab-support"><summary>Try the data playground</summary><div class="lab-support__body">'+window.EBDA_PLAYGROUND.panel(g,u,i)+'</div></details>';
+ const review=window.EBDA_RUBRIC.panel(g,u,i)+outcomes+
  '<div class="actions"><button class="btn light" onclick="EBDAA_STUDIO.exportEvidence('+g+','+u+','+i+')">↓ Save my lab evidence (.txt)</button></div>';
+ const practice=window.EBDAA_PRACTICE.panel(g,u,i)+
+ '<details class="lab-support"><summary>Optional factory mission and skills review</summary><div class="lab-support__body">'+
+ window.EBDAA_STORIES.panel(g,u,i)+window.EBDAA_CASE.panel(g,u,i)+review+'</div></details>';
+ const names=["Discover","Experiment","Understand","Check","Practice"];
+ const bodies=[discover,experiment,understand,check,practice];
+ const selected=Math.max(0,Math.min(4,Number(n)||0));
  return '<div class="eyebrow">YEAR '+g+' · UNIT '+(u+1)+' · SESSION '+(i+1)+'</div>'+
- '<h1 style="font-size:clamp(26px,3vw,39px);line-height:1.2;margin:12px 0 9px">'+esc(name)+'</h1>'+
- '<p style="font-size:14px;margin:0 0 8px">Learn in five short steps. Complete each activity and use Continue to move forward.</p>'+
- '<div class="lab-stage-heading"><span id="lab-stage-status" aria-live="polite">Stage '+(activeSection+1)+' of 5</span><span>One step at a time</span></div><div class="lab-stage-track"><i id="lab-stage-meter" style="width:'+(20*(activeSection+1))+'%"></i></div>'+
- '<div class="lab-journey">'+
- moduleView(g,u,i,0,"Discover","Get curious. Understand the key idea.",discover)+
- moduleView(g,u,i,1,"Experiment","Run code or calculations and check the result",experiment)+
- moduleView(g,u,i,2,"Understand","Explore visual explanations and transform data",understand)+
- moduleView(g,u,i,3,"Practice","Solve the mission and 50 guided questions",practice)+
- moduleView(g,u,i,4,"Reflect","Review evidence and performance indicators",reflect)+
- '</div><p class="source">Academic source: '+esc(p.source)+' · Supplementary tasks, not an official accredited assessment.</p>';
+ '<h2 class="advanced-lesson-title">'+esc(name)+'</h2>'+
+ '<p class="advanced-lesson-intro">'+esc([
+ "Start with one clear idea. Predict what you will observe.",
+ "Try the experiment. Run code or change values and compare the results.",
+ "Look for the pattern. Explain why the experiment behaved that way.",
+ "Check your understanding with one short question.",
+ "Apply what you learned in 50 guided questions, with help when needed."
+ ][selected])+'</p>'+
+ '<div class="advanced-stage-content" data-stage="'+selected+'">'+bodies[selected]+'</div>'+
+ '<p class="source">Academic source: '+esc(p.source)+' · Supplementary activities; full official rubric requires academic review.</p>';
+
 }
 async function runSQL(){const input=document.getElementById("studio-editor"),output=document.getElementById("studio-output");if(!input||!output)return;editSQL=input.value;const code=editSQL.trim();if(!/^(SELECT|WITH)\b/i.test(code)||/\b(INSERT|DELETE|UPDATE|DROP|ALTER|ATTACH|DETACH|PRAGMA|CREATE|REPLACE)\b/i.test(code)){setOutput("Read-only SELECT/WITH statements only.");return}setOutput("Loading SQLite runtime...");try{if(!window.initSqlJs){await new Promise((ok,fail)=>{const s=document.createElement("script");s.src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.11.0/sql-wasm.js";s.onload=ok;s.onerror=()=>fail(Error("SQLite CDN unavailable"));document.head.appendChild(s)})}const SQL=await window.initSqlJs({locateFile:f=>"https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.11.0/"+f});const db=new SQL.Database();db.run("PRAGMA foreign_keys=ON; CREATE TABLE production(id INTEGER PRIMARY KEY,region TEXT, product TEXT,qty INTEGER); INSERT INTO production VALUES (1,'Cairo','Panel',5),(2,'Giza','Panel',8),(3,'Cairo','Glass',3),(4,'Alexandria','Glass',10),(5,'Giza','Panel',4); CREATE TABLE machines(id INTEGER PRIMARY KEY,name TEXT NOT NULL,line TEXT); INSERT INTO machines VALUES (1,'Laser-C','Cutting'),(2,'Press-A','Forming'),(3,'Vision-B','Inspection'); CREATE TABLE inspections(id INTEGER PRIMARY KEY,machine_id INTEGER REFERENCES machines(id),defects INTEGER NOT NULL CHECK(defects>=0)); INSERT INTO inspections VALUES (101,1,2),(102,1,5),(103,2,1),(104,3,0),(105,2,2); CREATE TABLE operators(id INTEGER PRIMARY KEY,name TEXT,machine_id INTEGER REFERENCES machines(id)); INSERT INTO operators VALUES (201,'Salma',1),(202,'Omar',2),(203,'Nada',3);");const res=db.exec(code);const route=currentKey.split("-").map(Number);if(route.length===3)window.EBDA_RUBRIC.observe(route[0],route[1],route[2],{success:true,hasEvidence:res.length>0&&res.some(x=>x.values.length>0),output:JSON.stringify(res).slice(0,1000)});if(route.length===3&&window.EBDAA_CASE)window.EBDAA_CASE.observe(route[0],route[1],route[2],res);setOutput(res.length?res.map(r=>r.columns.join(" | ")+"\n"+r.values.map(v=>v.join(" | ")).join("\n")).join("\n"):"No rows found.");db.close()}catch(e){setOutput("SQL error: "+String(e.message||e))}}
 function exportEvidence(g,u,i){
@@ -135,5 +144,5 @@ document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjec
 }
 function setOutput(message){out=String(message);const node=document.getElementById("studio-output");if(node)node.textContent=out}
 function runPython(override){const input=document.getElementById("studio-editor"),output=document.getElementById("studio-output");if(!input||!output)return;editPython=input.value;const submittedCode=typeof override==="string"?override:editPython;if(activeWorker)activeWorker.terminate();setOutput("Loading Python runtime...");const workerCode='importScripts("https://cdn.jsdelivr.net/pyodide/v0.27.7/full/pyodide.js");(async()=>{try{const py=await loadPyodide({stdout:s=>postMessage({type:"print",text:s}),stderr:s=>postMessage({type:"print",text:s})});postMessage({type:"ready"});onmessage=async e=>{try{await py.runPythonAsync(e.data);postMessage({type:"done"})}catch(err){postMessage({type:"error",text:String(err)})}}}catch(e){postMessage({type:"error",text:String(e)})}})();';const url=URL.createObjectURL(new Blob([workerCode],{type:"text/javascript"}));const w=new Worker(url);activeWorker=w;let lines=[];let timeout=setTimeout(()=>{if(activeWorker===w){w.terminate();URL.revokeObjectURL(url);activeWorker=null;setOutput("Python runtime load exceeded 45 seconds. Check network connectivity.")}},45000);w.onmessage=e=>{const m=e.data;if(m.type==="ready"){URL.revokeObjectURL(url);clearTimeout(timeout);timeout=setTimeout(()=>{if(activeWorker===w){w.terminate();activeWorker=null;setOutput(lines.join("\n")+"\nExecution stopped after 12 seconds (possible infinite loop).")}},12000);setOutput("Executing...");w.postMessage(submittedCode)}else if(m.type==="print"){lines.push(m.text);setOutput(lines.join("\n"))}else if(m.type==="done"||m.type==="error"){if(m.type==="error")lines.push(m.text);setOutput(lines.join("\n")||"(no printed output)");if(m.type==="done"){const route=currentKey.split("-").map(Number);if(typeof override==="string"&&route.length===3&&window.EBDA_CODE_TESTS)window.EBDA_CODE_TESTS.reportPython(route[0],route[1],route[2],lines);if(route.length===3)window.EBDA_RUBRIC.observe(route[0],route[1],route[2],{success:true,hasEvidence:lines.length>0,output:lines.join("\n")});}clearTimeout(timeout);w.terminate();activeWorker=null}};w.onerror=()=>{setOutput("Unable to load Python worker. Check internet access.");clearTimeout(timeout);URL.revokeObjectURL(url);w.terminate();activeWorker=null}}
-return {reset,session,setSection,goToSection,value,pick,check,checkNumeric,runSQL,runPython,exportEvidence,saveEditor,resetEditor,editorKey};
+return {reset,session,setSection,goToSection,value,pick,check,isChecked,checkNumeric,runSQL,runPython,exportEvidence,saveEditor,resetEditor,editorKey};
 })();
