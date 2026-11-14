@@ -507,3 +507,12 @@ body{
   .practice-flow .choices .choice{font-size:14px;padding:14px 15px}
 }
 @media(prefers-reduced-motion:reduce){.lab-stage-track>i{transition:none}}
+
+/* Skill feedback never stops the student's 50-question flow. */
+.practice-milestone{border:1px solid #d9e8df;background:#f4fbf7;border-radius:14px;margin:0 0 22px}
+.practice-milestone>summary{list-style:none;padding:15px 18px;cursor:pointer;color:#176b61;font-size:13px;font-weight:750;line-height:1.5}
+.practice-milestone>summary::-webkit-details-marker{display:none}
+.practice-milestone>summary:after{content:"＋";float:right;color:#1b9688}
+.practice-milestone[open]>summary:after{content:"−"}
+.practice-milestone[open]>summary{border-bottom:1px solid #d9e8df}
+.practice-milestone>.interactive{margin:12px!important;background:#fff!important}
