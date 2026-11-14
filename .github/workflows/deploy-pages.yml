@@ -1,4 +1,4 @@
-name: Validate & Publish EBDAA Learning Hub
+name: Validate & Publish EBDA Learning Hub
 on:
   push:
     branches: [main]
