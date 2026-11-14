@@ -23,6 +23,12 @@ const goHome=async()=>{await page.goto(url,{waitUntil:"load"});await page.waitFo
 try{
  await goHome();
  if(!await page.getByText("Choose your academic year").count())throw Error("Grade landing missing");
+ if(!await page.title().then(x=>x.includes("EBDA Learning")))throw Error("EBDA brand title missing");
+ if(await page.locator("a.skip-link").count()!==1)throw Error("Accessibility skip link missing");
+ await page.locator("#lesson-search").fill("Python");
+ if(await page.locator("#search-results .search-result").count()<1)throw Error("Cross-grade lesson search failed");
+ await page.locator("#lesson-search").fill("");
+
  const years=page.getByRole("button",{name:/View subjects/i});
  if(await years.count()!==3)throw Error("Need 3 grade entries");
  await years.nth(1).click(); // Year 2
@@ -49,5 +55,5 @@ try{
  await page.reload({waitUntil:"load"});
  if(await page.locator("body").evaluate(el=>el.scrollWidth)>410)throw Error("Mobile horizontal overflow");
  if(errors.length)throw Error("JS errors: "+errors.join("; "));
- console.log("Browser smoke PASS: grade navigation, real DOM events, 50 question panel, feedback, Year 3 labs, mobile width.");
+ console.log("Browser smoke PASS: EBDA brand, search, grade navigation, practice, feedback, Year 3 labs, mobile width.");
 } finally {await browser.close();await new Promise(ok=>server.close(ok))}
