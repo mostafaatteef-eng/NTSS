@@ -53,6 +53,10 @@ try{
  await page.locator("#studio-editor").fill("DROP TABLE machines;");
  await page.getByRole("button",{name:/Execute SQL|Run SQL/i}).click();
  await page.waitForFunction(()=>document.querySelector("#studio-output")?.textContent?.includes("Read-only"),null,{timeout:4000});
+ // Validate SQL challenge against two independent database fixtures.
+ await page.locator("#studio-editor").fill("SELECT COUNT(*) AS machine_count FROM machines;");
+ await page.getByRole("button",{name:/Run test cases/i}).click();
+ await page.waitForFunction(()=>document.querySelector("#ebda-code-results")?.textContent?.includes("2/2 SQL test cases passed"),null,{timeout:90000});
  // Execute Python WASM interpreter in dedicated web worker.
  await enter(2,0,0);
  await page.locator("#studio-editor").fill('readings = [3,5,8,13]\nprint("mean:",sum(readings)/len(readings))');
@@ -60,7 +64,12 @@ try{
  await page.waitForFunction(()=>document.querySelector("#studio-output")?.textContent?.includes("mean: 7.25"),null,{timeout:90000});
  const pythonOutput=await page.locator("#studio-output").textContent();
  if(!pythonOutput.includes("mean: 7.25"))throw Error("Pyodide output invalid");
+ // Validate student-defined Python function using three real test inputs.
+ await page.locator("#studio-editor").fill("def average(values):\n    return sum(values)/len(values)");
+ await page.getByRole("button",{name:/Run test cases/i}).click();
+ await page.waitForFunction(()=>document.querySelector("#ebda-code-results")?.textContent?.includes("3 / 3 Python test cases passed"),null,{timeout:90000});
+
  if(errors.length)throw Error("Browser errors: "+errors.join("; "));
- console.log("RUNTIME PASS: real SQLite WASM/JOIN, read-only SQL policy, and Python/Pyodide worker execution.");
+ console.log("RUNTIME PASS: SQLite JOIN and multi-dataset SQL grading, read-only policy, Pyodide execution and three Python function test cases.");
 }catch(err){console.error("RUNTIME FAIL:",err.stack||err);process.exitCode=1}
 finally{await browser.close();await new Promise(ok=>server.close(ok))}
