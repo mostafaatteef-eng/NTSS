@@ -10,7 +10,7 @@ if(s.op==="normalize"){const nums=rows.map(r=>r.sensor).filter(x=>x!==null),mn=M
 if(s.op==="sort")rows.sort((a,b)=>(b.sensor??-Infinity)-(a.sensor??-Infinity));
 if(s.op==="filter")rows=rows.filter(r=>r.sensor!==null&&r.sensor>=s.threshold);
 return rows}
-function change(kind,value){const [g,u,i]=active.split("-").map(Number);const s=get(g,u,i);if(kind==="op")s.op=String(value);if(kind==="site")s.site=String(value);if(kind==="threshold")s.threshold=Number(value);s.dirty=true;draw(g,u,i)}
+function change(kind,value){const [g,u,i]=active.split("-").map(Number);const s=get(g,u,i);if(kind==="op")s.op=String(value);if(kind==="site")s.site=String(value);if(kind==="threshold")s.threshold=Number(value);s.dirty=true;if(window.EBDA_RUBRIC)window.EBDA_RUBRIC.markManipulation(g,u,i);draw(g,u,i)}
 function draw(g,u,i){const node=document.getElementById("data-playground");if(node)node.innerHTML=inside(g,u,i)}
 function inside(g,u,i){active=key(g,u,i);const s=get(g,u,i),rows=compute(g,u,i),nums=rows.map(r=>r.sensor).filter(x=>x!==null),mean=nums.length?nums.reduce((a,b)=>a+b,0)/nums.length:0,max=Math.max(1,...nums);
 const modes=[["raw","Original"],["impute","Impute missing"],["normalize","Min–max scale"],["sort","Sort descending"],["filter","Threshold filter"]];
