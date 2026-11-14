@@ -19,9 +19,17 @@ function pythonScript(code,t){const checks=t.tests.map(([expr,expected],j)=>{con
 async function sqlRun(code,t){if(!/^\s*(SELECT|WITH)\b/i.test(code)||/;\s*\S/.test(code.replace(/;\s*$/,""))||/\b(INSERT|DELETE|UPDATE|DROP|ALTER|ATTACH|DETACH|PRAGMA|CREATE|REPLACE)\b/i.test(code))throw Error("Only one SELECT / WITH query is allowed.");
 if(!window.initSqlJs)await new Promise((ok,fail)=>{const s=document.createElement("script");s.src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.11.0/sql-wasm.js";s.onload=ok;s.onerror=()=>fail(Error("SQL runtime failed to load"));document.head.appendChild(s)});
 const SQL=await window.initSqlJs({locateFile:f=>"https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.11.0/"+f});const out=[];for(const [fixture,expected] of t.cases){const db=new SQL.Database();try{db.run(fixture);const got=db.exec(code)[0]?.values||[];out.push({pass:JSON.stringify(got)===JSON.stringify(expected),expected,actual:got})}catch(e){out.push({pass:false,expected,actual:String(e.message||e)})}finally{db.close()}}return out}
+function reportPython(g,u,i,lines){
+ const records=lines.filter(x=>/^TEST [1-3]: (PASS|FAIL|ERROR)/.test(x));
+ const passes=records.filter(x=>x.includes(": PASS")).length;
+ const taskItem=task(g,u,i);
+ if(!taskItem||taskItem.type!=="python")return;
+ show(g,u,i,'<div class="feedback '+(passes===taskItem.tests.length&&records.length===taskItem.tests.length?'':'error')+'"><b>'+passes+' / '+taskItem.tests.length+' Python test cases passed</b>'+records.map(x=>'<p>'+safe(x)+'</p>').join("")+(records.length===0?'<p>No test results were produced; inspect the Python output for an error.</p>':'')+'</div>');
+ return {passed:passes,total:taskItem.tests.length};
+}
 async function run(g,u,i){const t=task(g,u,i),ed=document.getElementById("studio-editor");if(!t||!ed)return null;show(g,u,i,'<p>Executing independent test inputs…</p>');try{
 if(t.type==="python"){const script=pythonScript(ed.value,t);window.EBDAA_STUDIO.runPython(script);show(g,u,i,'<p class="feedback">Tests are running in the Python output panel above. Inspect TEST 1–3; PASS means the function produced the expected value.</p>');return {tests:t.tests.length,submitted:true}}
 const rows=await sqlRun(ed.value,t),passed=rows.filter(x=>x.pass).length;show(g,u,i,'<div class="feedback '+(passed===rows.length?'':'error')+'"><b>'+passed+'/'+rows.length+' SQL test cases passed</b>'+rows.map((x,j)=>'<p>Case '+(j+1)+': '+(x.pass?'PASS':'RETRY')+(x.pass?'':' · expected '+safe(JSON.stringify(x.expected))+' · got '+safe(JSON.stringify(x.actual)))+'</p>').join("")+'</div>');return {passed,total:rows.length}
 }catch(e){show(g,u,i,'<div class="feedback error">'+safe(e.message||e)+'</div>');return null}}
-return {task,panel,run,sqlRun,pythonScript};
+return {task,panel,run,sqlRun,pythonScript,reportPython};
 })();
