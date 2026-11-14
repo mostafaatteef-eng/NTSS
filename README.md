@@ -2,6 +2,18 @@
 
 A free, browser-based interactive learning experience for EBDA National Technical Science Schools (Badr) — Year 1 AI and Data Engineering.
 
+## Guided errors, runnable coding challenges, industrial missions and concept visualizers
+
+**Smart Mistake Review:** Wrong answers in the integrated 50-question lesson sequence now reveal a three-stage, optional explanation: identify the misconception; review the worked solution; try a related question on the same skill. The related question is formative and does not affect the original 50-question count/order. All state stays in RAM.
+
+**Code Challenges with Test Cases:** Twenty Year-2 Python/SQL specialization sessions now include supplementary code challenges within the existing executable code editor. Python challenges test student-defined functions for averaging sensor values, cleaning invalid readings and counting alerts across three independent inputs. SQL challenges test counts, aggregate JOINs and threshold filters against two separate synthetic database fixtures. Tests run locally in the browser using the existing Pyodide/SQLite WebAssembly engines. A sample starter solution is optional. These do **not** cover every official product checklist item. Source topic mapping is unit-level, not instructor certification.
+
+**Interactive Mission Mode:** The existing 18 industrial evidence missions now persist across all lessons within their respective unit, instead of appearing only in the first unit lesson. Each has three linked decisions with staged evidence and helpful retry feedback. The four-step industrial SQL evidence mystery additionally requires real SQL output before a clue can be unlocked. No mission progress is persisted.
+
+**Interactive Concept Visualizer:** All 39 first-year lessons and all 77 upper-year lessons now include a manipulable computed walkthrough showing one of: stepwise Python loops, relational INNER JOIN matches (including unmatched rows), changes in sample mean, KNN nearest-neighbor distances/majority labels, or threshold-based alert rates. The illustrations use small synthetic data and do not replace full official projects.
+
+**Validation status:** JavaScript simulations checked all 39 Year-1 concept visualizers and the 77 Year-2/3 pages, including 20 coding challenge panels, continuous mission displays, and in-lesson wrong-answer review. Sample Python functions (3 cases) and two distinct SQLite JOIN fixtures were separately verified with local Python/SQLite reference interpreters. The GitHub Actions runtime smoke test has been updated to check actual Pyodide and sql.js execution within Chromium; successful CI execution and GitHub Pages availability have **not** been confirmed.
+
 ## In-lesson assessment sequence — corrected
 
 - **No separate Practice Workshop card or launch button** is rendered.
