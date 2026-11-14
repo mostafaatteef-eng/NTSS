@@ -2,6 +2,19 @@
 
 A free, browser-based interactive learning experience for EBDA National Technical Science Schools (Badr) — Year 1 AI and Data Engineering.
 
+## EBDA learner-experience improvements (14 November 2026)
+
+The publicly visible product name is **EBDA Learning** (not EBDAA). Internal `EBDAA_*` JavaScript identifiers are retained for compatibility and are not part of the visual brand.
+
+- **Cross-grade lesson search:** a live home-page search covers all 116 lessons, with direct navigation to the appropriate grade, unit and session. No search history is collected.
+- **Five mastery sprints per lesson:** each 50-question workshop has five ten-question stages. At every checkpoint the learner sees correct first-attempt answers and can review that stage or continue. Progress exists only in memory.
+- **Hands-on task checklist:** 77 Year-2/3 lab sessions have a three-step completion checklist, without sign-in or saved records.
+- **Evidence export:** students can save a local plain-text lab report containing source/unit indicators, their own editor content (Python or SQL if applicable), and their entered numerical evidence. This is not an accredited assessment certificate or official checklist submission.
+- **Accessible navigation:** visible keyboard skip link, search input labeling, and reduced-motion preferences. Full WCAG testing remains outstanding.
+- **Scientific integrity:** Prevent repeated scoring by re-submitting the same checked response. Neither the generated question count nor completing the checklist establishes scientific accreditation.
+
+The new UI and content changes have passed scripted JavaScript-flow tests. Browser-based rendering, file download, Pyodide, SQLite, CI deployment and mobile accessibility must be verified separately before formal release.
+
 ## Academic structure
 
 - Year 1 → AI in Data Engineering & Analysis → Term 1 (Units 1–3), Term 2 (Units 4–6) → 39 interactive sessions.
