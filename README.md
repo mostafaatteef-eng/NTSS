@@ -2,6 +2,14 @@
 
 A free, browser-based interactive learning experience for Ebdaa National Technical Science Schools (Badr) — Year 1 AI and Data Engineering.
 
+## Academic structure
+
+- Year 1 → AI in Data Engineering & Analysis → Term 1 (Units 1–3), Term 2 (Units 4–6) → 39 interactive sessions.
+- Year 2 → AI in Data Engineering & Analysis → Term 1 (Programming and Scripting for Automation; Data Types and Modeling for AI; Database Design and Management) and Term 2 (Data Analysis Techniques; Data Preprocessing Techniques; Machine Learning and Deep Learning Algorithms). These are 41 source-verified **session titles**, not yet developed interactive lessons.
+- Year 3 → independent placeholder awaiting official uploaded curricula. Do not fabricate third-year subjects.
+
+`grade-catalog.js` holds the year/subject/unit/session taxonomy and is editable only by users with repository write permissions. Additional general-education or technical subjects can be added after their official syllabi are uploaded.
+
 ## Public learning
 - No student accounts, no student names, no teacher dashboards and no student analytics.
 - Six curriculum units and 39 short concept journeys, with 39 distinct entry questions and a separate application checkpoint.
