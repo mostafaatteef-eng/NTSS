@@ -18,7 +18,14 @@ const browser=await chromium.launch({headless:true,args:["--no-sandbox"]});
 const page=await browser.newPage({viewport:{width:1360,height:900}});
 page.setDefaultTimeout(30000);
 const errors=[];page.on("pageerror",e=>errors.push(e.message));
-const stage=async n=>page.locator(".lab-module").nth(n).locator("summary").first().click();
+const stage=async n=>{
+ const outer=page.locator(".lab-module").nth(n);
+ if(!(await outer.evaluate(el=>el.open)))await outer.locator("summary").first().click();
+ if(n===3){
+  const optional=outer.locator("details.lab-support");
+  if(!(await optional.evaluate(el=>el.open)))await optional.locator("summary").first().click();
+ }
+};
 const enter=async(g,u,i)=>{
  await page.goto(host,{waitUntil:"load"});
  await page.getByRole("button",{name:/View subjects/i}).nth(g-1).click();
