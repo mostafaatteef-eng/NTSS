@@ -1,4 +1,4 @@
-/* Academic year > subject > term > unit > session. Only extracted/sourced titles are listed. */
+/* Academic year > subject > term > unit > session. Source-verified names; third-year units mapped from actual lesson sections rather than stale contents pages. */
 window.EBDAA_GRADES={
   "grades": [
     {
@@ -112,8 +112,94 @@ window.EBDAA_GRADES={
     {
       "id": 3,
       "name": "Third Year",
-      "subjects": [],
-      "status": "awaiting-source-files"
+      "subjects": [
+        {
+          "id": "ai-data-engineering",
+          "name": "Artificial Intelligence in Data Engineering & Analysis",
+          "units": [
+            {
+              "title": "Statistical Analysis for Data Science",
+              "term": 1,
+              "source": "Year 3 · Term 1 · Statistical Analysis Teacher Guide · p. 6",
+              "sessions": [
+                "Introduction to Statistical Analysis: Descriptive vs. Inferential",
+                "Probability, Distributions, and Understanding Random Variables",
+                "Hypothesis Testing Essentials: One-Sample and Two-Sample Tests",
+                "Digging Deeper: ANOVA, Correlation, and Linear Regression",
+                "Advanced Topics: Nonparametric Statistics, Multivariate Analysis, and Bayesian Inferences",
+                "From Theory to Practice: Case Studies and Real-world Application of Statistical Analysis"
+              ]
+            },
+            {
+              "title": "Data Annotation and Labeling for AI",
+              "term": 1,
+              "source": "Year 3 · Term 1 · Data Annotation Teacher Guide · p. 18",
+              "sessions": [
+                "Data Sourcing for AI: Techniques, Tools, and Best Practices",
+                "A Deep Dive into Data Annotation: Why, What, and How",
+                "Hands-on with Annotation Tools: From LabelImg to RectLabel",
+                "Ensuring Annotation Quality: Techniques and Best Practices",
+                "Data Transformation and Annotation: How to Keep Consistency",
+                "Real-World Applications: Case Studies and Projects on Data Annotation"
+              ]
+            },
+            {
+              "title": "AI Application Monitoring and Maintenance",
+              "term": 1,
+              "source": "Year 3 · Term 1 · AI Application Monitoring Teacher Guide · p. 29",
+              "sessions": [
+                "Introduction to AI System Metrics: Importance and Overview",
+                "Deep Dive into Tracking and Interpreting Performance Indicators using Tools",
+                "User Activity and Database Health: From Analyzing Logs to Recognizing Peak Usage Patterns",
+                "Database Best Practices: Backup, Restoration, and Query Optimization Techniques",
+                "Implementing AI System Updates: Procedures, Testing, and Verification",
+                "Valuing User Feedback: Methods of Collection, Analysis, and Prioritizing Application Changes"
+              ]
+            },
+            {
+              "title": "Data Management Frameworks for AI",
+              "term": 2,
+              "source": "Year 3 · Term 2 · Teacher Guide · p. 6; Unit 16 Guide · p. 2",
+              "sessions": [
+                "Foundations of Data Management Frameworks: From Traditional to AI-centric Needs",
+                "Unraveling Data Governance: Importance, Principles, and Its Role in AI",
+                "Assessing Data Quality: Techniques, Tools, and Impact on AI",
+                "Data Integration for AI: Tools, Best Practices, and Seamless Data Flow Design",
+                "Data Security in AI: Safeguarding Information and Designing a Robust Security Plan",
+                "Real-world Applications: Leveraging Apache Spark, Hadoop, and Databricks for AI Data Management"
+              ]
+            },
+            {
+              "title": "Data Privacy, Security, and Fairness",
+              "term": 2,
+              "source": "Year 3 · Term 2 · Teacher Guide · p. 69; Unit 17 Guide · p. 3",
+              "sessions": [
+                "Laying the Groundwork: Data Privacy, Security, and Fairness Defined",
+                "Regulations and Legalities: Navigating the Landscape of Data Protection",
+                "The Battlefield of Cybersecurity: Recognizing Threats and Protecting AI Systems",
+                "Delving Deep into Encryption: Protecting Data and Maintaining Privacy in AI Systems",
+                "Ethics at Play: Ensuring Fairness and Mitigating Biases in AI",
+                "From GDPR to Risk Assessments: A Comprehensive Overview of Data Privacy Regulations and Practices"
+              ]
+            },
+            {
+              "title": "Applied Machine Learning and Analytics",
+              "term": 2,
+              "source": "Year 3 · Term 2 · Teacher Guide · p. 125; Unit 18 Guide · p. 2",
+              "sessions": [
+                "Introduction to AI in Agriculture and Environmental Monitoring: The Revolution in Modern Farming and Conservation",
+                "Data in Agriculture: Analyzing Crop, Soil, and Weather Data to Determine AI Potential and Implementations",
+                "Customizing AI Algorithms: Addressing Challenges in Crop Prediction, Pesticide Use, and Irrigation",
+                "AI in Environmental Monitoring: Predictive Analytics for Climate Change, Pollution Control, and Wildlife Protection",
+                "Infusing Domain Expertise: Collaborating with Agronomists and Environmentalists for Ground-Truthed AI Solutions",
+                "Case Studies and Practical Implementations: Real-world AI Solutions for Sustainable Farming and Robust Environmental Conservation"
+              ]
+            }
+          ],
+          "status": "session-index"
+        }
+      ],
+      "status": "session-index"
     }
   ]
 };
