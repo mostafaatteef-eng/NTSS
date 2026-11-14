@@ -56,6 +56,10 @@ const record=[
 "Code/query (student-edited where applicable):",
 pythonOrSql?(editor?editor.value:(p.engine==="python"?editPython:editSQL)):"Browser-based illustrative calculation; see screen for its calculated outcome.",
 "Last numerical evidence answer entered: "+(entered?entered.value:numericInput||"Not entered"),
+"Practical rubric automatic points: "+window.EBDA_RUBRIC.score(g,u,i).earned+" / 65",
+"Teacher review points: 35 reserved (not automatically awarded)",
+"Student interpretation (pending review): "+window.EBDA_RUBRIC.get(g,u,i).interpretation,
+"Visual playground changed this visit: "+window.EBDA_PLAYGROUND.changed(g,u,i),
 "Learning note: This is an unverified student practice artifact, not an accredited product-checklist submission.",
 "Student name and personal identifiers: not collected"
 ].join("\n");
