@@ -114,6 +114,19 @@ assert.equal(mastery.prioritizeUpcoming(2,0,0,[qForMastery[1],qForMastery[0]])[0
 const playground=context.window.EBDA_PLAYGROUND;
 assert.equal(playground.snapshot(2,3,0).length,6);
 assert.ok(playground.snapshot(2,3,0).some(x=>x.sensor===null));
+
+assert.ok(html.includes(".lab-workspace__editor"),"Shared code-editor design tokens missing");
+assert.ok(html.includes("@media(max-width:570px)"),"Small viewport CSS missing");
+vm.runInContext("window.EBDA_PLAYGROUND.panel(2,3,1);window.EBDA_PLAYGROUND.change('site','Damietta')",context);
+assert.equal(playground.verify(),true,"Missing-data detective challenge");
+vm.runInContext("window.EBDA_PLAYGROUND.change('challenge','clean');window.EBDA_PLAYGROUND.change('site','All');window.EBDA_PLAYGROUND.change('op','impute')",context);
+assert.equal(playground.verify(),true,"Imputation challenge");
+vm.runInContext("window.EBDA_PLAYGROUND.change('challenge','high');window.EBDA_PLAYGROUND.change('op','filter');window.EBDA_PLAYGROUND.change('threshold',20)",context);
+assert.equal(playground.verify(),true,"High-reading filter challenge");
+vm.runInContext("chooseGrade(2);chooseSubject();chooseGradeUnit(0);openAdvancedSession(0)",context);
+assert.ok(content.innerHTML.includes("lab-workspace__editor"),"Accessible coding workspace not rendered");
+assert.ok(content.innerHTML.includes("studio-shortcut"),"Editor shortcut instructions missing");
+
 vm.runInContext("window.EBDA_PLAYGROUND.panel(2,3,0);window.EBDA_PLAYGROUND.change('op','impute')",context);
 assert.ok(playground.snapshot(2,3,0).every(x=>x.sensor!==null));
 vm.runInContext("window.EBDA_PLAYGROUND.change('op','normalize')",context);
