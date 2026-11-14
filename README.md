@@ -1,6 +1,6 @@
-# EBDAA Learning Hub
+# EBDA Learning Hub
 
-A free, browser-based interactive learning experience for Ebdaa National Technical Science Schools (Badr) — Year 1 AI and Data Engineering.
+A free, browser-based interactive learning experience for EBDA National Technical Science Schools (Badr) — Year 1 AI and Data Engineering.
 
 ## Academic structure
 
@@ -14,7 +14,7 @@ A free, browser-based interactive learning experience for Ebdaa National Technic
 ## Immersive curriculum cases and genuine runtime acceptance
 
 - 18 unit-level three-stage narrative cases are embedded alongside lessons; new stages unlock only after the preceding answer is verified.
-- Year 2 relational database units include a custom **Factory SQL Mystery** with four evidence clues and three linked SQLite tables. Students must run SQL and inspect the expected query result before unlocking clues. The industrial data and scenario were created for EBDAA, not copied from third-party games.
+- Year 2 relational database units include a custom **Factory SQL Mystery** with four evidence clues and three linked SQLite tables. Students must run SQL and inspect the expected query result before unlocking clues. The industrial data and scenario were created for EBDA, not copied from third-party games.
 - The instructional pattern combines immersive problem-solving, real-world project tasks, an investigative chain of evidence, and editable SQL JOIN examples, inspired by The Data Escape Room, DataWars, Knight Lab SQL Murder Mystery, and W3Schools SQL JOIN.
 - **QA gate**: `scripts/validate.mjs` checks structural/logic flow; `scripts/browser-smoke.mjs` checks real desktop/mobile DOM interaction; `scripts/runtime-smoke.mjs` runs actual Pyodide Python and sql.js SQLite WebAssembly in Chromium, checks the JOIN results and checks a guessed SQL case answer is blocked without SQL evidence.
 - **Truthful status**: CI checks and external runtimes have been configured but no successful remote Chromium/GitHub Pages deployment report has been independently retrieved in this conversation. Do not treat the live service as verified until an explicit green run and HTTPS page access have been recorded.
@@ -91,7 +91,7 @@ A built-in password-protected dashboard would require server-side authentication
 The release pipeline runs `node scripts/validate.mjs` before GitHub Pages publishing. It checks 39 lesson journeys, question integrity, and the no-student-storage design. The checks are computational smoke tests, not a substitute for browser, usability, accessibility or academic review.
 
 ## Deploy
-In GitHub > Settings > Pages, set Source to **GitHub Actions**, then run the Publish EBDAA Learning Hub workflow. Expected URL: https://mostafaatteef-eng.github.io/NTSS/
+In GitHub > Settings > Pages, set Source to **GitHub Actions**, then run the Publish EBDA Learning Hub workflow. Expected URL: https://mostafaatteef-eng.github.io/NTSS/
 
 ## Limitations
 Not a hosted backend or full CMS. No unrestricted Python execution; visual interactions include calculated examples and conceptual models. First-term student book is not included in supplied files, so supplementary content requires academic review. The 39 lessons are short guided concepts; complete curricular lab coverage and external validations are not yet implemented.
