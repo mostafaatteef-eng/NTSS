@@ -26,6 +26,8 @@ try{
  if(await page.getByText("FOUR WAYS TO LEARN").count())throw Error("Removed feature section reappeared");
  if(await page.locator(".feature-tile").count())throw Error("Removed feature cards remain");
  if(!await page.title().then(x=>x.includes("EBDA Learning")))throw Error("EBDA brand title missing");
+ const uiStyle=await page.evaluate(()=>({linked:[...document.styleSheets].some(s=>s.href?.includes("ebda-ui.css")),hero:getComputedStyle(document.querySelector(".hero-art")).backgroundImage}));
+ if(!uiStyle.linked||!uiStyle.hero.includes("gradient"))throw Error("Student-friendly EBDA stylesheet missing or not applied");
  if(await page.locator("a.skip-link").count()!==1)throw Error("Accessibility skip link missing");
  await page.locator("#lesson-search").fill("Python");
  if(await page.locator("#search-results .search-result").count()<1)throw Error("Cross-grade lesson search failed");
@@ -39,6 +41,9 @@ try{
  await page.getByRole("button",{name:/HANDS-ON LAB/i}).first().click();
  if(await page.locator(".lab-module").count()!==5)throw Error("Expected five learning stages");
  if(await page.locator(".lab-module[open]").count()!==1)throw Error("More than one stage open");
+ if(await page.locator(".theory-spark").count()!==1)throw Error("Focused Discover prompt absent");
+ if(await page.locator(".theory-path").count())throw Error("Old overcrowded theory pathway remains");
+ if(await page.locator(".theory-more[open]").count())throw Error("Detailed guidance should be collapsed by default");
  await page.locator(".lab-module").nth(1).locator("summary").first().click();
  if(await page.getByText(/PRACTICAL BRIEF|Your learning mission/).count())throw Error("Removed practical brief still visible");
  if(await page.locator("#task-progress").count())throw Error("Removed checklist still rendered");
