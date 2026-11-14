@@ -21,10 +21,12 @@ assert.ok(!html.includes("EBDAA NATIONAL TECHNICAL SCIENCE SCHOOLS"),"Outdated p
 assert.ok(html.includes('id="lesson-search"'));
 assert.ok(html.includes('class="skip-link"'));
 assert.ok(html.includes("prefers-reduced-motion"));
-assert.ok(content.innerHTML.includes("Adaptive Learning"));
-assert.ok(content.innerHTML.includes("Skill Mastery Map"));
-assert.ok(content.innerHTML.includes("Practical Rubrics"));
-assert.ok(content.innerHTML.includes("Visual Data Playground"));
+assert.ok(!content.innerHTML.includes("FOUR WAYS TO LEARN"));
+assert.ok(!content.innerHTML.includes("Explore. Experiment. Improve."));
+assert.ok(!html.includes('class="feature-tile"'));
+assert.ok(!html.includes(".feature-highlights"));
+assert.ok(content.innerHTML.includes('id="lesson-search"'));
+assert.ok(content.innerHTML.includes("Choose your academic year"));
 vm.runInContext("setLessonSearch('Python')",context);
 assert.ok(vm.runInContext("searchCards()",context).includes("search-result"),"Cross-grade search returned no lessons");
 vm.runInContext("searchOpen(2,0,0)",context);
@@ -184,21 +186,37 @@ vm.runInContext("chooseGrade(2);chooseSubject();chooseGradeUnit(1);openAdvancedS
 assert.ok(content.innerHTML.includes("INDUSTRIAL SQL MYSTERY"));
 assert.ok(content.innerHTML.includes("UNIT CASEFILE"));
 assert.ok(content.innerHTML.includes("50 QUESTIONS"));
-// Five ten-question sprints should display checkpoints without saving learner data.
+// Shuffle at the beginning of an attempt and preserve the resulting order throughout.
 vm.runInContext("chooseGrade(2);chooseSubject();chooseGradeUnit(0);openAdvancedSession(0)",context);
-const checkpointQuestions=context.window.EBDAA_QUESTION_FACTORY.all(2,0,0);
-vm.runInContext("window.EBDAA_PRACTICE.begin(2,0,0)",context);
+const practice=context.window.EBDAA_PRACTICE;
+const originalBank=context.window.EBDAA_QUESTION_FACTORY.all(2,0,0);
+practice.begin(2,0,0);
+const attemptOne=Array.from(practice.questionOrder());
+assert.equal(attemptOne.length,50);
+assert.equal(new Set(attemptOne).size,50);
+assert.deepEqual(attemptOne.slice().sort(),originalBank.map(q=>q.id).sort());
 for(let i=0;i<10;i++){
- const question=checkpointQuestions[i];
- if(question.mode==="order"){for(const value of question.answer.split("|"))vm.runInContext("window.EBDAA_PRACTICE.chooseOrder("+JSON.stringify(value)+")",context)}
- else vm.runInContext("window.EBDAA_PRACTICE.answer("+JSON.stringify(question.answer)+")",context);
- vm.runInContext("window.EBDAA_PRACTICE.check();window.EBDAA_PRACTICE.next()",context);
+ const question=practice.currentQuestion();
+ assert.equal(question.id,attemptOne[i],"Question order changed mid-attempt");
+ if(question.mode==="order"){
+   for(const value of question.answer.split("|"))practice.chooseOrder(value);
+ }else practice.answer(question.answer);
+ practice.check();
+ practice.next();
 }
 assert.ok(practiceStage.innerHTML.includes("CHECKPOINT 1 / 5"));
 assert.ok(practiceStage.innerHTML.includes("SKILL MASTERY MAP"));
 assert.ok(practiceStage.innerHTML.includes("Order of operations"));
-vm.runInContext("window.EBDAA_PRACTICE.continueCheckpoint()",context);
+assert.deepEqual(Array.from(practice.questionOrder()),attemptOne,"Checkpoint reordered the attempt");
+practice.continueCheckpoint();
 assert.ok(practiceStage.innerHTML.includes("QUESTION 11 / 50"));
+assert.equal(practice.currentQuestion().id,attemptOne[10]);
+assert.deepEqual(Array.from(practice.questionOrder()),attemptOne,"Question order changed entering the next sprint");
+practice.begin(2,0,0);
+const attemptTwo=Array.from(practice.questionOrder());
+assert.equal(attemptTwo.length,50);
+assert.deepEqual(attemptTwo.slice().sort(),attemptOne.slice().sort());
+assert.notDeepEqual(attemptTwo,attemptOne,"A new attempt repeated the previous question order");
 const missions=context.window.EBDAA_MISSIONS;
 assert.equal(missions.length,18);
 assert.equal(missions.reduce((n,m)=>n+m.steps.length,0),54);
