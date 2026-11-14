@@ -21,6 +21,10 @@ assert.ok(!html.includes("EBDAA NATIONAL TECHNICAL SCIENCE SCHOOLS"),"Outdated p
 assert.ok(html.includes('id="lesson-search"'));
 assert.ok(html.includes('class="skip-link"'));
 assert.ok(html.includes("prefers-reduced-motion"));
+assert.ok(content.innerHTML.includes("Adaptive Learning"));
+assert.ok(content.innerHTML.includes("Skill Mastery Map"));
+assert.ok(content.innerHTML.includes("Practical Rubrics"));
+assert.ok(content.innerHTML.includes("Visual Data Playground"));
 vm.runInContext("setLessonSearch('Python')",context);
 assert.ok(vm.runInContext("searchCards()",context).includes("search-result"),"Cross-grade search returned no lessons");
 vm.runInContext("searchOpen(2,0,0)",context);
@@ -125,6 +129,9 @@ assert.equal(rubric.score(2,0,0).earned,35);
 rubric.observe(2,0,0,{success:true,hasEvidence:true,output:"mean: 7.25"});
 assert.equal(rubric.score(2,0,0).earned,65);
 assert.equal(rubric.score(2,0,0).automatedPossible,65);
+assert.equal(rubric.score(2,0,0).checks.filter(c=>c.mode!=="automatic"&&c.passed).length,0);
+assert.equal(context.window.EBDA_MASTERY.names(2,0)[0],"Order of operations");
+assert.ok(context.window.EBDA_PLAYGROUND.panel(2,3,0).includes("Download CSV"));
 
 // Required: exactly 50 non-duplicate, deterministically keyed practice items per lesson.
 let practiceCount=0,lessonCount=0,formatCounts={};
@@ -179,6 +186,8 @@ for(let i=0;i<10;i++){
  vm.runInContext("window.EBDAA_PRACTICE.check();window.EBDAA_PRACTICE.next()",context);
 }
 assert.ok(practiceStage.innerHTML.includes("CHECKPOINT 1 / 5"));
+assert.ok(practiceStage.innerHTML.includes("SKILL MASTERY MAP"));
+assert.ok(practiceStage.innerHTML.includes("Order of operations"));
 vm.runInContext("window.EBDAA_PRACTICE.continueCheckpoint()",context);
 assert.ok(practiceStage.innerHTML.includes("QUESTION 11 / 50"));
 const missions=context.window.EBDAA_MISSIONS;
