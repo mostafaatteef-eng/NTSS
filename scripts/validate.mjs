@@ -1,0 +1,48 @@
+import assert from "node:assert/strict";
+import fs from "node:fs";
+import vm from "node:vm";
+
+const paths=["index.html","curriculum-data.js","experiments.js","challenge.js","advanced-labs.js"];
+for(const name of paths)assert.ok(fs.existsSync(name),name+" must exist");
+const html=fs.readFileSync("index.html","utf8");
+const scripts=paths.slice(1).map(x=>fs.readFileSync(x,"utf8"));
+const inline=html.match(/<script>([\s\S]*?)<\/script>/)?.[1];
+assert.ok(inline,"inline app script missing");
+for(const src of [...scripts,inline])new vm.Script(src);
+const content={innerHTML:""};
+const buttons=["home","browse","about"].map(x=>({dataset:{nav:x},addEventListener(){},classList:{toggle(){}}}));
+const context={window:{},document:{querySelector:()=>content,querySelectorAll:()=>buttons},scrollTo(){}};
+vm.createContext(context);
+for(const src of scripts)vm.runInContext(src,context);
+vm.runInContext(inline,context);
+const data=context.window.EBDAA_DATA;
+assert.equal(data.names.length,6);
+assert.equal(data.sessions.length,39);
+assert.equal(new Set(data.sessions.map(s=>s.id)).size,39);
+assert.equal(new Set(data.sessions.map(s=>s.question)).size,39);
+assert.equal(context.window.EBDAA_LAB_CONFIG.length,39);
+for(const s of data.sessions){
+  assert.ok(s.title && s.topic && s.explanation,"Missing content for "+s.id);
+  assert.equal(s.options.length,4);
+  assert.ok(Number.isInteger(s.answer)&&s.answer>=0&&s.answer<4);
+  assert.ok(s.options.every(x=>typeof x==="string"&&x.trim()));
+  context.openUnit(s.unit);
+  context.choose(s.id);
+  context.chooseAnswer(s.answer);
+  context.verify();
+  assert.ok(content.innerHTML.includes("feedback"),"Diagnostic feedback: "+s.id);
+  context.next();
+  context.setLab(4);
+  assert.ok(content.innerHTML.includes('type="range"'),"Experiment: "+s.id);
+  context.next();
+  context.next();
+  const q=context.window.EBDAA_CHALLENGE(s);
+  assert.equal(q.options.length,4);
+  context.chooseAnswer(q.answer);
+  context.verify();
+  assert.ok(content.innerHTML.includes("feedback"),"Application feedback: "+s.id);
+}
+context.nav("about");
+assert.ok(content.innerHTML.includes("No student registration"));
+assert.ok(!html.includes("localStorage."),"Do not persist student answers");
+console.log("PASS: 39 educational flows, 6 units, script syntax, student privacy.");
