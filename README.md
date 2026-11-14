@@ -6,7 +6,8 @@ A free, browser-based interactive learning experience for Ebdaa National Technic
 
 - Year 1 → AI in Data Engineering & Analysis → Term 1 (Units 1–3), Term 2 (Units 4–6) → 39 interactive sessions.
 - Year 2 → AI in Data Engineering & Analysis → Term 1 (Programming and Scripting for Automation; Data Types and Modeling for AI; Database Design and Management) and Term 2 (Data Analysis Techniques; Data Preprocessing Techniques; Machine Learning and Deep Learning Algorithms). These are 41 source-verified **session titles**, not yet developed interactive lessons.
-- Year 3 → independent placeholder awaiting official uploaded curricula. Do not fabricate third-year subjects.
+- Year 3 → AI in Data Engineering & Analysis → Term 1 (Statistical Analysis for Data Science; Data Annotation and Labeling for AI; AI Application Monitoring and Maintenance) and Term 2 (Data Management Frameworks for AI; Data Privacy, Security, and Fairness; Applied Machine Learning and Analytics). Six units and 36 source-verified lesson titles. Interactive Year 3 lessons are pending; the content index is live.
+- Year 3 source reconciliation: the Term 2 combined teacher guide's contents page lists a Unit 6 monitoring title, while its actual Unit 6 body (pp. 124–125) identifies **Applied Machine Learning and Analytics**, corroborated by the standalone Unit 18 guide. The actual unit and standalone guide take precedence. The standalone first-term monitoring guide is kept in first term.
 
 `grade-catalog.js` holds the year/subject/unit/session taxonomy and is editable only by users with repository write permissions. Additional general-education or technical subjects can be added after their official syllabi are uploaded.
 
