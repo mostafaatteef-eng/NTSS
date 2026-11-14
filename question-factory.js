@@ -163,13 +163,13 @@ function all(g,u,i){
   const heading=["Mini case","Data calculation","Code / logic check","Reasoning challenge","Review sprint"][variant];
   const mode=skill%5===0?"choice":skill%5===1?"number":skill%5===2?"truefalse":skill%5===3?"choice":"number";
   let options=null,correct=mode==="truefalse"?(variant%2===0):item.answer,renderMode=mode;
+  const claim=Number(item.answer)+(variant%2===0?0:1);
   const stem=mode==="truefalse"?item.stem+" Claim: the numerical answer is "+claim+".":item.stem;
   if(mode==="choice"){
    const base=Number(item.answer);const candidates=[base,base+1,base-1,base+2];
    options=[...new Set(candidates.map(String))];
    if(options.length!==4)renderMode="number";
   }
-  const claim=Number(item.answer)+(variant%2===0?0:1);
   questions.push({id:g+"-"+(u+1)+"-"+(i+1)+"-"+no,number:no,title,unit:unitName,heading,
     question:stem,answer:correct,mode:renderMode,options,
     explanation:item.why,sourceStatus:"Authored parameterized practice, associated with unit topic; requires lesson-level instructor review.",parameter:value,focus:skill+1});
