@@ -9,12 +9,22 @@ const scripts=paths.slice(1).map(x=>fs.readFileSync(x,"utf8"));
 const inline=html.match(/<script>([\s\S]*?)<\/script>/)?.[1];
 assert.ok(inline,"inline app script missing");
 for(const src of [...scripts,inline])new vm.Script(src);
-const content={innerHTML:""};
+const content={innerHTML:""};const practiceStage={innerHTML:""};
 const buttons=["home","browse","missions","about"].map(x=>({dataset:{nav:x},addEventListener(){},classList:{toggle(){}}}));
-const context={window:{},document:{querySelector:()=>content,querySelectorAll:()=>buttons},scrollTo(){}};
+const context={window:{},document:{querySelector:()=>content,querySelectorAll:()=>buttons,getElementById:(id)=>id==="ebdaa-practice-stage"?practiceStage:null},scrollTo(){}};
 vm.createContext(context);
 for(const src of scripts)vm.runInContext(src,context);
 vm.runInContext(inline,context);
+assert.ok(html.includes("<title>EBDA Learning"));
+assert.ok(html.includes("EBDA NATIONAL TECHNICAL SCIENCE SCHOOLS"));
+assert.ok(!html.includes("EBDAA NATIONAL TECHNICAL SCIENCE SCHOOLS"),"Outdated public spelling");
+assert.ok(html.includes('id="lesson-search"'));
+assert.ok(html.includes('class="skip-link"'));
+assert.ok(html.includes("prefers-reduced-motion"));
+vm.runInContext("setLessonSearch('Python')",context);
+assert.ok(vm.runInContext("searchCards()",context).includes("search-result"),"Cross-grade search returned no lessons");
+vm.runInContext("searchOpen(2,0,0)",context);
+assert.ok(content.innerHTML.includes("PRACTICAL BRIEF"),"Search did not route to practical lesson");
 const data=context.window.EBDAA_DATA;
 assert.equal(data.names.length,6);
 const grades=context.window.EBDAA_GRADES.grades;
@@ -131,6 +141,19 @@ vm.runInContext("chooseGrade(2);chooseSubject();chooseGradeUnit(1);openAdvancedS
 assert.ok(content.innerHTML.includes("INDUSTRIAL SQL MYSTERY"));
 assert.ok(content.innerHTML.includes("UNIT CASEFILE"));
 assert.ok(content.innerHTML.includes("50 QUESTIONS"));
+// Five ten-question sprints should display checkpoints without saving learner data.
+vm.runInContext("chooseGrade(2);chooseSubject();chooseGradeUnit(0);openAdvancedSession(0)",context);
+const checkpointQuestions=context.window.EBDAA_QUESTION_FACTORY.all(2,0,0);
+vm.runInContext("window.EBDAA_PRACTICE.begin(2,0,0)",context);
+for(let i=0;i<10;i++){
+ const question=checkpointQuestions[i];
+ if(question.mode==="order"){for(const value of question.answer.split("|"))vm.runInContext("window.EBDAA_PRACTICE.chooseOrder("+JSON.stringify(value)+")",context)}
+ else vm.runInContext("window.EBDAA_PRACTICE.answer("+JSON.stringify(question.answer)+")",context);
+ vm.runInContext("window.EBDAA_PRACTICE.check();window.EBDAA_PRACTICE.next()",context);
+}
+assert.ok(practiceStage.innerHTML.includes("CHECKPOINT 1 / 5"));
+vm.runInContext("window.EBDAA_PRACTICE.continueCheckpoint()",context);
+assert.ok(practiceStage.innerHTML.includes("QUESTION 11 / 50"));
 const missions=context.window.EBDAA_MISSIONS;
 assert.equal(missions.length,18);
 assert.equal(missions.reduce((n,m)=>n+m.steps.length,0),54);
