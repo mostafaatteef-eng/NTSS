@@ -32,18 +32,18 @@ try{
  const query="SELECT m.name, SUM(i.defects) AS defect_count FROM machines m JOIN inspections i ON i.machine_id=m.id GROUP BY m.id,m.name ORDER BY defect_count DESC;";
  await page.locator("#studio-editor").fill(query);
  await page.getByRole("button",{name:/Execute SQL|Run SQL/i}).click();
- await page.waitForFunction(()=>document.querySelector("#studio-output")?.textContent?.includes("Laser-C | 7"),{timeout:90000});
+ await page.waitForFunction(()=>document.querySelector("#studio-output")?.textContent?.includes("Laser-C | 7"),null,{timeout:90000});
  const sqlOutput=await page.locator("#studio-output").textContent();
  if(!sqlOutput.includes("Press-A | 3"))throw Error("SQL join result inaccurate");
  // Confirm read-only policy rejects statements that would mutate the database.
  await page.locator("#studio-editor").fill("DROP TABLE machines;");
  await page.getByRole("button",{name:/Execute SQL|Run SQL/i}).click();
- await page.waitForFunction(()=>document.querySelector("#studio-output")?.textContent?.includes("Read-only"),{timeout:4000});
+ await page.waitForFunction(()=>document.querySelector("#studio-output")?.textContent?.includes("Read-only"),null,{timeout:4000});
  // Execute Python WASM interpreter in dedicated web worker.
  await enter(2,0,0);
  await page.locator("#studio-editor").fill('readings = [3,5,8,13]\nprint("mean:",sum(readings)/len(readings))');
  await page.getByRole("button",{name:/Run Python/i}).click();
- await page.waitForFunction(()=>document.querySelector("#studio-output")?.textContent?.includes("mean: 7.25"),{timeout:90000});
+ await page.waitForFunction(()=>document.querySelector("#studio-output")?.textContent?.includes("mean: 7.25"),null,{timeout:90000});
  const pythonOutput=await page.locator("#studio-output").textContent();
  if(!pythonOutput.includes("mean: 7.25"))throw Error("Pyodide output invalid");
  if(errors.length)throw Error("Browser errors: "+errors.join("; "));
