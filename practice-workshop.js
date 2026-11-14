@@ -2,9 +2,28 @@
    Answers only live in memory; no cookies, tracking, remote submission or server storage. */
 window.EBDAA_PRACTICE=(function(){
 let items=[],cursor=0,chosen=null,graded=false,correct=0,reviewed={},session="",hintShown=false,checkpoint=false,grade=1,unit=0,lesson=0;
+const previousOrders=new Map();
+function shuffleQuestions(all,key){
+ const shuffled=all.slice();
+ // Fisher-Yates: shuffle once when the attempt begins, never during the attempt.
+ for(let i=shuffled.length-1;i>0;i--){
+  const j=Math.floor(Math.random()*(i+1));
+  [shuffled[i],shuffled[j]]=[shuffled[j],shuffled[i]];
+ }
+ const last=previousOrders.get(key);
+ // Guarantee consecutive attempts in this tab never use the exact same order.
+ if(last&&shuffled.length>1&&shuffled.every((q,i)=>q.id===last[i])){
+  [shuffled[0],shuffled[1]]=[shuffled[1],shuffled[0]];
+ }
+ previousOrders.set(key,shuffled.map(q=>q.id));
+ return shuffled;
+}
+function currentQuestion(){return items[cursor]||null}
+function questionOrder(){return items.map(q=>q.id)}
+
 const e=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 function panel(g,u,i){const key=[g,u,i].join("-");return '<section class="interactive" style="background:#fffdf0;border-color:#e9d893"><div class="eyebrow">50 QUESTIONS · WITHIN THIS LESSON</div><h3>Practice workshop: '+(g===1?'50 adaptive-numbered exercises':'50 interactive exercises')+'</h3><p>50 practice exercises split into five short sprints of ten questions. Ten skill patterns with five controlled variations; they are not 50 independently reviewed syllabus questions.</p><p class="muted">Question formats: numeric calculation, multiple choice and true/false. Results are not stored.</p><button class="btn teal" onclick="EBDAA_PRACTICE.begin('+g+','+u+','+i+')">Begin 50-question workshop →</button><div id="ebdaa-practice-stage" aria-live="polite"></div></section>'}
-function begin(g,u,i){const key=[g,u,i].join("-");items=window.EBDAA_QUESTION_FACTORY.all(g,u,i);cursor=0;chosen=null;graded=false;correct=0;reviewed={};session=key;grade=g;unit=u;lesson=i;window.EBDA_MASTERY.begin(g,u,i);hintShown=false;checkpoint=false;draw()}
+function begin(g,u,i){const key=[g,u,i].join("-");items=shuffleQuestions(window.EBDAA_QUESTION_FACTORY.all(g,u,i),key);cursor=0;chosen=null;graded=false;correct=0;reviewed={};session=key;grade=g;unit=u;lesson=i;window.EBDA_MASTERY.begin(g,u,i);hintShown=false;checkpoint=false;draw()}
 function answer(v){if(graded)return;chosen=v;if(items[cursor]?.mode==="number"){const b=document.getElementById("ebdaa-check");if(b)b.disabled=String(v).trim()==="";return}draw()}
 function chooseOrder(v){if(graded)return;if(!Array.isArray(chosen))chosen=[];if(!chosen.includes(v))chosen.push(v);draw()}
 function clearOrder(){chosen=[];draw()}
@@ -12,8 +31,8 @@ function showHint(){hintShown=true;draw()}
 function check(){const q=items[cursor];if(chosen===null||!q)return;graded=true;const ok=q.mode==="number"?Number.isFinite(Number(chosen))&&Math.abs(Number(chosen)-Number(q.answer))<=0.005:q.mode==="order"?Array.isArray(chosen)&&chosen.join("|")===q.answer:String(chosen)===String(q.answer);
 if(!Object.hasOwn(reviewed,cursor)){reviewed[cursor]=ok;window.EBDA_MASTERY.record(grade,unit,lesson,q,ok,hintShown);if(ok)correct++}draw()}
 function next(){if(cursor===49){finish();return}if((cursor+1)%10===0){checkpoint=true;drawCheckpoint();return}continueCheckpoint()}
-function continueCheckpoint(){checkpoint=false;if(cursor+1<items.length){const first=cursor+1,ranked=window.EBDA_MASTERY.prioritizeUpcoming(grade,unit,lesson,items.slice(first,first+10));items.splice(first,ranked.length,...ranked);cursor++;chosen=null;graded=Object.hasOwn(reviewed,cursor);hintShown=false;draw()}}
-function drawCheckpoint(){const node=document.getElementById("ebdaa-practice-stage");if(!node)return;const completed=cursor+1,round=completed/10;const inStage=Array.from({length:10},(_,i)=>reviewed[completed-10+i]===true).filter(Boolean).length;const suggested=window.EBDA_MASTERY.weakest(grade,unit,lesson);node.innerHTML='<div class="feedback" role="status"><div class="eyebrow">CHECKPOINT '+round+' / 5</div><h3>Great — one learning sprint completed</h3><p>First-attempt correct answers in this sprint: <b>'+inStage+'/10</b>. Incorrect answers are opportunities to revisit the experiment and try a similar task.</p><p>Questions completed: <b>'+completed+'/50</b>. Next sprint prioritizes weaker skills (currently Skill '+suggested.id+'). No score is stored after you leave the page.</p><div class="actions"><button class="btn light" onclick="EBDAA_PRACTICE.beginFromCheckpoint()">Review this sprint</button><button class="btn teal" onclick="EBDAA_PRACTICE.continueCheckpoint()">Continue to sprint '+(round+1)+' →</button></div></div>'+window.EBDA_MASTERY.map(grade,unit,lesson)}
+function continueCheckpoint(){checkpoint=false;if(cursor+1<items.length){cursor++;chosen=null;graded=Object.hasOwn(reviewed,cursor);hintShown=false;draw()}}
+function drawCheckpoint(){const node=document.getElementById("ebdaa-practice-stage");if(!node)return;const completed=cursor+1,round=completed/10;const inStage=Array.from({length:10},(_,i)=>reviewed[completed-10+i]===true).filter(Boolean).length;const suggested=window.EBDA_MASTERY.weakest(grade,unit,lesson);node.innerHTML='<div class="feedback" role="status"><div class="eyebrow">CHECKPOINT '+round+' / 5</div><h3>Great — one learning sprint completed</h3><p>First-attempt correct answers in this sprint: <b>'+inStage+'/10</b>. Incorrect answers are opportunities to revisit the experiment and try a similar task.</p><p>Questions completed: <b>'+completed+'/50</b>. Review Skill '+suggested.id+' if it needs more practice. The question order stays fixed for this attempt. No score is stored after you leave the page.</p><div class="actions"><button class="btn light" onclick="EBDAA_PRACTICE.beginFromCheckpoint()">Review this sprint</button><button class="btn teal" onclick="EBDAA_PRACTICE.continueCheckpoint()">Continue to sprint '+(round+1)+' →</button></div></div>'+window.EBDA_MASTERY.map(grade,unit,lesson)}
 function beginFromCheckpoint(){checkpoint=false;cursor=Math.max(0,cursor-9);chosen=null;graded=Object.hasOwn(reviewed,cursor);draw()}
 function prev(){if(cursor>0){cursor--;chosen=null;graded=Object.hasOwn(reviewed,cursor);draw()}}
 function finish(){const node=document.getElementById("ebdaa-practice-stage");if(!node)return;node.innerHTML='<div class="feedback"><h3>Practice summary</h3><p>Attempted: '+Object.keys(reviewed).length+'/50 · First-attempt correct: '+correct+'/'+Object.keys(reviewed).length+'.</p><p>These are formative estimates, not accredited competency results.</p></div>'+window.EBDA_MASTERY.map(grade,unit,lesson)+'<div class="actions"><button class="btn light" onclick="EBDAA_PRACTICE.restart()">Try a new attempt</button></div>'}
@@ -26,7 +45,7 @@ else {const options=q.mode==="truefalse"?[{label:"True",value:true},{label:"Fals
 const hint=hintShown?'<div class="hint"><b>Thinking hint:</b> '+(q.mode==="order"?'Identify the prerequisite step before each operation.':'Write down the relevant operation, then test it on a simpler input before using the displayed values.')+'</div>':'';
 const verdict=graded?'<div class="feedback '+(reviewed[cursor]?'':'error')+'"><b>'+(reviewed[cursor]?'Correct answer':'Review the method')+'</b><p>'+e(q.explanation)+'</p><p><b>Answer:</b> '+e(q.answer)+'</p></div>':'';
 const action=graded?'<button class="btn teal" onclick="EBDAA_PRACTICE.next()">'+(cursor===49?'Show summary':'Next question →')+'</button>':'<button id="ebdaa-check" class="btn teal" onclick="EBDAA_PRACTICE.check()" '+((chosen===null||(q.mode==="order"&&chosen.length!==4))?'disabled':'')+'>Check answer</button>';
-node.innerHTML='<div style="border-top:1px solid #e5d7ae;margin-top:22px;padding-top:20px"><div class="topmeta"><span class="pill">'+e(q.heading)+' · QUESTION '+(cursor+1)+' / 50</span><span class="pill">Correct first attempts: '+correct+'</span></div><div class="meter"><i style="width:'+progress+'%"></i></div><p class="muted">Adaptive questions prioritize weaker skills in each new sprint.</p><p class="muted">Concept focus '+q.focus+' of 10 · variation '+(Math.floor(cursor/10)+1)+' of 5</p><h3 style="font-size:21px">'+e(q.question)+'</h3>'+controls+hint+verdict+'<div class="actions"><button class="btn light" onclick="EBDAA_PRACTICE.showHint()">💡 Get a hint</button></div><div class="stepfooter"><button class="btn light" onclick="EBDAA_PRACTICE.prev()" '+(cursor===0?'disabled':'')+'>← Previous</button>'+action+'</div><p class="source">'+e(q.sourceStatus)+'</p></div>';
+node.innerHTML='<div style="border-top:1px solid #e5d7ae;margin-top:22px;padding-top:20px"><div class="topmeta"><span class="pill">'+e(q.heading)+' · QUESTION '+(cursor+1)+' / 50</span><span class="pill">Correct first attempts: '+correct+'</span></div><div class="meter"><i style="width:'+progress+'%"></i></div><p class="muted">Questions are shuffled when you begin a new attempt, then stay in the same order as you progress.</p><p class="muted">Concept focus '+q.focus+' of 10 · variation '+(Math.floor(cursor/10)+1)+' of 5</p><h3 style="font-size:21px">'+e(q.question)+'</h3>'+controls+hint+verdict+'<div class="actions"><button class="btn light" onclick="EBDAA_PRACTICE.showHint()">💡 Get a hint</button></div><div class="stepfooter"><button class="btn light" onclick="EBDAA_PRACTICE.prev()" '+(cursor===0?'disabled':'')+'>← Previous</button>'+action+'</div><p class="source">'+e(q.sourceStatus)+'</p></div>';
 }
-return {panel,begin,answer,chooseOrder,clearOrder,showHint,check,next,continueCheckpoint,beginFromCheckpoint,prev,finish,restart,all:(g,u,i)=>window.EBDAA_QUESTION_FACTORY.all(g,u,i)};
+return {panel,begin,currentQuestion,questionOrder,answer,chooseOrder,clearOrder,showHint,check,next,continueCheckpoint,beginFromCheckpoint,prev,finish,restart,all:(g,u,i)=>window.EBDAA_QUESTION_FACTORY.all(g,u,i)};
 })();
