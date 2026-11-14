@@ -86,6 +86,8 @@ for(const year of [2,3]){
    assert.ok(Number.isFinite(numeric.answer));
    assert.ok(content.innerHTML.includes("Performance Indicators"),year+"-"+unit+"-"+i);
    assert.ok(content.innerHTML.includes("PRACTICAL BRIEF"),"No session-specific brief");
+   assert.ok(content.innerHTML.includes("task-progress"),"Missing lab completion checklist");
+   assert.ok(content.innerHTML.includes("Save my lab evidence"),"Missing local evidence export");
    assert.ok(content.innerHTML.includes("50 QUESTIONS"),"No embedded practice");
    const family=academic[year+"-"+(unit+1)].engine;
    assert.ok(content.innerHTML.includes(family==="python"||family==="sql"?"studio-editor":"studio-slider"),"Missing lab for "+year+"-"+unit+"-"+i);
