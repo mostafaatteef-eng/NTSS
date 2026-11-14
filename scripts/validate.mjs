@@ -53,7 +53,7 @@ for(const s of data.sessions){
   assert.ok(content.innerHTML.includes('type="range"'),"Experiment: "+s.id);
   context.next();
   context.next();
-  const q=context.window.EBDAA_CHALLENGE(s);
+  const q=vm.runInContext("currentChallenge()",context);
   assert.equal(q.options.length,4);
   context.chooseAnswer(q.answer);
   context.verify();
