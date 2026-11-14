@@ -4,7 +4,7 @@ A free, browser-based interactive learning experience for EBDA National Technica
 
 ## Student experience visual refresh — 15 November 2026
 
-The noisy **Practical Brief · Your learning mission** checklist, including its 0/3 counter, expected-evidence paragraph and approval-status copy, has been removed across all Year 2/3 lessons. Discover now opens directly onto educational theory. The 50 inline questions, code labs, practical feedback and evidence export remain.
+The noisy **Practical Brief · Your learning mission** checklist, including its 0/3 counter, expected-evidence paragraph and approval-status copy, has been removed across all Year 2/3 lessons. The previous Discover theory view also repeated the same three steps in large cards. It now asks one concise prediction question and offers optional expandable guidance, keeping the focus on understanding and experimentation. Discover now opens directly onto educational theory. The 50 inline questions, code labs, practical feedback and evidence export remain.
 
 The new expressive-but-calm interface uses EBDA teal and yellow accents, data-inspired illustration, brighter academic-year cards, clearer stage feedback and mobile touch targets. No student accounts or new promotional dashboards.
 
