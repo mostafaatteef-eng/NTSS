@@ -11,6 +11,18 @@ A free, browser-based interactive learning experience for Ebdaa National Technic
 
 `grade-catalog.js` holds the year/subject/unit/session taxonomy and is editable only by users with repository write permissions. Additional general-education or technical subjects can be added after their official syllabi are uploaded.
 
+## 50 practice items per lesson (November 2026 enhancement)
+
+- 116 specialization lesson pages across grades 1–3, each with exactly **50 generated practice questions** (5,800 total).
+- Ten domain-specific reasoning templates per lesson, each with five data/scenario variations. This is 50 distinct item texts per lesson, **not 50 independent learning objectives or 5,800 manually curated, source-certified questions**.
+- UI modes: calculations, four-option choices, true/false assertions, and clickable workflow ordering; immediate explanatory feedback, question navigation and a non-persistent end summary.
+- Formats across the generated bank: 1,740 numeric, 2,320 multiple-choice, 1,160 true/false and 580 ordering items.
+- Automated release checks assert exactly 50 non-duplicate question stems for **each** lesson and verify keys, formats and source-status flags. Editorial and subject-specialist review is still mandatory before summative or certified assessment.
+
+**Curriculum audit:** [ASSESSMENT_AUDIT.md](ASSESSMENT_AUDIT.md) inventories all 116 sessions and 18 unit-level practical checklists, identifies gaps, and explicitly marks all units PARTIAL. The question count is a practice-bank coverage metric, not evidence of full practical-checklist compliance.
+
+**Browser QA:** [scripts/browser-smoke.mjs](scripts/browser-smoke.mjs) uses Playwright Chromium to check real DOM navigation, answer feedback, mobile overflow and JS errors. The GitHub Actions verification job must succeed before the static site can be deployed by the configured workflow. A workflow definition by itself does not establish a successful production deployment; confirm run status in GitHub Actions and Pages settings. Python/SQL external WebAssembly runtimes additionally require a live browser and network-specific acceptance testing.
+
 ## Integrated practical specialization laboratories (Years 2 and 3)
 
 **New architecture:** Grade → specialization subject → semester → unit → session → practical brief → live laboratory → embedded formative challenge → immediate feedback. The standalone Challenge Arena link and its routes have been removed.
