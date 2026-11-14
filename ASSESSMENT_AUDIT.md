@@ -4,6 +4,18 @@
 
 **Review type:** Verified the availability and headline requirements of the uploaded Teacher Guide assessment attachments and product checklists, then compared them to implemented laboratory families, practice briefs and assessment widgets. This is **not an item-by-item certified acceptance** of every official rubric, nor a claim that 50 parameterized tasks replace the original product checklists.
 
+## Revision — interactive case laboratories (14 November 2026)
+
+The platform now includes **18 original unit-level three-step case missions** and a relational **Factory SQL Mystery** attached to the Year 2 database-modeling and management units. The mystery runs against related synthetic tables (`machines`, `inspections`, `operators`) using real SQLite queries. A clue only unlocks after the expected result is returned by the SQL executor and the learner states the conclusion.
+
+**Verified in a JavaScript execution simulation:** all 18 unit story panels, all four mystery stages, and blocking a guessed answer without observed SQL evidence. SQL reference queries have also been executed against a reference SQLite database, resulting in machine count 3, Laser-C defects 7, and inspection contact Salma. This is **not** evidence of completed browser/CND WebAssembly runtime tests.
+
+**No complete checklist equivalence is claimed.** For Year 2 Database Design and Management, the official Teacher Guide Product Checklist includes schema creation, primary and foreign keys, 3NF normalization, indexing, denormalization rationale, aggregate queries and JOINs, user authentication, role-based access control, encryption, security/vulnerability audits and documentation. The new mystery improves JOIN/aggregation coverage, but it does **not** complete schema creation, advanced SQL, security, indexing and formal submission assessment. The unit remains PARTIAL.
+
+**External inspiration, original content:** [The Data Escape Room](https://www.thedataescaperoom.com/), [DataWars](https://www.datawars.io/), [Northwestern Knight Lab SQL Murder Mystery](https://mystery.knightlab.com/), and [W3Schools SQL JOIN](https://www.w3schools.com/sql/sql_join.asp). No copyrighted scenarios, datasets or assets were copied.
+
+**Required final sign-off:** a subject teacher should test every session against the exact teaching-step sequence, checklist indicator and expected artifact, using realistic data and assessing valid/invalid attempts. Until that review and a successful Chromium runtime + deployment run are documented, this remains a supplementary learning prototype.
+
 ## Summary
 
 - 116/116 sessions include a 50-item parameterized formative workshop (10 exercise mechanisms/skills × 5 variations).
