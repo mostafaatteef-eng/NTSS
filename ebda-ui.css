@@ -470,3 +470,40 @@ body{
  .theory-spark__icon{flex-basis:38px;height:38px;font-size:20px}
  .theory-spark h3{font-size:18px}
 }
+
+
+/* Lesson usability repairs: unmistakable progress, clear Next action, calmer quiz surface. */
+.lab-stage-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:18px 0 10px;color:#116d67;font-size:13px;font-weight:750}
+.lab-stage-heading>span:last-child{color:#687f74;font-size:12px;font-weight:500}
+.lab-stage-track{height:5px;overflow:hidden;border-radius:999px;background:#e5efeb;margin-bottom:17px}
+.lab-stage-track>i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#159e97,#49bba5);transition:width .2s ease}
+.lab-module{scroll-margin-top:98px}
+.lab-module__footer{margin-top:20px;padding-top:17px;border-top:1px solid #e8efeb;display:flex;justify-content:flex-end}
+.lab-module__footer .btn{min-width:180px}
+.practice-flow{max-width:740px;padding:12px 0 5px}
+.practice-flow .topmeta{margin-bottom:12px}
+.practice-flow .meter{margin:12px 0 27px;height:7px;background:#e7f0eb}
+.practice-question{font-size:clamp(20px,2.4vw,28px)!important;line-height:1.43;letter-spacing:-.025em;font-weight:770;margin:24px 0}
+.practice-flow .choices{display:grid;grid-template-columns:1fr;gap:10px}
+.practice-flow .choices .choice{text-align:left;padding:15px 19px;min-height:55px}
+.practice-flow .choice:disabled{opacity:1}
+.practice-flow .choices .choice.chosen{border-color:#1c9d94}
+.practice-flow .stepfooter{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.practice-flow .stepfooter .btn{min-width:135px}
+.practice-source{margin-top:22px;border-top:1px solid #e8eeeb;padding:12px 0;font-size:12px;color:#71847a}
+.practice-source>summary{cursor:pointer}
+.practice-source p{margin:7px 0 0;font-size:12px}
+.guided-question{border-top:0;padding-top:0}
+.lab-module__body .guided-question{margin:0}
+.lab-module__body .guided-question .topmeta{gap:10px}
+.lab-module__body .guided-question .interactive{margin:14px 0}
+@media(max-width:520px){
+  .lab-stage-heading{font-size:12px;gap:8px}
+  .lab-stage-heading>span:last-child{font-size:11px}
+  .lab-module__footer .btn{width:100%}
+  .practice-flow .stepfooter{flex-wrap:wrap}
+  .practice-flow .stepfooter .btn{flex:1;min-width:0}
+  .practice-question{font-size:20px!important}
+  .practice-flow .choices .choice{font-size:14px;padding:14px 15px}
+}
+@media(prefers-reduced-motion:reduce){.lab-stage-track>i{transition:none}}
