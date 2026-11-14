@@ -34,6 +34,8 @@ vm.runInContext("setLessonSearch('Python')",context);
 assert.ok(vm.runInContext("searchCards()",context).includes("search-result"),"Cross-grade search returned no lessons");
 vm.runInContext("searchOpen(2,0,0)",context);
 assert.ok(content.innerHTML.includes("lab-journey"),"Search did not route to practical learning");
+assert.ok(content.innerHTML.includes("theory-spark"),"Focused Discover prompt absent");
+assert.ok(!content.innerHTML.includes("theory-path"),"Old full three-card pathway remains");
 assert.ok(!content.innerHTML.includes("PRACTICAL BRIEF"),"Removed practical brief reappeared");
 assert.equal((content.innerHTML.match(/class="lab-module"/g)||[]).length,5,"Lab must have five progressively disclosed stages");
 assert.equal((content.innerHTML.match(/class="lab-module"[^>]* open/g)||[]).length,1,"Only one lab stage should start open");
@@ -103,6 +105,9 @@ for(const year of [2,3]){
    assert.ok(Number.isFinite(numeric.answer));
    assert.ok(content.innerHTML.includes("Performance Indicators"),year+"-"+unit+"-"+i);
    assert.ok(content.innerHTML.includes("lab-journey"),"Learning journey missing");
+   assert.ok(content.innerHTML.includes("theory-spark"),"Missing student prediction prompt");
+   assert.ok(content.innerHTML.includes("theory-more"),"Optional guidance missing");
+   assert.ok(!content.innerHTML.includes("theory-path"),"Duplicate path remains visible");
    assert.ok(!content.innerHTML.includes("PRACTICAL BRIEF"),"Removed practical brief reappeared");
    assert.ok(!content.innerHTML.includes("Your learning mission"),"Removed heading reappeared");
    assert.ok(!content.innerHTML.includes("task-progress"),"Removed checklist meter reappeared");
