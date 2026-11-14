@@ -6,7 +6,7 @@ const fmt=x=>Number(x).toFixed(3);
 const unit=(g,u)=>window.EBDAA_GRADES.grades[g-1].subjects[0].units[u];
 const profile=(g,u)=>window.EBDAA_PERFORMANCE[g+"-"+(u+1)];
 function reset(){if(activeWorker)activeWorker.terminate();activeWorker=null;currentKey="";v=4;ans=null;graded=false;out="";numericChecked=false;numericInput="";taskFlags=[];}
-function value(x){v=Number(x);numericChecked=false;numericInput="";render();}
+function value(x){v=Number(x);numericChecked=false;numericInput="";const route=currentKey.split("-").map(Number);if(route.length===3&&route[0]>=2)window.EBDA_RUBRIC.markManipulation(route[0],route[1],route[2]);render();}
 function pick(i){if(!graded){ans=i;render()}}
 function check(){graded=true;render()}function markTask(n,checked){taskFlags[n]=!!checked;const node=document.getElementById("task-progress");if(node)node.textContent=taskFlags.filter(Boolean).length+" / 3 steps completed (this visit only)"}function checkNumeric(g,u,i){const el=document.getElementById("numeric-input");numericInput=el?el.value:"";numericChecked=true;const q=window.EBDAA_NUMERIC(g,u,i,v);const valid=numericInput!==""&&Math.abs(Number(numericInput)-q.answer)<=q.tolerance;window.EBDA_RUBRIC.recordEvidence(g,u,i,valid);render()}
 function select(g,u,i){const key=g+"-"+u+"-"+i;if(currentKey!==key){reset();currentKey=key;v=(i%5)+3;editPython=pythonSample(i);editSQL=sqlSample(i)}}
