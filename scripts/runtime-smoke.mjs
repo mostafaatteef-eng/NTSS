@@ -19,10 +19,10 @@ const page=await browser.newPage({viewport:{width:1360,height:900}});
 page.setDefaultTimeout(30000);
 const errors=[];page.on("pageerror",e=>errors.push(e.message));
 const stage=async n=>{
- const outer=page.locator(".lab-module").nth(n);
- if(!(await outer.evaluate(el=>el.open)))await outer.locator("summary").first().click();
- if(n===3){
-  const optional=outer.locator("details.lab-support");
+ if(n===4){await page.evaluate(()=>jumpAdvancedPractice())}
+ else{await page.evaluate(n=>goAdvancedStep(n),n)}
+ if(n===4){
+  const optional=page.locator(".advanced-stage-content details.lab-support").first();
   if(!(await optional.evaluate(el=>el.open)))await optional.locator("summary").first().click();
  }
 };
@@ -32,12 +32,12 @@ const enter=async(g,u,i)=>{
  await page.getByRole("button",{name:/Explore subject/i}).click();
  await page.getByRole("button",{name:/View session index/i}).nth(u).click();
  await page.getByRole("button",{name:/HANDS-ON LAB/i}).nth(i).click();
- await page.waitForSelector("#studio-editor",{state:"attached"});
+ await page.waitForSelector(".advanced-stage-content[data-stage=\"0\"]");
 };
 try{
  // Start the case with proof-gating: guessing an answer before executing SQL must fail.
  await enter(2,1,0);
- await stage(3);
+ await stage(4);
  await page.locator("#case-answer").fill("3");
  await page.getByRole("button",{name:/Verify evidence & unlock/i}).click();
  if(!await page.getByText(/Execute a relevant SQL query first/i).count())throw Error("Case did not block unverified guess");
@@ -45,7 +45,7 @@ try{
  await page.locator("#studio-editor").fill("SELECT COUNT(*) AS machine_count FROM machines;");
  await page.getByRole("button",{name:/Execute SQL|Run SQL/i}).click();
  await page.waitForFunction(()=>document.querySelector("#studio-output")?.textContent?.includes("machine_count")&&document.querySelector("#studio-output")?.textContent?.includes("3"),null,{timeout:90000});
- await stage(3);
+ await stage(4);
  await page.locator("#case-answer").fill("3");
  await page.getByRole("button",{name:/Verify evidence & unlock/i}).click();
  if(!await page.getByRole("button",{name:/Next clue/i}).count())throw Error("Valid SQL evidence did not unlock first clue");
@@ -58,7 +58,7 @@ try{
  await page.waitForFunction(()=>document.querySelector("#studio-output")?.textContent?.includes("Laser-C | 7"),null,{timeout:90000});
  const sqlOutput=await page.locator("#studio-output").textContent();
  if(!sqlOutput.includes("Press-A | 3"))throw Error("SQL JOIN result inaccurate");
- await stage(3);
+ await stage(4);
  await page.locator("#case-answer").fill("Laser-C");
  await page.getByRole("button",{name:/Verify evidence & unlock/i}).click();
  if(!await page.getByRole("button",{name:/Next clue/i}).count())throw Error("JOIN evidence did not unlock second clue");
