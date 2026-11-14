@@ -21,6 +21,9 @@ assert.ok(!html.includes("EBDAA NATIONAL TECHNICAL SCIENCE SCHOOLS"),"Outdated p
 assert.ok(html.includes('id="lesson-search"'));
 assert.ok(html.includes('class="skip-link"'));
 assert.ok(html.includes("prefers-reduced-motion"));
+assert.ok(html.includes('href="ebda-ui.css"'),"Minimal design CSS not linked");
+assert.ok(fs.existsSync("ebda-ui.css"),"Design stylesheet absent");
+assert.ok(fs.readFileSync("ebda-ui.css","utf8").includes(".lab-module"),"Accessible lab stages missing styles");
 assert.ok(!content.innerHTML.includes("FOUR WAYS TO LEARN"));
 assert.ok(!content.innerHTML.includes("Explore. Experiment. Improve."));
 assert.ok(!html.includes('class="feature-tile"'));
@@ -31,6 +34,8 @@ vm.runInContext("setLessonSearch('Python')",context);
 assert.ok(vm.runInContext("searchCards()",context).includes("search-result"),"Cross-grade search returned no lessons");
 vm.runInContext("searchOpen(2,0,0)",context);
 assert.ok(content.innerHTML.includes("PRACTICAL BRIEF"),"Search did not route to practical lesson");
+assert.equal((content.innerHTML.match(/class="lab-module"/g)||[]).length,5,"Lab must have five progressively disclosed stages");
+assert.equal((content.innerHTML.match(/class="lab-module"[^>]* open/g)||[]).length,1,"Only one lab stage should start open");
 const data=context.window.EBDAA_DATA;
 assert.equal(data.names.length,6);
 const grades=context.window.EBDAA_GRADES.grades;
