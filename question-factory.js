@@ -151,6 +151,21 @@ v=>A("A risk matrix has "+v+" risk items and closes 2. Open items?",v-2,"Subtrac
 ]
 };
 F.agriculture=[...F.ml.slice(0,5),...F.ai.slice(5,10)];
+const workflow={
+programming:["Read input","Validate value","Process logic","Print output"],
+math:["Identify variables","Select formula","Calculate result","Interpret result"],
+charts:["Inspect data","Choose chart","Label axes","Interpret pattern"],
+ai:["Collect inputs","Prepare examples","Apply model","Evaluate output"],
+ml:["Split data","Train model","Validate settings","Test on held-out set"],
+algorithms:["Initialize data","Execute steps","Check stopping condition","Return result"],
+sql:["Inspect schema","Write SELECT","Execute query","Interpret rows"],
+preprocess:["Profile input","Identify problems","Apply justified cleaning","Validate changes"],
+annotation:["Define label rules","Label samples","Review disagreement","Adjudicate errors"],
+monitor:["Collect telemetry","Detect anomaly","Investigate cause","Apply and verify fix"],
+pipeline:["Extract records","Transform fields","Validate outputs","Load approved data"],
+fairness:["Define groups","Calculate group metrics","Compare outcomes","Investigate disparities"],
+agriculture:["Collect field readings","Prepare sensor data","Generate recommendation","Validate with agronomist"]
+};
 const fam=(g,u)=>g===1?["programming","math","charts","ai","ml","algorithms"][u]:window.EBDAA_PERFORMANCE[g+"-"+(u+1)].engine;
 function all(g,u,i){
  const grade=window.EBDAA_GRADES.grades[g-1],unitName=g===1?window.EBDAA_DATA.names[u]:grade.subjects[0].units[u].title;
@@ -169,6 +184,16 @@ function all(g,u,i){
    const base=Number(item.answer);const candidates=[base,base+1,base-1,base+2];
    options=[...new Set(candidates.map(String))];
    if(options.length!==4)renderMode="number";
+  }
+  if(skill===4){
+    const steps=workflow[family]||workflow.ai;
+    const shuffled=[steps[2],steps[0],steps[3],steps[1]];
+    questions.push({id:g+"-"+(u+1)+"-"+(i+1)+"-"+no,number:no,title,unit:unitName,heading,
+      question:"In the "+["factory data center","production control room","field research station","quality-control lab","operations team"][variant]+", arrange the four steps of '"+title+"' into a sensible workflow.",
+      answer:steps.join("|"),mode:"order",options:shuffled,
+      explanation:"Start with: "+steps.join(" → ")+"; adapt the workflow to the practical task.",
+      sourceStatus:"Author-developed conceptual workflow; not a verbatim official assessment.",parameter:value,focus:skill+1});
+    continue;
   }
   questions.push({id:g+"-"+(u+1)+"-"+(i+1)+"-"+no,number:no,title,unit:unitName,heading,
     question:stem,answer:correct,mode:renderMode,options,
