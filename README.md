@@ -11,13 +11,31 @@ A free, browser-based interactive learning experience for Ebdaa National Technic
 
 `grade-catalog.js` holds the year/subject/unit/session taxonomy and is editable only by users with repository write permissions. Additional general-education or technical subjects can be added after their official syllabi are uploaded.
 
+## Integrated practical specialization laboratories (Years 2 and 3)
+
+**New architecture:** Grade → specialization subject → semester → unit → session → practical brief → live laboratory → embedded formative challenge → immediate feedback. The standalone Challenge Arena link and its routes have been removed.
+
+**Coverage:** 41 Year-2 and 36 Year-3 session pages (77 total), each with a session-specific practical task brief and proposed evidence output; 12 unit-level LO/KPI mappings transcribed/paraphrased from the uploaded teacher guides. Important: the source guides present these indicators at unit level. Session-to-indicator alignment in the application is a proposal, not an official per-session allocation.
+
+**Working computational engines:**
+- Python editing/execution through an on-demand Pyodide 0.27.7 WebAssembly worker (12-second execution timeout; first use requires internet). This is an executable educational sandbox, not an unrestricted full Python cloud service.
+- Real SQLite SELECT queries over an in-memory synthetic factory dataset using sql.js 1.11.0 WebAssembly (download on first use). Browser-local, disposed per execution.
+- Recalculating JavaScript demonstrations for basic descriptive statistics, one-sample t statistic, Pearson correlation, Bayes, data preprocessing, KNN, classification metrics, anomaly detection, annotation agreement, telemetry, pipelines, fairness-screening metrics and agriculture.
+- Additional source-topic-specific calculators for selected sessions; other sessions reuse an educational calculation engine at unit level with an individual practical brief.
+
+**Pedagogy and evidence:** Every session has a manipulable or executable activity and a formative checkpoint. These checkpoints provide explanations rather than recording student grades. The current lab outcomes and unit-level question banks are **supplementary instructional prototypes**, not validated equivalents of all official practical projects, product checklists or summative assessments. The 77 pages therefore provide working practical entry points, **not 77 independently validated full curriculum labs**. A curriculum expert must still review each against the original session's full teaching steps and acceptance criteria.
+
+**Security/privacy:** No student registration, names, saved marks, telemetry, or backend. The browser fetches public runtime assets from third-party CDNs when Python or SQL is launched; ordinary network requests may expose standard connection metadata to those providers. No student records are transmitted by the application. Admin editing uses GitHub repository write permissions.
+
+**Testing:** JavaScript syntax, navigation, every one of the 77 new session flows, embedded feedback, 39 original Year-1 lessons, and 77 practical briefs pass scripted simulation tests. End-to-end execution of Pyodide and SQLite in a real browser, complete academic validation, accessibility testing and confirmation of GitHub Pages publication remain outstanding.
+
 ## Challenge Arena — enhanced specialization pedagogy
 
-Every specialization unit in Years 1, 2 and 3 now has its own **three-stage practical decision-making mission** (18 missions, 54 curriculum-aligned checks). Each mission introduces a vocational scenario, one decision per stage, explanatory feedback, optional non-revealing hints, an end-of-mission summary, and an unlimited retry button. These are supplementary formative exercises authored for this platform, not official assessment papers.
+There are 18 unit-level mission banks and 54 authored formative questions. Their questions are distributed across lesson checks, with immediate explanations; no separate Challenge Arena navigation remains. These are supplementary formative exercises authored for this platform, not official assessment papers.
 
 - Year 1: missions extend the existing 39 full guided sessions and hands-on visual experiments.
-- Year 2: six missions for automation scripting, relational modeling, database queries, analysis, preprocessing and model evaluation. Unit lesson titles remain indexes pending full lesson authoring.
-- Year 3: six missions on statistical analysis, annotation, monitoring, governance, privacy/fairness, and precision agriculture. The complete unit lesson library still needs full learning-lab authoring.
+- Year 2: six unit question banks for automation scripting, relational modeling, database queries, analysis, preprocessing and model evaluation; all 41 session entries have working practical activities and await deeper individual academic validation.
+- Year 3: six unit question banks on statistical analysis, annotation, monitoring, governance, privacy/fairness, and precision agriculture; all 36 session entries have working practical activities and await deeper individual academic validation.
 
 All mission questions and answers live in `missions-data.js` and require GitHub collaborator access to edit. Tests check every mission. Results and attempts exist only in browser memory during the active visit. Do not treat them as formal assessment or student records.
 
