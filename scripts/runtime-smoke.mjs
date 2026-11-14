@@ -67,6 +67,9 @@ try{
  await page.locator("#studio-editor").fill("DROP TABLE machines;");
  await page.getByRole("button",{name:/Execute SQL|Run SQL/i}).click();
  await page.waitForFunction(()=>document.querySelector("#studio-output")?.textContent?.includes("Read-only"),null,{timeout:4000});
+ await stage(2);
+ await stage(1);
+ if(!await page.locator("#studio-output").textContent().then(t=>t?.includes("Read-only")))throw Error("SQL feedback lost after returning to the code editor");
  // Validate SQL challenge against two independent database fixtures.
  await page.locator("#studio-editor").fill("SELECT COUNT(*) AS machine_count FROM machines;");
  await page.getByRole("button",{name:/Run test cases/i}).click();
