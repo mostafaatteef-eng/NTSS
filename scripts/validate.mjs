@@ -2,16 +2,16 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import vm from "node:vm";
 
-const paths=["index.html","curriculum-data.js","grade-catalog.js","experiments.js","challenge.js","advanced-labs.js","microgames.js","missions-data.js","performance-map.js","session-guides.js","lab-specialists.js","numeric-challenges.js","question-factory.js","practice-workshop.js","case-labs.js","scenario-labs.js","lab-studio.js"];
+const paths=["index.html","curriculum-data.js","grade-catalog.js","experiments.js","challenge.js","advanced-labs.js","microgames.js","missions-data.js","performance-map.js","session-guides.js","lab-specialists.js","numeric-challenges.js","question-factory.js","mastery-engine.js","practice-workshop.js","case-labs.js","scenario-labs.js","practical-rubrics.js","visual-playground.js","lab-studio.js"];
 for(const name of paths)assert.ok(fs.existsSync(name),name+" must exist");
 const html=fs.readFileSync("index.html","utf8");
 const scripts=paths.slice(1).map(x=>fs.readFileSync(x,"utf8"));
 const inline=html.match(/<script>([\s\S]*?)<\/script>/)?.[1];
 assert.ok(inline,"inline app script missing");
 for(const src of [...scripts,inline])new vm.Script(src);
-const content={innerHTML:""};const practiceStage={innerHTML:""};
+const content={innerHTML:""};const practiceStage={innerHTML:""};const dataPlayground={innerHTML:""};const rubricProgress={innerHTML:""};
 const buttons=["home","browse","missions","about"].map(x=>({dataset:{nav:x},addEventListener(){},classList:{toggle(){}}}));
-const context={window:{},document:{querySelector:()=>content,querySelectorAll:()=>buttons,getElementById:(id)=>id==="ebdaa-practice-stage"?practiceStage:null},scrollTo(){}};
+const context={window:{},document:{querySelector:()=>content,querySelectorAll:()=>buttons,getElementById:(id)=>id==="ebdaa-practice-stage"?practiceStage:id==="data-playground"?dataPlayground:id==="rubric-progress"?rubricProgress:null},scrollTo(){}};
 vm.createContext(context);
 for(const src of scripts)vm.runInContext(src,context);
 vm.runInContext(inline,context);
@@ -88,6 +88,8 @@ for(const year of [2,3]){
    assert.ok(content.innerHTML.includes("PRACTICAL BRIEF"),"No session-specific brief");
    assert.ok(content.innerHTML.includes("task-progress"),"Missing lab completion checklist");
    assert.ok(content.innerHTML.includes("Save my lab evidence"),"Missing local evidence export");
+   assert.ok(content.innerHTML.includes("VISUAL DATA PLAYGROUND"),"Missing visual playground");
+   assert.ok(content.innerHTML.includes("PRACTICAL RUBRIC"),"Missing practical rubric");
    assert.ok(content.innerHTML.includes("50 QUESTIONS"),"No embedded practice");
    const family=academic[year+"-"+(unit+1)].engine;
    assert.ok(content.innerHTML.includes(family==="python"||family==="sql"?"studio-editor":"studio-slider"),"Missing lab for "+year+"-"+unit+"-"+i);
@@ -101,6 +103,29 @@ for(const year of [2,3]){
 }
 assert.equal(completedLabs,77);
 assert.ok(!html.includes('data-nav="missions"'),"Challenge must be integrated, not a standalone menu");
+// Test real browser-local adaptation, computed data operations and rubric separation.
+const mastery=context.window.EBDA_MASTERY;
+mastery.begin(2,0,0);
+const qForMastery=context.window.EBDAA_QUESTION_FACTORY.all(2,0,0);
+mastery.record(2,0,0,qForMastery[0],false,true);
+mastery.record(2,0,0,qForMastery[1],true,false);
+assert.equal(mastery.snapshot(2,0,0).seen,2);
+assert.equal(mastery.prioritizeUpcoming(2,0,0,[qForMastery[1],qForMastery[0]])[0].focus,qForMastery[0].focus);
+const playground=context.window.EBDA_PLAYGROUND;
+assert.equal(playground.snapshot(2,3,0).length,6);
+assert.ok(playground.snapshot(2,3,0).some(x=>x.sensor===null));
+vm.runInContext("window.EBDA_PLAYGROUND.panel(2,3,0);window.EBDA_PLAYGROUND.change('op','impute')",context);
+assert.ok(playground.snapshot(2,3,0).every(x=>x.sensor!==null));
+vm.runInContext("window.EBDA_PLAYGROUND.change('op','normalize')",context);
+assert.ok(playground.snapshot(2,3,0).every(x=>x.sensor===null||(x.sensor>=0&&x.sensor<=1)));
+const rubric=context.window.EBDA_RUBRIC;
+assert.equal(rubric.score(2,0,0).earned,0);
+rubric.recordEvidence(2,0,0,true);
+assert.equal(rubric.score(2,0,0).earned,35);
+rubric.observe(2,0,0,{success:true,hasEvidence:true,output:"mean: 7.25"});
+assert.equal(rubric.score(2,0,0).earned,65);
+assert.equal(rubric.score(2,0,0).automatedPossible,65);
+
 // Required: exactly 50 non-duplicate, deterministically keyed practice items per lesson.
 let practiceCount=0,lessonCount=0,formatCounts={};
 for(const grade of [1,2,3]){
