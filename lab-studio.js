@@ -75,8 +75,8 @@ function session(g,u,i){
  '<p class="muted">This is a proposed session alignment to unit indicators, not a certified official assessment.</p></details>';
  const discover=window.EBDA_THEORY.advanced(g,u,i,guide,p,name)+brief;
  const experiment=(p.engine==="python"||p.engine==="sql"?program(d):calculated(d))+evidence+window.EBDA_CODE_TESTS.panel(g,u,i);
- const understand=window.EBDA_VISUALIZER.panel(g,u,i)+window.EBDA_PLAYGROUND.panel(g,u,i);
- const practice=check+window.EBDAA_STORIES.panel(g,u,i)+window.EBDAA_CASE.panel(g,u,i)+window.EBDAA_PRACTICE.panel(g,u,i);
+ const understand=window.EBDA_VISUALIZER.panel(g,u,i)+'<details class="lab-support"><summary>Explore the data yourself <span aria-hidden="true">↗</span></summary><div class="lab-support__body">'+window.EBDA_PLAYGROUND.panel(g,u,i)+'</div></details>';
+ const practice=window.EBDAA_PRACTICE.panel(g,u,i)+'<details class="lab-support"><summary>Optional investigation and concept check <span aria-hidden="true">↗</span></summary><div class="lab-support__body">'+check+window.EBDAA_STORIES.panel(g,u,i)+window.EBDAA_CASE.panel(g,u,i)+'</div></details>';
  const reflect=window.EBDA_RUBRIC.panel(g,u,i)+outcomes+
  '<div class="actions"><button class="btn light" onclick="EBDAA_STUDIO.exportEvidence('+g+','+u+','+i+')">↓ Save my lab evidence (.txt)</button></div>';
  return '<div class="eyebrow">YEAR '+g+' · UNIT '+(u+1)+' · SESSION '+(i+1)+'</div>'+
