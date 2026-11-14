@@ -27,14 +27,28 @@ const enter=async(g,u,i)=>{
  await page.waitForSelector("#studio-editor");
 };
 try{
- // First use executes an actual external sqlite3 WASM asset and a JOIN query.
+ // Start the case with proof-gating: guessing an answer before executing SQL must fail.
  await enter(2,1,0);
- const query="SELECT m.name, SUM(i.defects) AS defect_count FROM machines m JOIN inspections i ON i.machine_id=m.id GROUP BY m.id,m.name ORDER BY defect_count DESC;";
+ await page.locator("#case-answer").fill("3");
+ await page.getByRole("button",{name:/Verify evidence & unlock/i}).click();
+ if(!await page.getByText(/Execute a relevant SQL query first/i).count())throw Error("Case did not block unverified guess");
+ await page.locator("#studio-editor").fill("SELECT COUNT(*) AS machine_count FROM machines;");
+ await page.getByRole("button",{name:/Execute SQL|Run SQL/i}).click();
+ await page.waitForFunction(()=>document.querySelector("#studio-output")?.textContent?.includes("machine_count")&&document.querySelector("#studio-output")?.textContent?.includes("3"),null,{timeout:90000});
+ await page.locator("#case-answer").fill("3");
+ await page.getByRole("button",{name:/Verify evidence & unlock/i}).click();
+ if(!await page.getByRole("button",{name:/Next clue/i}).count())throw Error("Valid SQL evidence did not unlock first clue");
+ await page.getByRole("button",{name:/Next clue/i}).click();
+ // A genuine relational JOIN must drive the second clue.
+ const query="SELECT m.name, SUM(i.defects) AS total_defects FROM machines m JOIN inspections i ON i.machine_id=m.id GROUP BY m.id,m.name ORDER BY total_defects DESC;";
  await page.locator("#studio-editor").fill(query);
  await page.getByRole("button",{name:/Execute SQL|Run SQL/i}).click();
  await page.waitForFunction(()=>document.querySelector("#studio-output")?.textContent?.includes("Laser-C | 7"),null,{timeout:90000});
  const sqlOutput=await page.locator("#studio-output").textContent();
- if(!sqlOutput.includes("Press-A | 3"))throw Error("SQL join result inaccurate");
+ if(!sqlOutput.includes("Press-A | 3"))throw Error("SQL JOIN result inaccurate");
+ await page.locator("#case-answer").fill("Laser-C");
+ await page.getByRole("button",{name:/Verify evidence & unlock/i}).click();
+ if(!await page.getByRole("button",{name:/Next clue/i}).count())throw Error("JOIN evidence did not unlock second clue");
  // Confirm read-only policy rejects statements that would mutate the database.
  await page.locator("#studio-editor").fill("DROP TABLE machines;");
  await page.getByRole("button",{name:/Execute SQL|Run SQL/i}).click();
