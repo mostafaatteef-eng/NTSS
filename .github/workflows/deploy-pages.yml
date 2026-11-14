@@ -27,6 +27,8 @@ jobs:
         run: npx playwright install --with-deps chromium
       - name: Browser smoke test at desktop and mobile widths
         run: node scripts/browser-smoke.mjs
+      - name: Real Pyodide and SQLite WebAssembly runtime tests
+        run: node scripts/runtime-smoke.mjs
 
   deploy:
     name: Publish verified static site
