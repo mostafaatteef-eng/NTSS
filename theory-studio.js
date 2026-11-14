@@ -7,11 +7,18 @@ const esc=x=>String(x??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&
 function key(g,u,i){return [g,u,i].join("-")}
 function reveal(g,u,i){seen.add(key(g,u,i));const n=document.getElementById("ebda-theory-insight-"+key(g,u,i));if(n){n.hidden=false;const b=document.getElementById("ebda-theory-reveal-"+key(g,u,i));if(b){b.setAttribute("aria-expanded","true");b.textContent="Explanation revealed ✓"}n.focus()}}
 function hero(g,u,i,heading,topic){return '<div class="theory-hero"><div class="theory-hero__copy"><span class="theory-eyebrow"><span class="theory-dot"></span> THEORY LAB · YEAR '+g+' · UNIT '+(u+1)+'</span><h2>'+esc(heading)+'</h2><p>'+esc(topic)+'</p><div class="theory-tags"><span>Observe</span><span>Understand</span><span>Apply</span></div></div><div class="theory-hero__art" aria-hidden="true"><span class="theory-orbit theory-orbit--one"></span><span class="theory-orbit theory-orbit--two"></span><span class="theory-core">✦</span></div></div>'}
-function yearOne(s,u,i){const g=1,k=key(g,u,i),visible=seen.has(k);
-return '<section class="theory-studio" aria-label="Visual theory lesson">'+hero(g,u,i,s.title,s.topic)+
-'<div class="theory-flow"><div class="theory-flow__item"><span class="theory-flow__number">01</span><div><strong>Start with the concept</strong><p>'+esc(s.topic)+'</p></div></div><div class="theory-flow__item"><span class="theory-flow__number">02</span><div><strong>Build your mental model</strong><p>Think about the prediction you made earlier. Which detail changes your answer?</p></div></div><div class="theory-flow__item"><span class="theory-flow__number">03</span><div><strong>Explain the reasoning</strong><p>Reveal the explanation and connect it to your experiment.</p></div></div></div>'+
-'<div class="theory-insight"><div class="theory-insight__label">THE BIG IDEA</div><h3>Can you explain the result?</h3><p>Compare your prediction with what you observed in the previous interactive step.</p><button class="theory-reveal" id="ebda-theory-reveal-'+k+'" type="button" aria-controls="ebda-theory-insight-'+k+'" aria-expanded="'+visible+'" onclick="EBDA_THEORY.reveal(1,'+u+','+i+')">'+(visible?'Explanation revealed ✓':'Reveal the explanation →')+'</button><div class="theory-revealed" id="ebda-theory-insight-'+k+'" tabindex="-1" '+(visible?'':'hidden')+'><strong>Concept explained</strong><p>'+esc(s.explanation)+'</p></div></div>'+
-'<div class="theory-bottom"><div><span class="theory-mini-label">WHAT TO REMEMBER</span><p>'+esc(s.explanation)+'</p></div><div><span class="theory-mini-label">YOUR NEXT MOVE</span><p>Describe the idea in your own words, then answer the next concept check.</p></div></div></section>'}
+function yearOne(s,u,i){
+const g=1,k=key(g,u,i),visible=seen.has(k);
+return '<section class="theory-studio theory-studio--focused" aria-label="Understand the lesson concept">'+
+hero(g,u,i,s.title,s.topic)+
+'<div class="theory-spark"><div class="theory-spark__icon" aria-hidden="true">✦</div>'+
+'<div class="theory-spark__content"><span class="theory-mini-label">THE BIG IDEA</span>'+
+'<h3>Why did the experiment behave that way?</h3>'+
+'<p>Think about what changed when you adjusted the input. Then reveal the reasoning.</p>'+
+'<button class="theory-reveal" id="ebda-theory-reveal-'+k+'" type="button" aria-controls="ebda-theory-insight-'+k+'" aria-expanded="'+visible+'" onclick="EBDA_THEORY.reveal(1,'+u+','+i+')">'+(visible?'Explanation revealed ✓':'Show the explanation →')+'</button>'+
+'<div class="theory-revealed" id="ebda-theory-insight-'+k+'" tabindex="-1" '+(visible?'':'hidden')+'><strong>Concept explained</strong><p>'+esc(s.explanation)+'</p></div></div></div>'+
+'<details class="theory-more"><summary>Review the concept in one sentence</summary><p>'+esc(s.topic)+'</p></details>'+
+'</section>'}
 function advanced(g,u,i,guide,profile,name){
 const k=key(g,u,i),shown=seen.has(k),focus=guide.focus||name,steps=guide.instructions||[];
 return '<section class="theory-studio theory-studio--focused" aria-label="Discover the lesson concept">'+
