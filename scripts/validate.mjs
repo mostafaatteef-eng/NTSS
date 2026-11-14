@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import vm from "node:vm";
 
-const paths=["index.html","curriculum-data.js","grade-catalog.js","experiments.js","challenge.js","advanced-labs.js","microgames.js","missions-data.js","performance-map.js","session-guides.js","lab-specialists.js","numeric-challenges.js","question-factory.js","practice-workshop.js","lab-studio.js"];
+const paths=["index.html","curriculum-data.js","grade-catalog.js","experiments.js","challenge.js","advanced-labs.js","microgames.js","missions-data.js","performance-map.js","session-guides.js","lab-specialists.js","numeric-challenges.js","question-factory.js","practice-workshop.js","case-labs.js","scenario-labs.js","lab-studio.js"];
 for(const name of paths)assert.ok(fs.existsSync(name),name+" must exist");
 const html=fs.readFileSync("index.html","utf8");
 const scripts=paths.slice(1).map(x=>fs.readFileSync(x,"utf8"));
@@ -122,6 +122,15 @@ assert.equal(practiceCount,5800);
 assert.equal(formatCounts.order,580);
 assert.equal(formatCounts.truefalse,1160);
 
+// Evidence-driven educational story checks.
+assert.equal(Object.keys(context.window.EBDAA_STORIES.storyNames).length,18);
+assert.equal(context.window.EBDAA_CASE.clues.length,4);
+assert.equal(context.window.EBDAA_CASE.tables.machines.length,3);
+assert.equal(context.window.EBDAA_CASE.tables.inspections.reduce((n,r)=>n+(r.machine_id===1?r.defects:0),0),7);
+vm.runInContext("chooseGrade(2);chooseSubject();chooseGradeUnit(1);openAdvancedSession(0)",context);
+assert.ok(content.innerHTML.includes("INDUSTRIAL SQL MYSTERY"));
+assert.ok(content.innerHTML.includes("UNIT CASEFILE"));
+assert.ok(content.innerHTML.includes("50 QUESTIONS"));
 const missions=context.window.EBDAA_MISSIONS;
 assert.equal(missions.length,18);
 assert.equal(missions.reduce((n,m)=>n+m.steps.length,0),54);
