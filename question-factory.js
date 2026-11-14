@@ -70,7 +70,7 @@ v=>A("A stack contains "+v+" items. After 2 pops, how many remain?",v-2,"Each po
 v=>A("A queue has "+v+" waiting jobs and receives 3. How many total?",v+3,"Add arriving jobs."),
 v=>A("A tree has "+v+" leaves and 2 non-leaf nodes. Total nodes?",v+2,"Add leaves and non-leaf nodes."),
 v=>A("An undirected chain with "+v+" vertices has how many edges?",v-1,"Each new vertex after the first adds an edge."),
-v=>A("A full binary tree with 3 levels has how many nodes?",7,"1+2+4 nodes across 3 filled levels."),
+v=>A("A full binary tree with "+v+" filled levels has how many nodes?",Math.pow(2,v)-1,"The number of nodes is 2^levels − 1."),
 v=>A("What is the last element after sorting ["+v+","+(v+2)+","+(v-1)+"] ascending?",v+2,"The maximum ends the list."),
 v=>A("A loop visits "+v+" graph nodes once. How many node visits occur?",v,"Each node is visited exactly once."),
 v=>A("In a connected undirected tree with "+v+" vertices, how many edges?",v-1,"Any tree has |V|-1 edges."),
@@ -162,15 +162,16 @@ function all(g,u,i){
   const item=rules[skill](value);const no=variant*10+skill+1;
   const heading=["Mini case","Data calculation","Code / logic check","Reasoning challenge","Review sprint"][variant];
   const mode=skill%5===0?"choice":skill%5===1?"number":skill%5===2?"truefalse":skill%5===3?"choice":"number";
-  let options=null,correct=item.answer,renderMode=mode;
+  let options=null,correct=mode==="truefalse"?(variant%2===0):item.answer,renderMode=mode;
+  const stem=mode==="truefalse"?item.stem+" Claim: the numerical answer is "+claim+".":item.stem;
   if(mode==="choice"){
-   const candidates=[correct,typeof correct==="number"?correct+1:String(correct)+"1",typeof correct==="number"?correct-1:String(correct)+"2",typeof correct==="number"?correct+2:String(correct)+"3"];
+   const base=Number(item.answer);const candidates=[base,base+1,base-1,base+2];
    options=[...new Set(candidates.map(String))];
    if(options.length!==4)renderMode="number";
   }
-  const claim=(Number(item.answer)===0?1:Number(item.answer));
+  const claim=Number(item.answer)+(variant%2===0?0:1);
   questions.push({id:g+"-"+(u+1)+"-"+(i+1)+"-"+no,number:no,title,unit:unitName,heading,
-    question:item.stem,answer:correct,mode:renderMode,options,
+    question:stem,answer:correct,mode:renderMode,options,
     explanation:item.why,sourceStatus:"Authored parameterized practice, associated with unit topic; requires lesson-level instructor review.",parameter:value,focus:skill+1});
  }
  return questions;
