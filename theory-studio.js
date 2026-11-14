@@ -12,12 +12,19 @@ return '<section class="theory-studio" aria-label="Visual theory lesson">'+hero(
 '<div class="theory-flow"><div class="theory-flow__item"><span class="theory-flow__number">01</span><div><strong>Start with the concept</strong><p>'+esc(s.topic)+'</p></div></div><div class="theory-flow__item"><span class="theory-flow__number">02</span><div><strong>Build your mental model</strong><p>Think about the prediction you made earlier. Which detail changes your answer?</p></div></div><div class="theory-flow__item"><span class="theory-flow__number">03</span><div><strong>Explain the reasoning</strong><p>Reveal the explanation and connect it to your experiment.</p></div></div></div>'+
 '<div class="theory-insight"><div class="theory-insight__label">THE BIG IDEA</div><h3>Can you explain the result?</h3><p>Compare your prediction with what you observed in the previous interactive step.</p><button class="theory-reveal" id="ebda-theory-reveal-'+k+'" type="button" aria-controls="ebda-theory-insight-'+k+'" aria-expanded="'+visible+'" onclick="EBDA_THEORY.reveal(1,'+u+','+i+')">'+(visible?'Explanation revealed ✓':'Reveal the explanation →')+'</button><div class="theory-revealed" id="ebda-theory-insight-'+k+'" tabindex="-1" '+(visible?'':'hidden')+'><strong>Concept explained</strong><p>'+esc(s.explanation)+'</p></div></div>'+
 '<div class="theory-bottom"><div><span class="theory-mini-label">WHAT TO REMEMBER</span><p>'+esc(s.explanation)+'</p></div><div><span class="theory-mini-label">YOUR NEXT MOVE</span><p>Describe the idea in your own words, then answer the next concept check.</p></div></div></section>'}
-function advanced(g,u,i,guide,profile,name){const k=key(g,u,i),shown=seen.has(k),focus=guide.focus||name,steps=guide.instructions||[];
-return '<section class="theory-studio" aria-label="Lesson theory and practical learning objectives">'+hero(g,u,i,name,focus)+
-'<div class="theory-focus"><div class="theory-focus__icon" aria-hidden="true">◎</div><div><span class="theory-mini-label">TODAY’S FOCUS</span><h3>'+esc(focus)+'</h3><p>Use the concept to complete the practical task and explain the result.</p></div></div>'+
-'<div class="theory-path"><div class="theory-section-heading"><span class="theory-mini-label">YOUR LEARNING ROUTE</span><h3>Three steps to understanding</h3></div><div class="theory-flow">'+steps.map((step,j)=>'<div class="theory-flow__item"><span class="theory-flow__number">0'+(j+1)+'</span><div><strong>'+["Explore","Test","Explain"][j%3]+'</strong><p>'+esc(step)+'</p></div></div>').join("")+'</div></div>'+
-'<div class="theory-insight"><div class="theory-insight__label">CHECK YOUR UNDERSTANDING</div><h3>What will count as evidence?</h3><p>Before revealing the target, predict what you should be able to produce by the end.</p><button class="theory-reveal" type="button" id="ebda-theory-reveal-'+k+'" aria-controls="ebda-theory-insight-'+k+'" aria-expanded="'+shown+'" onclick="EBDA_THEORY.reveal('+g+','+u+','+i+')">'+(shown?'Evidence revealed ✓':'Reveal the expected evidence →')+'</button><div class="theory-revealed" id="ebda-theory-insight-'+k+'" tabindex="-1" '+(shown?'':'hidden')+'><strong>Expected practical artifact</strong><p>'+esc(guide.artifact)+'</p></div></div>'+
-'<p class="theory-disclaimer">Learning route developed from the session brief. The original teacher-guide criteria and session-level indicator mapping still require academic verification. Reference: '+esc(profile.source)+'</p></section>'}
+function advanced(g,u,i,guide,profile,name){
+const k=key(g,u,i),shown=seen.has(k),focus=guide.focus||name,steps=guide.instructions||[];
+return '<section class="theory-studio theory-studio--focused" aria-label="Discover the lesson concept">'+
+hero(g,u,i,name,focus)+
+'<div class="theory-spark"><div class="theory-spark__icon" aria-hidden="true">✦</div>'+
+'<div class="theory-spark__content"><span class="theory-mini-label">THINK BEFORE YOU TRY</span>'+
+'<h3>What would a successful result look like?</h3>'+
+'<p>Make a prediction. Then compare it with the result you produce in the experiment.</p>'+
+'<button class="theory-reveal" type="button" id="ebda-theory-reveal-'+k+'" aria-controls="ebda-theory-insight-'+k+'" aria-expanded="'+shown+'" onclick="EBDA_THEORY.reveal('+g+','+u+','+i+')">'+(shown?'Prediction guide revealed ✓':'Reveal one clue →')+'</button>'+
+'<div class="theory-revealed" id="ebda-theory-insight-'+k+'" tabindex="-1" '+(shown?'':'hidden')+'><strong>Look for this evidence</strong><p>'+esc(guide.artifact)+'</p></div></div></div>'+
+'<details class="theory-more"><summary>Need a starting point? View the learning steps</summary><ol>'+steps.map(step=>'<li>'+esc(step)+'</li>').join("")+'</ol><p class="muted">Teacher-guide reference: '+esc(profile.source)+'. Exact rubric alignment is pending review.</p></details>'+
+'</section>'}
+
 function reset(){seen.clear()}
 return {yearOne,advanced,reveal,reset};
 })();
