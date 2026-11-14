@@ -44,7 +44,8 @@ try{
  if(await page.locator(".theory-spark").count()!==1)throw Error("Focused Discover prompt absent");
  if(await page.locator(".theory-path").count())throw Error("Old overcrowded theory pathway remains");
  if(await page.locator(".theory-more[open]").count())throw Error("Detailed guidance should be collapsed by default");
- await page.locator(".lab-module").nth(1).locator("summary").first().click();
+ await page.locator(".lab-module").first().getByRole("button",{name:/Continue to Experiment/i}).click();
+ if(!(await page.locator(".lab-module").nth(1).evaluate(el=>el.open)))throw Error("Continue button did not open Experiment");
  if(await page.getByText(/PRACTICAL BRIEF|Your learning mission/).count())throw Error("Removed practical brief still visible");
  if(await page.locator("#task-progress").count())throw Error("Removed checklist still rendered");
  if(!await page.getByText("PRACTICAL RUBRIC").count())throw Error("Practical rubric not rendered");
@@ -97,9 +98,13 @@ try{
    await page.locator("#ebdaa-practice-stage button.choice").filter({hasText:choice}).first().click();
  }
  await page.getByRole("button",{name:"Check answer",exact:true}).last().click();
- if(!await page.getByText(/Review the method|Correct answer/).count())throw Error("Practice feedback missing");
+ if(!await page.locator("#ebdaa-practice-stage").getByText(/Correct!|Not quite yet/).count())throw Error("Practice feedback missing");
  await page.getByRole("button",{name:/Next question/i}).click();
  if(!await page.getByText("QUESTION 2 / 50").count())throw Error("Next question failed");
+ await page.locator("#ebdaa-practice-stage").getByRole("button",{name:/Previous/i}).click();
+ if(!await page.locator("#ebdaa-practice-stage").getByText("QUESTION 1 / 50").count())throw Error("Previous question lost its place");
+ if(!await page.locator("#ebdaa-practice-stage").getByText(/Correct!|Not quite yet/).count())throw Error("Reviewed answer feedback was lost");
+
  await goHome();
  await page.getByRole("button",{name:/View subjects/i}).nth(2).click();
  await page.getByRole("button",{name:/Explore subject/i}).click();
