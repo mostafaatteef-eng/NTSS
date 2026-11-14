@@ -64,7 +64,8 @@ try{
  if(!await page.locator("#rubric-progress").getByText(/Automatically verified: 35 \/ 65/).count())throw Error("Numerical evidence was not scored independently of actual Python execution");
 
  if(!await page.getByText(/50 QUESTIONS/).count())throw Error("50-question panel missing");
- await page.getByRole("button",{name:/Begin 50-question workshop/i}).click();
+ if(await page.getByRole("button",{name:/Begin 50-question workshop/i}).count())throw Error("Separate workshop launch button remains");
+ if(!await page.getByText("QUESTION 1 / 50").count())throw Error("Questions are not integrated directly in the lesson");
  const attemptA=await page.evaluate(()=>window.EBDAA_PRACTICE.questionOrder());
  await page.evaluate(()=>window.EBDAA_PRACTICE.begin(2,0,0));
  const attemptB=await page.evaluate(()=>window.EBDAA_PRACTICE.questionOrder());
@@ -73,8 +74,15 @@ try{
  if([...attemptA].sort().join("|")!==[...attemptB].sort().join("|"))throw Error("Shuffling changed the actual question set");
 
  if(!await page.getByText("QUESTION 1 / 50").count())throw Error("Question 1 missing");
- const options=page.locator("#ebdaa-practice-stage .choice");
- if(await options.count()>0){await options.first().click()}else{await page.locator("#ebdaa-answer").fill("1")}
+ const q=await page.evaluate(()=>window.EBDAA_PRACTICE.currentQuestion());
+ if(q.mode==="order"){
+   for(const step of q.answer.split("|"))await page.locator("#ebdaa-practice-stage button.choice").filter({hasText:step}).click();
+ }else if(q.mode==="number"){
+   await page.locator("#ebdaa-answer").fill(String(q.answer));
+ }else{
+   const choice=q.mode==="truefalse"?String(q.answer):String(q.answer);
+   await page.locator("#ebdaa-practice-stage button.choice").filter({hasText:choice}).first().click();
+ }
  await page.getByRole("button",{name:"Check answer",exact:true}).last().click();
  if(!await page.getByText(/Review the method|Correct answer/).count())throw Error("Practice feedback missing");
  await page.getByRole("button",{name:/Next question/i}).click();
