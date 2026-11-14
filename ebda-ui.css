@@ -523,3 +523,36 @@ body{
 .lesson-jump:hover{text-decoration:underline;color:#0c5f58}
 .lesson-jump:focus-visible{outline:3px solid #159e97;outline-offset:4px;border-radius:4px}
 @media(max-width:520px){.lesson-shortcut{justify-content:flex-start;margin:0 0 14px}.lesson-jump{font-size:12px}}
+
+/* The same distraction-free five-step journey for Year 1, Year 2 and Year 3. */
+.advanced-lesson-title{
+  font-size:clamp(25px,2.65vw,34px);line-height:1.23;
+  letter-spacing:-.038em;margin:10px 0 13px
+}
+.advanced-lesson-intro{font-size:15px;max-width:630px;color:#60746c;line-height:1.65;margin:0 0 23px}
+.advanced-stage-content{min-width:0;width:100%;max-width:100%;margin-bottom:16px}
+.advanced-stage-content .theory-studio{margin-top:10px}
+.advanced-stage-content .lab-workspace{max-width:100%;min-width:0}
+.advanced-stage-content textarea{width:100%;max-width:100%;font-size:14px;line-height:1.55}
+.advanced-stage-content pre{overflow-x:auto;white-space:pre-wrap;overflow-wrap:anywhere}
+.advanced-stage-content>.interactive{margin:16px 0}
+.advanced-stage-content .guided-question .practice-flow{padding-top:3px}
+.stage-next{display:flex;justify-content:flex-end;align-items:center;min-height:42px;gap:10px}
+.stage-next>.muted{text-align:end;max-width:260px}
+.lesson-layout .side-list{align-self:start}
+.lesson-layout .stage{min-width:0}
+.lesson-steps{scrollbar-width:thin}
+.lesson-steps .lesson-step{cursor:default}
+.stage .stepfooter{gap:16px}
+@media(max-width:740px){
+ .advanced-lesson-title{font-size:26px}
+ .advanced-lesson-intro{font-size:14px}
+ .stage-next>.muted{font-size:12px}
+}
+@media(max-width:520px){
+ .stage-next{min-width:0;flex:1}
+ .stage-next>.btn{width:100%}
+ .stage-next>.muted{max-width:100%}
+ .advanced-stage-content .interactive{padding:16px!important}
+ .advanced-stage-content .lab-workspace{border-radius:13px}
+}
