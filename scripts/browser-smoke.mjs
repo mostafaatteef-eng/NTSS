@@ -56,6 +56,12 @@ try{
  await page.locator("#studio-editor").fill("print(123)");
  await page.getByRole("button",{name:/Restore example/i}).click();
  if(await page.locator("#studio-editor").inputValue()!==originalSource)throw Error("Restore example did not reset Python editor");
+ await page.locator("#studio-editor").fill("print('student draft stays')");
+ await page.locator(".lab-module").nth(2).locator("summary").first().click();
+ await page.locator(".lab-module").nth(1).locator("summary").first().click();
+ if(await page.locator("#studio-editor").inputValue()!=="print('student draft stays')")throw Error("Student code disappeared when switching lab stages");
+ await page.getByRole("button",{name:/Restore example/i}).click();
+
  await page.locator(".lab-module").nth(2).locator("summary").first().click();
  await page.locator(".lab-module").nth(2).locator("details.lab-support > summary").click();
  const guided=page.locator("#data-playground");
