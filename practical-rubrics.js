@@ -4,13 +4,13 @@ const memory=new Map();
 const esc=x=>String(x).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const key=(g,u,i)=>g+"-"+u+"-"+i;
 function profile(g,u){return window.EBDAA_PERFORMANCE[g+"-"+(u+1)]}
-function get(g,u,i){const id=key(g,u,i);if(!memory.has(id))memory.set(id,{run:false,measurable:false,interpretation:"",verified:false,reason:"",lastOutput:""});return memory.get(id)}
+function get(g,u,i){const id=key(g,u,i);if(!memory.has(id))memory.set(id,{run:false,manipulated:false,measurable:false,interpretation:"",verified:false,reason:"",lastOutput:""});return memory.get(id)}
 function observe(g,u,i,info){const s=get(g,u,i);s.run=!!info?.success;s.lastOutput=String(info?.output||"").slice(0,1500);s.measurable=!!info?.hasEvidence;s.reason=String(info?.message||"");display(g,u,i)}
-function markManipulation(g,u,i){get(g,u,i).run=true;display(g,u,i)}
+function markManipulation(g,u,i){get(g,u,i).manipulated=true;display(g,u,i)}
 function recordEvidence(g,u,i,valid){const s=get(g,u,i);s.measurable=!!valid;display(g,u,i)}
 function reflect(g,u,i){const el=document.getElementById("rubric-reflection");if(!el)return;const s=get(g,u,i);s.interpretation=el.value.trim().slice(0,1000);display(g,u,i,true)}
 function score(g,u,i){const s=get(g,u,i);const p=profile(g,u);const executable=["python","sql"].includes(p.engine);const checks=[
-{title:"Execute / manipulate",points:30,passed:s.run,mode:"automatic"},
+{title:"Execute / manipulate",points:30,passed:executable?s.run:s.manipulated,mode:"automatic"},
 {title:"Correct computed evidence",points:35,passed:s.measurable,mode:"automatic"},
 {title:"Interpret the result with supporting evidence",points:20,passed:false,mode:"teacher review",prepared:s.interpretation.length>=35},
 {title:"Meet the official product checklist and KPI",points:15,passed:false,mode:"teacher approval",prepared:false}
