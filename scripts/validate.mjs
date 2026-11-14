@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import vm from "node:vm";
 
-const paths=["index.html","curriculum-data.js","grade-catalog.js","experiments.js","challenge.js","advanced-labs.js","microgames.js","missions-data.js","performance-map.js","lab-specialists.js","lab-studio.js"];
+const paths=["index.html","curriculum-data.js","grade-catalog.js","experiments.js","challenge.js","advanced-labs.js","microgames.js","missions-data.js","performance-map.js","session-guides.js","lab-specialists.js","lab-studio.js"];
 for(const name of paths)assert.ok(fs.existsSync(name),name+" must exist");
 const html=fs.readFileSync("index.html","utf8");
 const scripts=paths.slice(1).map(x=>fs.readFileSync(x,"utf8"));
@@ -61,6 +61,7 @@ for(const s of data.sessions){
 }
 const academic=context.window.EBDAA_PERFORMANCE;
 assert.equal(Object.keys(academic).length,12);
+assert.equal(Object.keys(context.window.EBDAA_SESSION_GUIDES).length,77);
 let completedLabs=0;
 for(const year of [2,3]){
  for(let unit=0;unit<6;unit++){
@@ -70,6 +71,7 @@ for(const year of [2,3]){
    vm.runInContext("openAdvancedSession("+i+")",context);
    assert.ok(content.innerHTML.includes("EMBEDDED FORMATIVE CHALLENGE"),year+"-"+unit+"-"+i);
    assert.ok(content.innerHTML.includes("Performance Indicators"),year+"-"+unit+"-"+i);
+   assert.ok(content.innerHTML.includes("PRACTICAL BRIEF"),"No session-specific brief");
    const family=academic[year+"-"+(unit+1)].engine;
    assert.ok(content.innerHTML.includes(family==="python"||family==="sql"?"studio-editor":"studio-slider"),"Missing lab for "+year+"-"+unit+"-"+i);
    const m=context.window.EBDAA_MISSIONS.find(x=>x.g===year&&x.u===unit);
