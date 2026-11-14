@@ -2,6 +2,20 @@
 
 A free, browser-based interactive learning experience for EBDA National Technical Science Schools (Badr) — Year 1 AI and Data Engineering.
 
+## Unified Year 1–3 five-stage learning experience (November 2026)
+
+All three grades now use **the same learning-page interaction model**, with a visible five-step progress bar, lesson navigation in the sidebar, a single focused activity per screen, and **Back / Continue** controls:
+
+1. **Discover** — a focused interactive concept and prediction
+2. **Experiment** — executable Python/SQL or a computed lab, with optional numerical evidence and code tests
+3. **Understand** — a step-through concept visualizer, with an optional data playground
+4. **Check** — one immediate-feedback applied question; checking the answer unlocks the standard Continue action
+5. **Practice** — 50 sequential formative questions with hints and mistake review; optional industrial missions, rubric inspection and local evidence export
+
+The Year 2/3 accordion wall and separate lesson flow are removed. Returning to Experiment preserves the student's editor draft, and returning after a run retains the prior output within this visit. Learners can also jump directly to the 50 questions, matching Year 1. There is no learner registration, central progress tracking or persistent student record. The source-mapped content remains provisional unless individually matched to the original academic assessment checklist.
+
+**Verification:** scripted integration simulation enumerated 77 advanced sessions and rendered all five learning stages for each without errors; the CI scripts have been revised for the unified path. Passing real Playwright and Python/SQLite WebAssembly checks and completing GitHub Pages deployment must be verified separately through Actions.
+
 ## Reliability and learner-flow repair — 15 November 2026
 
 - **Practice questions:** prevent unchecked next actions, retain selections and hints when students return to an earlier question, and keep all 50 questions in one uninterrupted sequence. The explanation for an incorrect answer is reached through guided mistake review instead of being spoiled immediately. Optional skill-map review remains after each ten questions.
@@ -21,7 +35,7 @@ Regression checks now explicitly reject the removed checklist. GitHub Actions an
 
 The live source now loads **`ebda-ui.css`** after the original styles. It introduces a calm, responsive design language with restrained EBDA teal and yellow, system typography, larger whitespace, accessible focus indicators, clear learner navigation and simpler grade cards. The home hero uses a lightweight, CSS-based data illustration rather than a heavy promotional visual. Search remains prominent; About/Admin/editor shortcuts and learner account requirements are not added.
 
-The Year 1 lesson sequence explicitly labels its five stages: **Discover → Experiment → Understand → Check → Practice**. Year 2/3 specialization sessions now use **five native accordion stages**: Discover, Experiment, Understand, Practice and Reflect. Only one stage starts expanded, avoiding a long vertical wall of labs, graphs, missions and rubrics. Supporting activities such as the data playground and optional investigations are available in secondary expandable panels. All existing content—including the 50 inline questions per lesson, coding challenges, source-linked indicators and export tools—is preserved.
+The Year 1 lesson sequence explicitly labels its five stages: **Discover → Experiment → Understand → Check → Practice**. Year 2/3 specialization sessions now use **the same five sequential learning stages as Year 1**: Discover, Experiment, Understand, Check and Practice. Only the active stage is displayed. Supporting activities such as the data playground and optional investigations are available in secondary expandable panels. All existing content—including the 50 inline questions per lesson, coding challenges, source-linked indicators and export tools—is preserved.
 
 **Release checks:** `scripts/validate.mjs` asserts the CSS asset, five lab stages and exactly one initially open stage. Desktop/mobile and Pyodide/SQLite browser smoke scripts have been updated to expand the right stages. `.github/workflows/deploy-pages.yml` now copies `*.css` into the GitHub Pages artifact so the redesign is actually published after successful CI.
 
