@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import vm from "node:vm";
 
-const paths=["index.html","curriculum-data.js","grade-catalog.js","experiments.js","challenge.js","advanced-labs.js","microgames.js","missions-data.js","performance-map.js","session-guides.js","lab-specialists.js","numeric-challenges.js","lab-studio.js"];
+const paths=["index.html","curriculum-data.js","grade-catalog.js","experiments.js","challenge.js","advanced-labs.js","microgames.js","missions-data.js","performance-map.js","session-guides.js","lab-specialists.js","numeric-challenges.js","question-factory.js","practice-workshop.js","lab-studio.js"];
 for(const name of paths)assert.ok(fs.existsSync(name),name+" must exist");
 const html=fs.readFileSync("index.html","utf8");
 const scripts=paths.slice(1).map(x=>fs.readFileSync(x,"utf8"));
@@ -58,6 +58,7 @@ for(const s of data.sessions){
   context.chooseAnswer(q.answer);
   context.verify();
   assert.ok(content.innerHTML.includes("feedback"),"Application feedback: "+s.id);
+  assert.ok(content.innerHTML.includes("50 QUESTIONS"),"Year 1 practice bank absent");
 }
 const academic=context.window.EBDAA_PERFORMANCE;
 assert.equal(Object.keys(academic).length,12);
@@ -75,6 +76,7 @@ for(const year of [2,3]){
    assert.ok(Number.isFinite(numeric.answer));
    assert.ok(content.innerHTML.includes("Performance Indicators"),year+"-"+unit+"-"+i);
    assert.ok(content.innerHTML.includes("PRACTICAL BRIEF"),"No session-specific brief");
+   assert.ok(content.innerHTML.includes("50 QUESTIONS"),"No embedded practice");
    const family=academic[year+"-"+(unit+1)].engine;
    assert.ok(content.innerHTML.includes(family==="python"||family==="sql"?"studio-editor":"studio-slider"),"Missing lab for "+year+"-"+unit+"-"+i);
    const m=context.window.EBDAA_MISSIONS.find(x=>x.g===year&&x.u===unit);
@@ -87,6 +89,39 @@ for(const year of [2,3]){
 }
 assert.equal(completedLabs,77);
 assert.ok(!html.includes('data-nav="missions"'),"Challenge must be integrated, not a standalone menu");
+// Required: exactly 50 non-duplicate, deterministically keyed practice items per lesson.
+let practiceCount=0,lessonCount=0,formatCounts={};
+for(const grade of [1,2,3]){
+ for(let unit=0;unit<6;unit++){
+  const arr=grade===1?data.sessions.filter(s=>s.unit===unit+1):grades[grade-1].subjects[0].units[unit].sessions;
+  for(let session=0;session<arr.length;session++){
+   const bank=context.window.EBDAA_QUESTION_FACTORY.all(grade,unit,session);
+   assert.equal(bank.length,50,"Bank size "+grade+"/"+unit+"/"+session);
+   assert.equal(new Set(bank.map(q=>q.question)).size,50,"Duplicate prompts "+grade+"/"+unit+"/"+session);
+   for(const question of bank){
+    assert.ok(question.explanation.length>10);
+    formatCounts[question.mode]=(formatCounts[question.mode]||0)+1;
+    assert.ok(["choice","number","truefalse","order"].includes(question.mode));
+    if(question.mode==="choice"){
+      assert.equal(question.options.length,4);
+      assert.ok(question.options.includes(String(question.answer)));
+    }
+    if(question.mode==="order"){
+      assert.equal(question.options.length,4);
+      assert.equal(question.answer.split("|").length,4);
+    }
+    if(question.mode==="number")assert.ok(Number.isFinite(Number(question.answer)));
+    if(question.mode==="truefalse")assert.equal(typeof question.answer,"boolean");
+   }
+   lessonCount++;practiceCount+=bank.length;
+  }
+ }
+}
+assert.equal(lessonCount,116);
+assert.equal(practiceCount,5800);
+assert.equal(formatCounts.order,580);
+assert.equal(formatCounts.truefalse,1160);
+
 const missions=context.window.EBDAA_MISSIONS;
 assert.equal(missions.length,18);
 assert.equal(missions.reduce((n,m)=>n+m.steps.length,0),54);
@@ -103,4 +138,4 @@ for(const m of missions){
 context.nav("about");
 assert.ok(content.innerHTML.includes("No student registration"));
 assert.ok(!html.includes("localStorage."),"Do not persist student answers");
-console.log("PASS: three-grade navigation, 41 Year-2 and 36 Year-3 session listings, 39 Year-1 learning flows, 77 integrated Year-2/3 lab sessions, 18 embedded unit challenge banks, script syntax, no student data.");
+console.log("PASS: 5800 generated exercises in 116 lesson banks; three-grade navigation, 41 Year-2 and 36 Year-3 session listings, 39 Year-1 learning flows, 77 integrated Year-2/3 lab sessions, 18 embedded unit challenge banks, script syntax, no student data.");
