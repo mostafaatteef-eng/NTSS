@@ -38,6 +38,21 @@ try{
  if(!await page.getByText("PRACTICAL BRIEF").count())throw Error("Year 2 practical brief missing");
  if(!await page.getByText("PRACTICAL RUBRIC").count())throw Error("Practical rubric not rendered");
  if(!await page.getByText("VISUAL DATA PLAYGROUND").count())throw Error("Visual data playground not rendered");
+ if(await page.locator(".lab-workspace__editor").count()!==1)throw Error("Unified code workspace missing");
+ if(await page.locator("#studio-shortcut").count()!==1)throw Error("Keyboard shortcut guidance missing");
+ const originalSource=await page.locator("#studio-editor").inputValue();
+ await page.locator("#studio-editor").fill("print(123)");
+ await page.getByRole("button",{name:/Restore example/i}).click();
+ if(await page.locator("#studio-editor").inputValue()!==originalSource)throw Error("Restore example did not reset Python editor");
+ const guided=page.locator("#data-playground");
+ if(!await guided.getByText("GUIDED DATA CHALLENGE").count())throw Error("Guided challenge panel missing");
+ await guided.locator("#play-challenge").selectOption("missing");
+ await guided.locator("#play-site").selectOption("Damietta");
+ await guided.getByRole("button",{name:/Check my transformation/i}).click();
+ if(!await guided.getByText(/Challenge complete!/).count())throw Error("Missing-data challenge failed");
+ await guided.locator("#play-challenge").selectOption("clean");
+ await guided.locator("#play-site").selectOption("All");
+
  await page.locator("#data-playground").getByRole("button",{name:"Impute missing"}).click();
  if(!await page.locator("#data-playground").getByText("Missing: 0").count())throw Error("Imputation did not recompute records");
  const initialRubric=await page.locator("#rubric-progress").textContent();
