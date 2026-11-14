@@ -41,10 +41,10 @@ try{
  await page.locator("#data-playground").getByRole("button",{name:"Impute missing"}).click();
  if(!await page.locator("#data-playground").getByText("Missing: 0").count())throw Error("Imputation did not recompute records");
  const initialRubric=await page.locator("#rubric-progress").textContent();
- if(!initialRubric.includes("30 / 65"))throw Error("Data manipulation did not earn its separate 30-point criterion");
+ if(!initialRubric.includes("0 / 65"))throw Error("Python execution must not be credited by unrelated visual data manipulation");
  await page.locator("#numeric-input").fill("6");
  await page.getByRole("button",{name:/Check calculated answer/i}).click();
- if(!await page.locator("#rubric-progress").getByText(/Automatically verified: 65 \/ 65/).count())throw Error("Numeric answer did not complete 65 automatic rubric points");
+ if(!await page.locator("#rubric-progress").getByText(/Automatically verified: 35 \/ 65/).count())throw Error("Numerical evidence was not scored independently of actual Python execution");
 
  if(!await page.getByText(/50 QUESTIONS/).count())throw Error("50-question panel missing");
  await page.getByRole("button",{name:/Begin 50-question workshop/i}).click();
