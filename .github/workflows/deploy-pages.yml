@@ -1,34 +1,60 @@
-name: Publish EBDAA Learning Hub
+name: Validate & Publish EBDAA Learning Hub
 on:
   push:
     branches: [main]
   workflow_dispatch:
 permissions:
   contents: read
-  pages: write
-  id-token: write
 concurrency:
   group: github-pages
   cancel-in-progress: true
 jobs:
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  verify:
+    name: Academic bank + Chromium smoke tests
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           persist-credentials: false
-      - name: Validate curriculum, JavaScript and lesson interactions
+      - name: Verify question banks, learning workflows and source maps
         run: node scripts/validate.mjs
+      - name: Install pinned browser test dependencies
+        run: npm install --no-save --ignore-scripts playwright@1.56.1
+      - name: Prepare Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Browser smoke test at desktop and mobile widths
+        run: node scripts/browser-smoke.mjs
+
+  deploy:
+    name: Publish verified static site
+    needs: verify
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Prepare release directory
+        run: |
+          mkdir -p site-dist
+          cp index.html *.js site-dist/
+          touch site-dist/.nojekyll
       - name: Configure Pages
         uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b
-      - name: Upload static site
+      - name: Upload tested static site
         uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27b3c40f8
         with:
-          path: .
+          path: site-dist
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@d6db9f9a2ae91c1bd3d389dd9ae25b41fc9c37b2
