@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import vm from "node:vm";
 
-const paths=["index.html","curriculum-data.js","experiments.js","challenge.js","advanced-labs.js"];
+const paths=["index.html","curriculum-data.js","experiments.js","challenge.js","advanced-labs.js","microgames.js"];
 for(const name of paths)assert.ok(fs.existsSync(name),name+" must exist");
 const html=fs.readFileSync("index.html","utf8");
 const scripts=paths.slice(1).map(x=>fs.readFileSync(x,"utf8"));
