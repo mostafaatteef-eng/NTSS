@@ -40,7 +40,8 @@ try{
  if(await page.locator(".lab-module").count()!==5)throw Error("Expected five learning stages");
  if(await page.locator(".lab-module[open]").count()!==1)throw Error("More than one stage open");
  await page.locator(".lab-module").nth(1).locator("summary").first().click();
- if(!await page.getByText("PRACTICAL BRIEF").count())throw Error("Year 2 practical brief missing");
+ if(await page.getByText(/PRACTICAL BRIEF|Your learning mission/).count())throw Error("Removed practical brief still visible");
+ if(await page.locator("#task-progress").count())throw Error("Removed checklist still rendered");
  if(!await page.getByText("PRACTICAL RUBRIC").count())throw Error("Practical rubric not rendered");
  if(!await page.getByText("VISUAL DATA PLAYGROUND").count())throw Error("Visual data playground not rendered");
  if(await page.locator(".lab-workspace__editor").count()!==1)throw Error("Unified code workspace missing");
