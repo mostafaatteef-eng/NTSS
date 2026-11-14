@@ -107,6 +107,15 @@ try{
  if(await page.locator(".lesson-steps .lesson-step").count()!==5)throw Error("Year 3 learning stages missing");
  await page.locator(".stage .stepfooter .btn.teal").click();
  if(!await page.getByText(/EVIDENCE CHECK/).count())throw Error("Year 3 experiment missing");
+ await page.locator(".stage .stepfooter .btn.teal").click();
+ if(!await page.getByText("INTERACTIVE CONCEPT VISUALIZER").count())throw Error("Year 3 Understand missing");
+ await page.locator(".stage .stepfooter .btn.teal").click();
+ const yearThreeAnswer=await page.evaluate(()=>window.EBDAA_MISSIONS.find(m=>m.g===3&&m.u===5).steps[0][2]);
+ await page.locator(".advanced-stage-content button.choice").nth(yearThreeAnswer).click();
+ await page.getByRole("button",{name:"Check answer",exact:true}).click();
+ await page.locator(".stage .stepfooter .btn.teal").click();
+ if(!await page.getByText("QUESTION 1 / 50").count())throw Error("Year 3 integrated practice missing");
+ if(await page.evaluate(()=>window.EBDAA_PRACTICE.questionOrder().length)!==50)throw Error("Year 3 full question bank missing");
  await page.setViewportSize({width:390,height:844});
  await page.reload({waitUntil:"load"});
  if(await page.locator("body").evaluate(el=>el.scrollWidth)>410)throw Error("Mobile horizontal overflow");
