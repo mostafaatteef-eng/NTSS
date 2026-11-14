@@ -20,7 +20,7 @@ The Year 2/3 accordion wall and separate lesson flow are removed. Returning to E
 
 - **Practice questions:** prevent unchecked next actions, retain selections and hints when students return to an earlier question, and keep all 50 questions in one uninterrupted sequence. The explanation for an incorrect answer is reached through guided mistake review instead of being spoiled immediately. Optional skill-map review remains after each ten questions.
 - **Year 1:** preserve already-checked stage answers when returning to a previous step; move the industrial case to an optional disclosure, and simplify the Understand explanation to one main insight.
-- **Years 2–3:** visible stage position and a **Continue to next stage** control reduce accordion guessing; changing stages without a page reload preserves code-editor drafts. Existing Python/SQL output is stored in the lesson state so rerenders do not erase the result.
+- **Years 2–3:** the same visible five-stage progress and **Back / Continue** controls as Year 1 replace the former accordion experience; changing stages without a page reload preserves code-editor drafts. Existing Python/SQL output is stored in the lesson state so rerenders do not erase the result.
 - **Testing:** added code checks for the full 116 lesson banks and complete 50-question navigation, and staged 77-lab simulations. Browser smoke tests additionally verify that navigation preserves code-editor work. No browser/WASM deployment success is asserted without a confirmed GitHub Actions run.
 
 ## Student experience visual refresh — 15 November 2026
@@ -37,7 +37,7 @@ The live source now loads **`ebda-ui.css`** after the original styles. It introd
 
 The Year 1 lesson sequence explicitly labels its five stages: **Discover → Experiment → Understand → Check → Practice**. Year 2/3 specialization sessions now use **the same five sequential learning stages as Year 1**: Discover, Experiment, Understand, Check and Practice. Only the active stage is displayed. Supporting activities such as the data playground and optional investigations are available in secondary expandable panels. All existing content—including the 50 inline questions per lesson, coding challenges, source-linked indicators and export tools—is preserved.
 
-**Release checks:** `scripts/validate.mjs` asserts the CSS asset, five lab stages and exactly one initially open stage. Desktop/mobile and Pyodide/SQLite browser smoke scripts have been updated to expand the right stages. `.github/workflows/deploy-pages.yml` now copies `*.css` into the GitHub Pages artifact so the redesign is actually published after successful CI.
+**Release checks:** `scripts/validate.mjs` asserts the CSS asset and all five sequential learning stages in each advanced lesson. Desktop/mobile and Pyodide/SQLite browser smoke scripts now navigate through those stages and their optional activities. `.github/workflows/deploy-pages.yml` now copies `*.css` into the GitHub Pages artifact so the redesign is actually published after successful CI.
 
 **Verification boundaries:** JavaScript integration simulation has checked all 116 lesson entries, all 5,800 question variants and the single-open stage structure of all 77 Year 2/3 laboratories, with zero simulation errors. This does **not** prove that Chromium tests, network-loaded WebAssembly runtimes or GitHub Pages deployment have passed. Check GitHub Actions before treating the deployment as confirmed.
 
