@@ -1,4 +1,4 @@
-/* Ebdaa educational session index: public supplementary exercises. Editing requires GitHub write access. */
+/* EBDA educational session index: public supplementary exercises. Editing requires GitHub write access. */
 window.EBDAA_DATA = {
   "names": [
     "Introduction to Programming",
