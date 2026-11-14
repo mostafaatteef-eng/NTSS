@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import vm from "node:vm";
 
-const paths=["index.html","curriculum-data.js","grade-catalog.js","experiments.js","challenge.js","advanced-labs.js","microgames.js","missions-data.js","performance-map.js","session-guides.js","lab-specialists.js","numeric-challenges.js","question-factory.js","mastery-engine.js","practice-workshop.js","case-labs.js","scenario-labs.js","practical-rubrics.js","visual-playground.js","lab-studio.js"];
+const paths=["index.html","curriculum-data.js","grade-catalog.js","experiments.js","challenge.js","advanced-labs.js","microgames.js","missions-data.js","performance-map.js","session-guides.js","lab-specialists.js","numeric-challenges.js","question-factory.js","mastery-engine.js","mistake-review.js","practice-workshop.js","case-labs.js","scenario-labs.js","practical-rubrics.js","visual-playground.js","code-challenges.js","concept-visualizer.js","lab-studio.js"];
 for(const name of paths)assert.ok(fs.existsSync(name),name+" must exist");
 const html=fs.readFileSync("index.html","utf8");
 const scripts=paths.slice(1).map(x=>fs.readFileSync(x,"utf8"));
@@ -100,6 +100,8 @@ for(const year of [2,3]){
    assert.ok(content.innerHTML.includes("task-progress"),"Missing lab completion checklist");
    assert.ok(content.innerHTML.includes("Save my lab evidence"),"Missing local evidence export");
    assert.ok(content.innerHTML.includes("VISUAL DATA PLAYGROUND"),"Missing visual playground");
+   assert.ok(content.innerHTML.includes("INTERACTIVE CONCEPT VISUALIZER"),"Missing computed visualizer");
+   if(context.window.EBDA_CODE_TESTS.task(year,unit,i))assert.ok(content.innerHTML.includes("EXECUTABLE CODE CHALLENGE"),"Missing executable code test panel");
    assert.ok(content.innerHTML.includes("PRACTICAL RUBRIC"),"Missing practical rubric");
    assert.ok(content.innerHTML.includes("GUIDED PRACTICE"),"No integrated question sequence");
    assert.ok(content.innerHTML.includes("QUESTION 1 / 50"),"First advanced lab question should be immediately visible");
@@ -225,6 +227,19 @@ const attemptTwo=Array.from(practice.questionOrder());
 assert.equal(attemptTwo.length,50);
 assert.deepEqual(attemptTwo.slice().sort(),attemptOne.slice().sort());
 assert.notDeepEqual(attemptTwo,attemptOne,"A new attempt repeated the previous question order");
+// Validate four added learning mechanisms.
+const codeTest=context.window.EBDA_CODE_TESTS;
+assert.equal(codeTest.task(2,0,0).tests.length,3);
+assert.equal(codeTest.task(2,1,0).cases.length,2);
+assert.ok(codeTest.pythonScript(codeTest.task(2,0,0).starter,codeTest.task(2,0,0)).includes("TEST 3"));
+const visualizer=context.window.EBDA_VISUALIZER;
+assert.equal(visualizer.family(2,1),"join");
+assert.equal(visualizer.family(2,0),"loop");
+assert.equal(visualizer.family(3,0),"stats");
+assert.ok(visualizer.panel(2,1,0).includes("INNER JOIN matches keys"));
+assert.ok(context.window.EBDAA_STORIES.panel(2,1,1).includes("UNIT CASEFILE"),"Mission should continue across unit sessions");
+const coach=context.window.EBDA_MISTAKES;
+assert.ok(coach.html(1,0,0,context.window.EBDAA_QUESTION_FACTORY.all(1,0,0)[0]).includes("SMART MISTAKE REVIEW"));
 const missions=context.window.EBDAA_MISSIONS;
 assert.equal(missions.length,18);
 assert.equal(missions.reduce((n,m)=>n+m.steps.length,0),54);
