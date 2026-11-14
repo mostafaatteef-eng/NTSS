@@ -36,6 +36,16 @@ try{
  await page.getByRole("button",{name:/View session index/i}).first().click();
  await page.getByRole("button",{name:/HANDS-ON LAB/i}).first().click();
  if(!await page.getByText("PRACTICAL BRIEF").count())throw Error("Year 2 practical brief missing");
+ if(!await page.getByText("PRACTICAL RUBRIC").count())throw Error("Practical rubric not rendered");
+ if(!await page.getByText("VISUAL DATA PLAYGROUND").count())throw Error("Visual data playground not rendered");
+ await page.locator("#data-playground").getByRole("button",{name:"Impute missing"}).click();
+ if(!await page.locator("#data-playground").getByText("Missing: 0").count())throw Error("Imputation did not recompute records");
+ const initialRubric=await page.locator("#rubric-progress").textContent();
+ if(!initialRubric.includes("30 / 65"))throw Error("Data manipulation did not earn its separate 30-point criterion");
+ await page.locator("#numeric-input").fill("6");
+ await page.getByRole("button",{name:/Check calculated answer/i}).click();
+ if(!await page.locator("#rubric-progress").getByText(/Automatically verified: 65 \/ 65/).count())throw Error("Numeric answer did not complete 65 automatic rubric points");
+
  if(!await page.getByText(/50 QUESTIONS/).count())throw Error("50-question panel missing");
  await page.getByRole("button",{name:/Begin 50-question workshop/i}).click();
  if(!await page.getByText("QUESTION 1 / 50").count())throw Error("Question 1 missing");
@@ -55,5 +65,5 @@ try{
  await page.reload({waitUntil:"load"});
  if(await page.locator("body").evaluate(el=>el.scrollWidth)>410)throw Error("Mobile horizontal overflow");
  if(errors.length)throw Error("JS errors: "+errors.join("; "));
- console.log("Browser smoke PASS: EBDA brand, search, grade navigation, practice, feedback, Year 3 labs, mobile width.");
+ console.log("Browser smoke PASS: EBDA brand, search, graded rubric, live data transforms, adaptive practice, Year 3 labs, mobile width.");
 } finally {await browser.close();await new Promise(ok=>server.close(ok))}
