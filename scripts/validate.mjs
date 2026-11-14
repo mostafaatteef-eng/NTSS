@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import vm from "node:vm";
 
-const paths=["index.html","curriculum-data.js","grade-catalog.js","experiments.js","challenge.js","advanced-labs.js","microgames.js","missions-data.js"];
+const paths=["index.html","curriculum-data.js","grade-catalog.js","experiments.js","challenge.js","advanced-labs.js","microgames.js","missions-data.js","performance-map.js","lab-studio.js"];
 for(const name of paths)assert.ok(fs.existsSync(name),name+" must exist");
 const html=fs.readFileSync("index.html","utf8");
 const scripts=paths.slice(1).map(x=>fs.readFileSync(x,"utf8"));
@@ -26,12 +26,12 @@ assert.equal(grades[2].subjects.length,1);
 assert.equal(grades[2].subjects[0].units.length,6);
 assert.equal(grades[2].subjects[0].units.reduce((n,u)=>n+u.sessions.length,0),36);
 vm.runInContext("chooseGrade(2);chooseSubject();chooseGradeUnit(0)",context);
-assert.ok(content.innerHTML.includes("Official curriculum session"));
+assert.ok(content.innerHTML.includes("HANDs-ON LAB")||content.innerHTML.includes("HANDS-ON LAB"));
 vm.runInContext("chooseGrade(3)",context);
 assert.ok(content.innerHTML.includes("Applied Machine Learning and Analytics"));
 vm.runInContext("chooseSubject();chooseGradeUnit(5)",context);
 assert.ok(content.innerHTML.includes("Agriculture and Environmental Monitoring"));
-assert.ok(content.innerHTML.includes("Official curriculum session"));
+assert.ok(content.innerHTML.includes("HANDS-ON LAB"));
 vm.runInContext("chooseGrade(1);chooseSubject()",context);
 assert.ok(content.innerHTML.includes("Introduction to Programming"));
 assert.equal(data.sessions.length,39);
@@ -59,6 +59,29 @@ for(const s of data.sessions){
   context.verify();
   assert.ok(content.innerHTML.includes("feedback"),"Application feedback: "+s.id);
 }
+const academic=context.window.EBDAA_PERFORMANCE;
+assert.equal(Object.keys(academic).length,12);
+let completedLabs=0;
+for(const year of [2,3]){
+ for(let unit=0;unit<6;unit++){
+  vm.runInContext("chooseGrade("+year+");chooseSubject();chooseGradeUnit("+unit+")",context);
+  const sessions=grades[year-1].subjects[0].units[unit].sessions;
+  for(let i=0;i<sessions.length;i++){
+   vm.runInContext("openAdvancedSession("+i+")",context);
+   assert.ok(content.innerHTML.includes("EMBEDDED FORMATIVE CHALLENGE"),year+"-"+unit+"-"+i);
+   assert.ok(content.innerHTML.includes("Performance Indicators"),year+"-"+unit+"-"+i);
+   const family=academic[year+"-"+(unit+1)].engine;
+   assert.ok(content.innerHTML.includes(family==="python"||family==="sql"?"studio-editor":"studio-slider"),"Missing lab for "+year+"-"+unit+"-"+i);
+   const m=context.window.EBDAA_MISSIONS.find(x=>x.g===year&&x.u===unit);
+   const correct=m.steps[i%m.steps.length][2];
+   vm.runInContext("window.EBDAA_STUDIO.pick("+correct+");window.EBDAA_STUDIO.check()",context);
+   assert.ok(content.innerHTML.includes("Correct"),"No immediate feedback");
+   completedLabs++;
+  }
+ }
+}
+assert.equal(completedLabs,77);
+assert.ok(!html.includes('data-nav="missions"'),"Challenge must be integrated, not a standalone menu");
 const missions=context.window.EBDAA_MISSIONS;
 assert.equal(missions.length,18);
 assert.equal(missions.reduce((n,m)=>n+m.steps.length,0),54);
@@ -80,4 +103,4 @@ assert.ok(content.innerHTML.includes("Privacy &amp; Fairness Audit"));
 context.nav("about");
 assert.ok(content.innerHTML.includes("No student registration"));
 assert.ok(!html.includes("localStorage."),"Do not persist student answers");
-console.log("PASS: three-grade navigation, 41 Year-2 and 36 Year-3 session listings, 39 Year-1 learning flows, 18 missions (54 challenges), script syntax, no student data.");
+console.log("PASS: three-grade navigation, 41 Year-2 and 36 Year-3 session listings, 39 Year-1 learning flows, 77 integrated Year-2/3 lab sessions, 18 embedded unit challenge banks, script syntax, no student data.");
