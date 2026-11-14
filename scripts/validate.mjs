@@ -74,7 +74,12 @@ for(const s of data.sessions){
   context.chooseAnswer(q.answer);
   context.verify();
   assert.ok(content.innerHTML.includes("feedback"),"Application feedback: "+s.id);
-  assert.ok(content.innerHTML.includes("50 QUESTIONS"),"Year 1 practice bank absent");
+  assert.ok(!content.innerHTML.includes("GUIDED PRACTICE"),"Year 1 question sequence should follow the existing lesson stages");
+  context.next();
+  assert.ok(content.innerHTML.includes("GUIDED PRACTICE"),"Year 1 fifth learning stage missing");
+  assert.ok(content.innerHTML.includes("QUESTION 1 / 50"),"Year 1 first question not displayed immediately");
+  assert.ok(!content.innerHTML.includes("Begin 50-question workshop"),"Standalone workshop remains");
+
 }
 const academic=context.window.EBDAA_PERFORMANCE;
 assert.equal(Object.keys(academic).length,12);
@@ -96,7 +101,9 @@ for(const year of [2,3]){
    assert.ok(content.innerHTML.includes("Save my lab evidence"),"Missing local evidence export");
    assert.ok(content.innerHTML.includes("VISUAL DATA PLAYGROUND"),"Missing visual playground");
    assert.ok(content.innerHTML.includes("PRACTICAL RUBRIC"),"Missing practical rubric");
-   assert.ok(content.innerHTML.includes("50 QUESTIONS"),"No embedded practice");
+   assert.ok(content.innerHTML.includes("GUIDED PRACTICE"),"No integrated question sequence");
+   assert.ok(content.innerHTML.includes("QUESTION 1 / 50"),"First advanced lab question should be immediately visible");
+   assert.ok(!content.innerHTML.includes("Begin 50-question workshop"),"No standalone workshop should remain");
    const family=academic[year+"-"+(unit+1)].engine;
    assert.ok(content.innerHTML.includes(family==="python"||family==="sql"?"studio-editor":"studio-slider"),"Missing lab for "+year+"-"+unit+"-"+i);
    const m=context.window.EBDAA_MISSIONS.find(x=>x.g===year&&x.u===unit);
@@ -109,6 +116,7 @@ for(const year of [2,3]){
 }
 assert.equal(completedLabs,77);
 assert.ok(!html.includes('data-nav="missions"'),"Challenge must be integrated, not a standalone menu");
+assert.ok(!html.includes("Practice workshop: 50 adaptive-numbered exercises"),"Old separate question card text remains");
 // Test real browser-local adaptation, computed data operations and rubric separation.
 const mastery=context.window.EBDA_MASTERY;
 mastery.begin(2,0,0);
