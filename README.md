@@ -2,6 +2,14 @@
 
 A free, browser-based interactive learning experience for EBDA National Technical Science Schools (Badr) — Year 1 AI and Data Engineering.
 
+## Student experience visual refresh — 15 November 2026
+
+The noisy **Practical Brief · Your learning mission** checklist, including its 0/3 counter, expected-evidence paragraph and approval-status copy, has been removed across all Year 2/3 lessons. Discover now opens directly onto educational theory. The 50 inline questions, code labs, practical feedback and evidence export remain.
+
+The new expressive-but-calm interface uses EBDA teal and yellow accents, data-inspired illustration, brighter academic-year cards, clearer stage feedback and mobile touch targets. No student accounts or new promotional dashboards.
+
+Regression checks now explicitly reject the removed checklist. GitHub Actions and real-browser checks must still pass before treating the redesign as deployed and visually verified.
+
 ## Minimal student-first UI redesign (November 2026)
 
 The live source now loads **`ebda-ui.css`** after the original styles. It introduces a calm, responsive design language with restrained EBDA teal and yellow, system typography, larger whitespace, accessible focus indicators, clear learner navigation and simpler grade cards. The home hero uses a lightweight, CSS-based data illustration rather than a heavy promotional visual. Search remains prominent; About/Admin/editor shortcuts and learner account requirements are not added.
@@ -53,7 +61,7 @@ The publicly visible product name is **EBDA Learning** (not EBDAA). Internal `EB
 
 - **Cross-grade lesson search:** a live home-page search covers all 116 lessons, with direct navigation to the appropriate grade, unit and session. No search history is collected.
 - **Stable randomized attempts:** every new lesson attempt shuffles the complete 50-question set once (consecutive attempts are guaranteed to differ in the same tab), then preserves question order across five ten-question stages. At every checkpoint the learner sees correct first-attempt answers and can review that stage or continue. Progress exists only in memory.
-- **Hands-on task checklist:** 77 Year-2/3 lab sessions have a three-step completion checklist, without sign-in or saved records.
+- **Streamlined Discover stage:** The large Practical Brief checklist was removed from all 77 Year-2/3 labs; interactive theory, experiment evidence, quizzes, rubric and export remain.
 - **Evidence export:** students can save a local plain-text lab report containing source/unit indicators, their own editor content (Python or SQL if applicable), and their entered numerical evidence. This is not an accredited assessment certificate or official checklist submission.
 - **Accessible navigation:** visible keyboard skip link, search input labeling, and reduced-motion preferences. Full WCAG testing remains outstanding.
 - **Scientific integrity:** Prevent repeated scoring by re-submitting the same checked response. Neither the generated question count nor completing the checklist establishes scientific accreditation.
@@ -92,7 +100,7 @@ The new UI and content changes have passed scripted JavaScript-flow tests. Brows
 
 ## Integrated practical specialization laboratories (Years 2 and 3)
 
-**New architecture:** Grade → specialization subject → semester → unit → session → practical brief → live laboratory → embedded formative challenge → immediate feedback. The standalone Challenge Arena link and its routes have been removed.
+**New architecture:** Grade → specialization subject → semester → unit → session → interactive concept → live laboratory → embedded formative challenge → immediate feedback. The standalone Challenge Arena link and its routes have been removed.
 
 **Coverage:** 41 Year-2 and 36 Year-3 session pages (77 total), each with a session-specific practical task brief and proposed evidence output; 12 unit-level LO/KPI mappings transcribed/paraphrased from the uploaded teacher guides. Important: the source guides present these indicators at unit level. Session-to-indicator alignment in the application is a proposal, not an official per-session allocation.
 
@@ -100,14 +108,14 @@ The new UI and content changes have passed scripted JavaScript-flow tests. Brows
 - Python editing/execution through an on-demand Pyodide 0.27.7 WebAssembly worker (12-second execution timeout; first use requires internet). This is an executable educational sandbox, not an unrestricted full Python cloud service.
 - Real SQLite SELECT queries over an in-memory synthetic factory dataset using sql.js 1.11.0 WebAssembly (download on first use). Browser-local, disposed per execution.
 - Recalculating JavaScript demonstrations for basic descriptive statistics, one-sample t statistic, Pearson correlation, Bayes, data preprocessing, KNN, classification metrics, anomaly detection, annotation agreement, telemetry, pipelines, fairness-screening metrics and agriculture.
-- Additional source-topic-specific calculators for 12 selected sessions; other sessions reuse an educational calculation engine at unit level with an individual practical brief.
+- Additional source-topic-specific calculators for 12 selected sessions; other sessions reuse an educational calculation engine at unit level with a focused theory-led Discover stage.
 - Every one of the 77 Year-2/3 sessions also has an independent auto-checked quantitative evidence question and an embedded conceptual challenge, both with explanations. Numerical problems are synthetic and formative.
 
 **Pedagogy and evidence:** Every session has a manipulable or executable activity and a formative checkpoint. These checkpoints provide explanations rather than recording student grades. The current lab outcomes, numerical assessment items and unit-level question banks are **supplementary instructional prototypes**, not validated equivalents of all official practical projects, product checklists or summative assessments. The 77 pages therefore provide working practical entry points, **not 77 independently validated full curriculum labs**. A curriculum expert must still review each against the original session's full teaching steps and acceptance criteria.
 
 **Security/privacy:** No student registration, names, saved marks, telemetry, or backend. The browser fetches public runtime assets from third-party CDNs when Python or SQL is launched; ordinary network requests may expose standard connection metadata to those providers. No student records are transmitted by the application. Admin editing uses GitHub repository write permissions.
 
-**Testing:** JavaScript syntax, navigation, every one of the 77 new session flows, embedded feedback, 39 original Year-1 lessons, and 77 practical briefs pass scripted simulation tests. End-to-end execution of Pyodide and SQLite in a real browser, complete academic validation, accessibility testing and confirmation of GitHub Pages publication remain outstanding.
+**Testing:** JavaScript syntax, navigation, every one of the 77 new session flows, embedded feedback, 39 original Year-1 lessons, and 77 practical lesson structures pass scripted simulation tests. End-to-end execution of Pyodide and SQLite in a real browser, complete academic validation, accessibility testing and confirmation of GitHub Pages publication remain outstanding.
 
 ## Challenge Arena — enhanced specialization pedagogy
 
