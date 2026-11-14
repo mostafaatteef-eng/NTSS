@@ -11,6 +11,15 @@ A free, browser-based interactive learning experience for Ebdaa National Technic
 
 `grade-catalog.js` holds the year/subject/unit/session taxonomy and is editable only by users with repository write permissions. Additional general-education or technical subjects can be added after their official syllabi are uploaded.
 
+## Immersive curriculum cases and genuine runtime acceptance
+
+- 18 unit-level three-stage narrative cases are embedded alongside lessons; new stages unlock only after the preceding answer is verified.
+- Year 2 relational database units include a custom **Factory SQL Mystery** with four evidence clues and three linked SQLite tables. Students must run SQL and inspect the expected query result before unlocking clues. The industrial data and scenario were created for EBDAA, not copied from third-party games.
+- The instructional pattern combines immersive problem-solving, real-world project tasks, an investigative chain of evidence, and editable SQL JOIN examples, inspired by The Data Escape Room, DataWars, Knight Lab SQL Murder Mystery, and W3Schools SQL JOIN.
+- **QA gate**: `scripts/validate.mjs` checks structural/logic flow; `scripts/browser-smoke.mjs` checks real desktop/mobile DOM interaction; `scripts/runtime-smoke.mjs` runs actual Pyodide Python and sql.js SQLite WebAssembly in Chromium, checks the JOIN results and checks a guessed SQL case answer is blocked without SQL evidence.
+- **Truthful status**: CI checks and external runtimes have been configured but no successful remote Chromium/GitHub Pages deployment report has been independently retrieved in this conversation. Do not treat the live service as verified until an explicit green run and HTTPS page access have been recorded.
+- **Scientific equivalence** is still partial: the source checklists include full Python/SQL artifact creation, advanced security, dataset evaluation, model training and teacher assessment. Review the current evidence/gaps in [ASSESSMENT_AUDIT.md](ASSESSMENT_AUDIT.md). Matching 50 question variants to a lesson is not the same as passing its complete practical checklist.
+
 ## 50 practice items per lesson (November 2026 enhancement)
 
 - 116 specialization lesson pages across grades 1–3, each with exactly **50 generated practice questions** (5,800 total).
