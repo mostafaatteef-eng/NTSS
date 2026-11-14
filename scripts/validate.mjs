@@ -64,6 +64,10 @@ assert.equal(data.sessions.length,39);
 assert.equal(new Set(data.sessions.map(s=>s.id)).size,39);
 assert.equal(new Set(data.sessions.map(s=>s.question)).size,39);
 assert.equal(context.window.EBDAA_LAB_CONFIG.length,39);
+context.openUnit(1);
+assert.ok(content.innerHTML.includes("Go directly to 50 practice questions"),"Quick practice shortcut missing");
+context.jumpToPractice();
+assert.ok(content.innerHTML.includes("QUESTION 1 / 50"),"Direct practice link did not open question one");
 for(const s of data.sessions){
   assert.ok(s.title && s.topic && s.explanation,"Missing content for "+s.id);
   assert.equal(s.options.length,4);
