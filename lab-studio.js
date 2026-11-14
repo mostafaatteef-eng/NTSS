@@ -43,14 +43,31 @@ return '<section class="lab-workspace" aria-label="'+language+' interactive labo
 function saveEditor(value){const family=profile(...currentKey.split("-").slice(0,2).map(Number)).engine;if(family==="python")editPython=String(value);else if(family==="sql")editSQL=String(value)}
 function resetEditor(){const [g,u,i]=currentKey.split("-").map(Number);if(!Number.isFinite(i))return;const python=profile(g,u).engine==="python";if(python)editPython=pythonSample(i);else editSQL=sqlSample(i);out="";const input=document.getElementById("studio-editor"),output=document.getElementById("studio-output");if(input){input.value=python?editPython:editSQL;input.focus()}if(output)output.textContent="Example restored. Run to see results."}
 function editorKey(event){if(event.key==="Enter"&&(event.ctrlKey||event.metaKey)){event.preventDefault();const [g,u]=currentKey.split("-").map(Number);if(profile(g,u).engine==="python")runPython();else runSQL()}}
-function setSection(n){activeSection=Math.max(0,Math.min(4,Number(n)||0))}
+function setSection(n){
+ activeSection=Math.max(0,Math.min(4,Number(n)||0));
+ const status=document.getElementById("lab-stage-status");
+ if(status)status.textContent="Stage "+(activeSection+1)+" of 5";
+ const meter=document.getElementById("lab-stage-meter");
+ if(meter)meter.style.width=(20*(activeSection+1))+"%";
+}
+function goToSection(n){
+ setSection(n);
+ const nodes=[...document.querySelectorAll(".lab-journey > details.lab-module")];
+ if(!nodes.length){if(typeof render==="function")render();return}
+ nodes.forEach((node,i)=>{node.open=i===activeSection});
+ const target=nodes[activeSection];
+ if(target){target.scrollIntoView({behavior:"auto",block:"start"});const heading=target.querySelector("summary");if(heading)heading.focus({preventScroll:true})}
+}
+
 function moduleView(g,u,i,n,title,subtitle,content){
+ const labels=["Experiment","Understand","Practice","Reflect"];
+ const forward=n<4?'<div class="lab-module__footer"><button class="btn teal" type="button" onclick="EBDAA_STUDIO.goToSection('+(n+1)+')">Continue to '+labels[n]+' →</button></div>':'';
  return '<details class="lab-module" name="ebda-lab-'+g+'-'+u+'-'+i+'" '+(activeSection===n?'open':'')+
  ' ontoggle="if(this.open)EBDAA_STUDIO.setSection('+n+')">'+
  '<summary><span class="lab-module__num">'+String(n+1).padStart(2,"0")+'</span>'+
  '<span class="lab-module__copy"><span class="lab-module__title">'+esc(title)+'</span>'+
  '<span class="lab-module__desc">'+esc(subtitle)+'</span></span></summary>'+
- '<div class="lab-module__body">'+content+'</div></details>';
+ '<div class="lab-module__body">'+content+forward+'</div></details>';
 }
 function session(g,u,i){
  const p=profile(g,u),name=unit(g,u).sessions[i];select(g,u,i);
@@ -77,7 +94,8 @@ function session(g,u,i){
  '<div class="actions"><button class="btn light" onclick="EBDAA_STUDIO.exportEvidence('+g+','+u+','+i+')">↓ Save my lab evidence (.txt)</button></div>';
  return '<div class="eyebrow">YEAR '+g+' · UNIT '+(u+1)+' · SESSION '+(i+1)+'</div>'+
  '<h1 style="font-size:clamp(26px,3vw,39px);line-height:1.2;margin:12px 0 9px">'+esc(name)+'</h1>'+
- '<p style="font-size:14px;margin:0 0 8px">Five focused stages. Open one at a time, whenever you are ready.</p>'+
+ '<p style="font-size:14px;margin:0 0 8px">Learn in five short steps. Complete each activity and use Continue to move forward.</p>'+
+ '<div class="lab-stage-heading"><span id="lab-stage-status" aria-live="polite">Stage '+(activeSection+1)+' of 5</span><span>One step at a time</span></div><div class="lab-stage-track"><i id="lab-stage-meter" style="width:'+(20*(activeSection+1))+'%"></i></div>'+
  '<div class="lab-journey">'+
  moduleView(g,u,i,0,"Discover","Get curious. Understand the key idea.",discover)+
  moduleView(g,u,i,1,"Experiment","Run code or calculations and check the result",experiment)+
@@ -116,5 +134,5 @@ a.href=href;a.download="EBDA-year"+g+"-unit"+(u+1)+"-session"+(i+1)+"-evidence.t
 document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(href),5000);
 }
 function runPython(override){const input=document.getElementById("studio-editor"),output=document.getElementById("studio-output");if(!input||!output)return;editPython=input.value;const submittedCode=typeof override==="string"?override:editPython;if(activeWorker)activeWorker.terminate();output.textContent="Loading Python runtime...";const workerCode='importScripts("https://cdn.jsdelivr.net/pyodide/v0.27.7/full/pyodide.js");(async()=>{try{const py=await loadPyodide({stdout:s=>postMessage({type:"print",text:s}),stderr:s=>postMessage({type:"print",text:s})});postMessage({type:"ready"});onmessage=async e=>{try{await py.runPythonAsync(e.data);postMessage({type:"done"})}catch(err){postMessage({type:"error",text:String(err)})}}}catch(e){postMessage({type:"error",text:String(e)})}})();';const url=URL.createObjectURL(new Blob([workerCode],{type:"text/javascript"}));const w=new Worker(url);activeWorker=w;let lines=[];let timeout=setTimeout(()=>{if(activeWorker===w){w.terminate();URL.revokeObjectURL(url);activeWorker=null;output.textContent="Python runtime load exceeded 45 seconds. Check network connectivity."}},45000);w.onmessage=e=>{const m=e.data;if(m.type==="ready"){URL.revokeObjectURL(url);clearTimeout(timeout);timeout=setTimeout(()=>{if(activeWorker===w){w.terminate();activeWorker=null;output.textContent=lines.join("\n")+"\nExecution stopped after 12 seconds (possible infinite loop)."}},12000);output.textContent="Executing...";w.postMessage(submittedCode)}else if(m.type==="print"){lines.push(m.text);output.textContent=lines.join("\n")}else if(m.type==="done"||m.type==="error"){if(m.type==="error")lines.push(m.text);output.textContent=lines.join("\n")||"(no printed output)";if(m.type==="done"){const route=currentKey.split("-").map(Number);if(typeof override==="string"&&route.length===3&&window.EBDA_CODE_TESTS)window.EBDA_CODE_TESTS.reportPython(route[0],route[1],route[2],lines);if(route.length===3)window.EBDA_RUBRIC.observe(route[0],route[1],route[2],{success:true,hasEvidence:lines.length>0,output:lines.join("\n")});}clearTimeout(timeout);w.terminate();activeWorker=null}};w.onerror=()=>{output.textContent="Unable to load Python worker. Check internet access.";clearTimeout(timeout);URL.revokeObjectURL(url);w.terminate();activeWorker=null}}
-return {reset,session,setSection,value,pick,check,checkNumeric,runSQL,runPython,exportEvidence,saveEditor,resetEditor,editorKey};
+return {reset,session,setSection,goToSection,value,pick,check,checkNumeric,runSQL,runPython,exportEvidence,saveEditor,resetEditor,editorKey};
 })();
