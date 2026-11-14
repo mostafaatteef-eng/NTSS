@@ -37,6 +37,9 @@ try{
  await page.getByRole("button",{name:/Explore subject/i}).click();
  await page.getByRole("button",{name:/View session index/i}).first().click();
  await page.getByRole("button",{name:/HANDS-ON LAB/i}).first().click();
+ if(await page.locator(".lab-module").count()!==5)throw Error("Expected five learning stages");
+ if(await page.locator(".lab-module[open]").count()!==1)throw Error("More than one stage open");
+ await page.locator(".lab-module").nth(1).locator("summary").first().click();
  if(!await page.getByText("PRACTICAL BRIEF").count())throw Error("Year 2 practical brief missing");
  if(!await page.getByText("PRACTICAL RUBRIC").count())throw Error("Practical rubric not rendered");
  if(!await page.getByText("VISUAL DATA PLAYGROUND").count())throw Error("Visual data playground not rendered");
@@ -46,6 +49,7 @@ try{
  await page.locator("#studio-editor").fill("print(123)");
  await page.getByRole("button",{name:/Restore example/i}).click();
  if(await page.locator("#studio-editor").inputValue()!==originalSource)throw Error("Restore example did not reset Python editor");
+ await page.locator(".lab-module").nth(2).locator("summary").first().click();
  const guided=page.locator("#data-playground");
  if(!await guided.getByText("GUIDED DATA CHALLENGE").count())throw Error("Guided challenge panel missing");
  await guided.locator("#play-challenge").selectOption("missing");
@@ -59,10 +63,12 @@ try{
  if(!await page.locator("#data-playground").getByText("Missing: 0").count())throw Error("Imputation did not recompute records");
  const initialRubric=await page.locator("#rubric-progress").textContent();
  if(!initialRubric.includes("0 / 65"))throw Error("Python execution must not be credited by unrelated visual data manipulation");
+ await page.locator(".lab-module").nth(1).locator("summary").first().click();
  await page.locator("#numeric-input").fill("6");
  await page.getByRole("button",{name:/Check calculated answer/i}).click();
  if(!await page.locator("#rubric-progress").getByText(/Automatically verified: 35 \/ 65/).count())throw Error("Numerical evidence was not scored independently of actual Python execution");
 
+ await page.locator(".lab-module").nth(3).locator("summary").first().click();
  if(!await page.getByText(/50 QUESTIONS/).count())throw Error("50-question panel missing");
  if(await page.getByRole("button",{name:/Begin 50-question workshop/i}).count())throw Error("Separate workshop launch button remains");
  if(!await page.getByText("QUESTION 1 / 50").count())throw Error("Questions are not integrated directly in the lesson");
@@ -97,5 +103,5 @@ try{
  await page.reload({waitUntil:"load"});
  if(await page.locator("body").evaluate(el=>el.scrollWidth)>410)throw Error("Mobile horizontal overflow");
  if(errors.length)throw Error("JS errors: "+errors.join("; "));
- console.log("Browser smoke PASS: EBDA brand, search, graded rubric, live data transforms, adaptive practice, Year 3 labs, mobile width.");
+ console.log("Browser smoke PASS: minimal UI, five collapsible stages, search, rubric, data transforms, guided practice, mobile width.");
 } finally {await browser.close();await new Promise(ok=>server.close(ok))}
