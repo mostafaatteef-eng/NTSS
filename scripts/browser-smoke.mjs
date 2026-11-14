@@ -59,11 +59,11 @@ try{
  await back();
  if(await code.inputValue()!=="print('student draft stays')")throw Error("Code draft lost when navigating");
  await page.getByRole("button",{name:/Restore example/i}).click();
- await page.locator(".advanced-stage-content details.lab-support > summary").click();
+ await page.locator(".advanced-stage-content details.lab-support > summary").first().click();
  await page.locator("#numeric-input").fill("6");
  await page.getByRole("button",{name:/Check calculated answer/i}).click();
  await next();
- await page.locator(".advanced-stage-content details.lab-support > summary").click();
+ await page.locator(".advanced-stage-content details.lab-support > summary").first().click();
  const data=page.locator("#data-playground");
  if(!await data.getByText("GUIDED DATA CHALLENGE").count())throw Error("Data playground missing");
  await data.locator("#play-challenge").selectOption("missing");
@@ -78,7 +78,7 @@ try{
  if(!await page.locator(".advanced-stage-content").getByText(/Correct/).count())throw Error("Concept feedback missing");
  await next();
  if(!await page.getByText("QUESTION 1 / 50").count())throw Error("Integrated practice missing");
- await page.locator(".advanced-stage-content details.lab-support > summary").click();
+ await page.locator(".advanced-stage-content details.lab-support > summary").first().click();
  if(!await page.getByText("PRACTICAL RUBRIC").count())throw Error("Practical rubric unavailable");
  if(!await page.locator("#rubric-progress").getByText(/Automatically verified: 35 \/ 65/).count())throw Error("Numerical evidence score lost between stages");
  const prior=await page.evaluate(()=>window.EBDAA_PRACTICE.questionOrder());
