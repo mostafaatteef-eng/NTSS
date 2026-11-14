@@ -4,8 +4,11 @@ A free, browser-based interactive learning experience for Ebdaa National Technic
 
 ## Public learning
 - No student accounts, no student names, no teacher dashboards and no student analytics.
-- Six curriculum units and 39 short concept journeys.
-- Each journey includes a prediction question, a manipulable topic demonstration, a concept explanation, and an immediate-feedback practice step.
+- Six curriculum units and 39 short concept journeys, with 39 distinct entry questions and a separate application checkpoint.
+- Each journey includes a prediction question, a topic demonstration, a concept explanation, and an immediate-feedback practice step.
+- Browser-only calculated experiments include K-Means centroid updates, 2D KNN distances and voting, BFS traversal, vector magnitude, gradient descent, probability and algorithm operations.
+- Direct manipulation: binary bit switches, mutable list builder, and LIFO push/pop stack.
+- Clear labels distinguish real calculations, simplified conceptual models and textbook teaching content.
 - No personal data is sent to a backend. Answers are used in memory for the current visit only.
 - Educational text and practice are supplementary, newly authored content; official guides remain separately protected.
 
@@ -24,10 +27,14 @@ Content editing uses GitHub's existing authenticated authorization model — **n
 
 A built-in password-protected dashboard would require server-side authentication and an API; a client-only login is not secure. Repository permissions restrict editing but not viewing: this public static website makes all shipped teaching content publicly readable.
 
+## Quality checks
+
+The release pipeline runs `node scripts/validate.mjs` before GitHub Pages publishing. It checks 39 lesson journeys, question integrity, and the no-student-storage design. The checks are computational smoke tests, not a substitute for browser, usability, accessibility or academic review.
+
 ## Deploy
 In GitHub > Settings > Pages, set Source to **GitHub Actions**, then run the Publish EBDAA Learning Hub workflow. Expected URL: https://mostafaatteef-eng.github.io/NTSS/
 
 ## Limitations
-Not a hosted backend or full CMS. No real Python execution; visual interactions are instructional models. First-term student book is not included in supplied files, so supplementary content requires academic review. The 39 lessons are short guided concepts; complete curricular lab coverage and external validations are not yet implemented.
+Not a hosted backend or full CMS. No unrestricted Python execution; visual interactions include calculated examples and conceptual models. First-term student book is not included in supplied files, so supplementary content requires academic review. The 39 lessons are short guided concepts; complete curricular lab coverage and external validations are not yet implemented.
 
 Pedagogical direction informed by [Brilliant's description of its learning approach](https://brilliant.org/about/), without copying Brilliant's proprietary interface or content.
