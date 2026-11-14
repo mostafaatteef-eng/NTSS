@@ -2,6 +2,19 @@
 
 A free, browser-based interactive learning experience for EBDA National Technical Science Schools (Badr) — Year 1 AI and Data Engineering.
 
+## Adaptive learning, named skill mastery and applied laboratories
+
+The EBDA Learning Hub now has four integrated additions:
+
+1. **Adaptive Learning:** Each 50-question lesson has five ten-question sprints. The next sprint reorders the remaining lesson questions according to the ten weakest skills, using first-attempt accuracy and hints in the current visit. It does not use opaque AI scoring, change the approved source content or claim formally validated difficulty calibration. The same 50 parameterized items remain available.
+2. **Skill Mastery Map:** After ten questions and in the final summary, the learner sees ten named skills, correct/attempted counts and a formative status (Not assessed / Needs practice / Progressing / Developing mastery). Skill names are linked to the domain-specific question templates, not inferred from personal data. Estimates reset on reload; no user profiles, persistent learning histories or records.
+3. **Practical Rubrics:** Every one of the 77 Year 2/3 laboratories has a detailed rubric with 30 points for observed code execution or genuine browser manipulation, 35 for a verified correct numerical evidence response, 20 reserved for teacher assessment of interpretation, and 15 reserved for teacher sign-off against the unit product checklist and relevant KPIs. A button lets learners write a reflection and include formative rubric status in their local evidence export. The teacher-review points are **never** self-awarded by the app. Generic runtime output alone does **not** satisfy a correct calculation.
+4. **Visual Data Playground:** All 77 Year 2/3 labs now include a six-record synthetic sensor dataset, with live filtering by site/threshold, descending sorting, mean imputation, min-max scaling, recomputed summaries and bar charts, and local CSV export. This is a deliberately small exploratory dataset; it does not automatically satisfy source-specific official dataset/project requirements.
+
+**Academic limitation:** The above are operational formative learning features, **not** completion or accreditation of the entire official practical rubrics. Unit-level indicators in `performance-map.js` are supported by the uploaded teacher guides; their per-session assignments and official product acceptance still need qualified teacher review. See [ASSESSMENT_AUDIT.md](ASSESSMENT_AUDIT.md). A successful browser/WASM deployment has not yet been independently confirmed.
+
+**Technical implementation:** `mastery-engine.js`, `practical-rubrics.js`, `visual-playground.js` and the updated `practice-workshop.js`/`lab-studio.js`. Their state is held in browser RAM only. GitHub Actions release tests check navigation, original 116 lesson banks, mastery, numerical scoring and data transformations.
+
 ## EBDA learner-experience improvements (14 November 2026)
 
 The publicly visible product name is **EBDA Learning** (not EBDAA). Internal `EBDAA_*` JavaScript identifiers are retained for compatibility and are not part of the visual brand.
