@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import vm from "node:vm";
 
-const paths=["index.html","curriculum-data.js","grade-catalog.js","experiments.js","challenge.js","advanced-labs.js","microgames.js","missions-data.js","performance-map.js","session-guides.js","lab-specialists.js","lab-studio.js"];
+const paths=["index.html","curriculum-data.js","grade-catalog.js","experiments.js","challenge.js","advanced-labs.js","microgames.js","missions-data.js","performance-map.js","session-guides.js","lab-specialists.js","numeric-challenges.js","lab-studio.js"];
 for(const name of paths)assert.ok(fs.existsSync(name),name+" must exist");
 const html=fs.readFileSync("index.html","utf8");
 const scripts=paths.slice(1).map(x=>fs.readFileSync(x,"utf8"));
@@ -70,6 +70,9 @@ for(const year of [2,3]){
   for(let i=0;i<sessions.length;i++){
    vm.runInContext("openAdvancedSession("+i+")",context);
    assert.ok(content.innerHTML.includes("EMBEDDED FORMATIVE CHALLENGE"),year+"-"+unit+"-"+i);
+   assert.ok(content.innerHTML.includes("EVIDENCE CHECK"),"Missing numerical assessment");
+   const numeric=context.window.EBDAA_NUMERIC(year,unit,i,(i%5)+3);
+   assert.ok(Number.isFinite(numeric.answer));
    assert.ok(content.innerHTML.includes("Performance Indicators"),year+"-"+unit+"-"+i);
    assert.ok(content.innerHTML.includes("PRACTICAL BRIEF"),"No session-specific brief");
    const family=academic[year+"-"+(unit+1)].engine;
