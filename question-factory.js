@@ -183,6 +183,8 @@ function all(g,u,i){
   if(mode==="choice"){
    const base=Number(item.answer);const candidates=[base,base+1,base-1,base+2];
    options=[...new Set(candidates.map(String))];
+   const offset=(variant+skill+i+u+g)%4;
+   options=options.slice(offset).concat(options.slice(0,offset));
    if(options.length!==4)renderMode="number";
   }
   if(skill===4){
