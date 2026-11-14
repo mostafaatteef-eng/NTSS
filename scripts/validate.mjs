@@ -246,14 +246,12 @@ for(let i=0;i<10;i++){
  practice.check();
  practice.next();
 }
-assert.ok(practiceStage.innerHTML.includes("CHECKPOINT 1 / 5"));
+assert.ok(practiceStage.innerHTML.includes("QUESTION 11 / 50"),"Practice must advance directly from Q10 to Q11");
+assert.ok(practiceStage.innerHTML.includes("practice-milestone"),"Skill reflection should be optional");
 assert.ok(practiceStage.innerHTML.includes("SKILL MASTERY MAP"));
 assert.ok(practiceStage.innerHTML.includes("Order of operations"));
-assert.deepEqual(Array.from(practice.questionOrder()),attemptOne,"Checkpoint reordered the attempt");
-practice.continueCheckpoint();
-assert.ok(practiceStage.innerHTML.includes("QUESTION 11 / 50"));
 assert.equal(practice.currentQuestion().id,attemptOne[10]);
-assert.deepEqual(Array.from(practice.questionOrder()),attemptOne,"Question order changed entering the next sprint");
+assert.deepEqual(Array.from(practice.questionOrder()),attemptOne,"Question order changed during uninterrupted practice");
 practice.begin(2,0,0);
 const attemptTwo=Array.from(practice.questionOrder());
 assert.equal(attemptTwo.length,50);
