@@ -516,3 +516,10 @@ body{
 .practice-milestone[open]>summary:after{content:"−"}
 .practice-milestone[open]>summary{border-bottom:1px solid #d9e8df}
 .practice-milestone>.interactive{margin:12px!important;background:#fff!important}
+
+/* An unobtrusive fast path for learners who want to practise immediately. */
+.lesson-shortcut{display:flex;justify-content:flex-end;margin:-3px 0 19px}
+.lesson-jump{background:transparent;border:0;padding:8px 0;color:#127b70;font-weight:740;font-size:13px;cursor:pointer}
+.lesson-jump:hover{text-decoration:underline;color:#0c5f58}
+.lesson-jump:focus-visible{outline:3px solid #159e97;outline-offset:4px;border-radius:4px}
+@media(max-width:520px){.lesson-shortcut{justify-content:flex-start;margin:0 0 14px}.lesson-jump{font-size:12px}}
