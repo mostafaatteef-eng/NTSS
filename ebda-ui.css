@@ -432,3 +432,41 @@ body{
 @media(prefers-reduced-motion:reduce){
  .hero-preview__bars span,.lab-module{transition:none!important}
 }
+
+
+/* A single question replaces the old visible multi-card theory checklist. */
+.theory-studio--focused{gap:14px}
+.theory-studio--focused .theory-hero{min-height:0}
+.theory-spark{
+  background:#fff;
+  display:flex;align-items:flex-start;gap:18px;
+  border:1px solid #dcebe4;border-radius:17px;
+  padding:clamp(18px,3vw,26px);
+  box-shadow:0 6px 20px rgb(12 81 70 / 4%);
+}
+.theory-spark__icon{
+  display:grid;place-items:center;flex:0 0 46px;
+  height:46px;border-radius:15px;
+  font-size:25px;color:#138a7e;background:linear-gradient(140deg,#d9f6eb,#e9faf0);
+}
+.theory-spark__content{min-width:0;flex:1}
+.theory-spark h3{font-size:clamp(18px,2vw,22px);margin:9px 0 8px}
+.theory-spark p{font-size:14px;line-height:1.65;margin:0 0 17px}
+.theory-spark .theory-revealed{margin-top:16px;background:#f4fbf7}
+.theory-spark .theory-reveal{background:#157f75;color:#fff;border-radius:11px;padding:11px 17px;min-height:44px}
+.theory-more{margin-top:0;border:1px solid #e3ece6;background:#f9fcfa;border-radius:12px}
+.theory-more>summary{
+  padding:14px 19px;font-size:13px;color:#59786b;
+  font-weight:650;cursor:pointer;list-style:none
+}
+.theory-more>summary::-webkit-details-marker{display:none}
+.theory-more>summary:after{content:"＋";float:right;color:#179588}
+.theory-more[open]>summary:after{content:"−"}
+.theory-more>ol{padding:0 20px 0 38px;margin:8px 0 14px}
+.theory-more li{font-size:13px;line-height:1.65;color:#4d615a;margin:8px 0}
+.theory-more>p{padding:0 19px 16px;font-size:11px}
+@media(max-width:520px){
+ .theory-spark{gap:12px;padding:17px}
+ .theory-spark__icon{flex-basis:38px;height:38px;font-size:20px}
+ .theory-spark h3{font-size:18px}
+}
