@@ -254,3 +254,10 @@ p{color:var(--muted);line-height:1.65}
  html{scroll-behavior:auto}
  *,*::before,*::after{transition:none!important;animation:none!important}
 }
+/* Secondary activities are available without competing with the current task. */
+.lab-support{margin-top:18px;background:#f8fbf9;border:1px solid #e1ebe5;border-radius:14px;overflow:hidden}
+.lab-support>summary{cursor:pointer;list-style:none;padding:15px 18px;font-size:14px;font-weight:700;color:var(--teald);display:flex;align-items:center;justify-content:space-between;gap:12px}
+.lab-support>summary::-webkit-details-marker{display:none}
+.lab-support[open]>summary{border-bottom:1px solid #e1ebe5}
+.lab-support__body{padding:12px 16px 16px}
+.lab-support__body .interactive{background:white!important;margin:10px 0}
