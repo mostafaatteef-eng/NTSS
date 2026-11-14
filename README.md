@@ -2,6 +2,16 @@
 
 A free, browser-based interactive learning experience for EBDA National Technical Science Schools (Badr) — Year 1 AI and Data Engineering.
 
+## Minimal student-first UI redesign (November 2026)
+
+The live source now loads **`ebda-ui.css`** after the original styles. It introduces a calm, responsive design language with restrained EBDA teal and yellow, system typography, larger whitespace, accessible focus indicators, clear learner navigation and simpler grade cards. The home hero uses a lightweight, CSS-based data illustration rather than a heavy promotional visual. Search remains prominent; About/Admin/editor shortcuts and learner account requirements are not added.
+
+The Year 1 lesson sequence explicitly labels its five stages: **Discover → Experiment → Understand → Check → Practice**. Year 2/3 specialization sessions now use **five native accordion stages**: Discover, Experiment, Understand, Practice and Reflect. Only one stage starts expanded, avoiding a long vertical wall of labs, graphs, missions and rubrics. Supporting activities such as the data playground and optional investigations are available in secondary expandable panels. All existing content—including the 50 inline questions per lesson, coding challenges, source-linked indicators and export tools—is preserved.
+
+**Release checks:** `scripts/validate.mjs` asserts the CSS asset, five lab stages and exactly one initially open stage. Desktop/mobile and Pyodide/SQLite browser smoke scripts have been updated to expand the right stages. `.github/workflows/deploy-pages.yml` now copies `*.css` into the GitHub Pages artifact so the redesign is actually published after successful CI.
+
+**Verification boundaries:** JavaScript integration simulation has checked all 116 lesson entries, all 5,800 question variants and the single-open stage structure of all 77 Year 2/3 laboratories, with zero simulation errors. This does **not** prove that Chromium tests, network-loaded WebAssembly runtimes or GitHub Pages deployment have passed. Check GitHub Actions before treating the deployment as confirmed.
+
 ## Guided errors, runnable coding challenges, industrial missions and concept visualizers
 
 **Smart Mistake Review:** Wrong answers in the integrated 50-question lesson sequence now reveal a three-stage, optional explanation: identify the misconception; review the worked solution; try a related question on the same skill. The related question is formative and does not affect the original 50-question count/order. All state stays in RAM.
