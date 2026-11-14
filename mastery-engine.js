@@ -17,7 +17,7 @@ pipeline:["Deduplication","Source consolidation","Valid share","Batch aggregatio
 fairness:["Group approval","Approval disparity","Sensitive fields","Access permissions","Invalid labels","Metric identifiability","Masking","Error disparities","Review status","Risk closure"],
 agriculture:["Accuracy","Precision","Recall","Nearest neighbors","Cluster centroids","Model signal","Data splits","Positive cases","Features","Loss change"]
 };
-function family(g,u){return g===1?["programming","math","charts","ai","ml","algorithms"][u]:window.EBDAA_PERFORMANCE[g+"-"+(u+1)]?.engine||"ai"}
+function family(g,u){const type=g===1?["programming","math","charts","ai","ml","algorithms"][u]:window.EBDAA_PERFORMANCE[g+"-"+(u+1)]?.engine||"ai";return type==="python"?"programming":type}
 function names(g,u){return SKILL_NAMES[family(g,u)]||SKILL_NAMES.ai}
 
 const clamp=(x,a,b)=>Math.min(b,Math.max(a,x));
