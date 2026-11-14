@@ -23,6 +23,8 @@ const goHome=async()=>{await page.goto(url,{waitUntil:"load"});await page.waitFo
 try{
  await goHome();
  if(!await page.getByText("Choose your academic year").count())throw Error("Grade landing missing");
+ if(await page.getByText("FOUR WAYS TO LEARN").count())throw Error("Removed feature section reappeared");
+ if(await page.locator(".feature-tile").count())throw Error("Removed feature cards remain");
  if(!await page.title().then(x=>x.includes("EBDA Learning")))throw Error("EBDA brand title missing");
  if(await page.locator("a.skip-link").count()!==1)throw Error("Accessibility skip link missing");
  await page.locator("#lesson-search").fill("Python");
@@ -63,6 +65,13 @@ try{
 
  if(!await page.getByText(/50 QUESTIONS/).count())throw Error("50-question panel missing");
  await page.getByRole("button",{name:/Begin 50-question workshop/i}).click();
+ const attemptA=await page.evaluate(()=>window.EBDAA_PRACTICE.questionOrder());
+ await page.evaluate(()=>window.EBDAA_PRACTICE.begin(2,0,0));
+ const attemptB=await page.evaluate(()=>window.EBDAA_PRACTICE.questionOrder());
+ if(attemptA.length!==50||new Set(attemptA).size!==50)throw Error("Invalid 50-question bank");
+ if(attemptA.join("|")===attemptB.join("|"))throw Error("New attempt repeated the old question order");
+ if([...attemptA].sort().join("|")!==[...attemptB].sort().join("|"))throw Error("Shuffling changed the actual question set");
+
  if(!await page.getByText("QUESTION 1 / 50").count())throw Error("Question 1 missing");
  const options=page.locator("#ebdaa-practice-stage .choice");
  if(await options.count()>0){await options.first().click()}else{await page.locator("#ebdaa-answer").fill("1")}
