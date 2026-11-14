@@ -50,6 +50,7 @@ try{
  await page.getByRole("button",{name:/Restore example/i}).click();
  if(await page.locator("#studio-editor").inputValue()!==originalSource)throw Error("Restore example did not reset Python editor");
  await page.locator(".lab-module").nth(2).locator("summary").first().click();
+ await page.locator(".lab-module").nth(2).locator("details.lab-support > summary").click();
  const guided=page.locator("#data-playground");
  if(!await guided.getByText("GUIDED DATA CHALLENGE").count())throw Error("Guided challenge panel missing");
  await guided.locator("#play-challenge").selectOption("missing");
