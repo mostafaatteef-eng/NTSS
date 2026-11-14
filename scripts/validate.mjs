@@ -21,7 +21,7 @@ assert.ok(!html.includes("EBDAA NATIONAL TECHNICAL SCIENCE SCHOOLS"),"Outdated p
 assert.ok(html.includes('id="lesson-search"'));
 assert.ok(html.includes('class="skip-link"'));
 assert.ok(html.includes("prefers-reduced-motion"));
-assert.ok(html.includes('href="ebda-ui.css"'),"Minimal design CSS not linked");
+assert.ok(/href="ebda-ui\.css(?:\?[^"]*)?"/.test(html),"Minimal design CSS not linked");
 assert.ok(fs.existsSync("ebda-ui.css"),"Design stylesheet absent");
 assert.ok(fs.readFileSync("ebda-ui.css","utf8").includes(".lab-module"),"Accessible lab stages missing styles");
 assert.ok(!content.innerHTML.includes("FOUR WAYS TO LEARN"));
