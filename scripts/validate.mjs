@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import vm from "node:vm";
 
-const paths=["index.html","curriculum-data.js","grade-catalog.js","experiments.js","challenge.js","advanced-labs.js","microgames.js","missions-data.js","performance-map.js","session-guides.js","lab-specialists.js","numeric-challenges.js","question-factory.js","mastery-engine.js","mistake-review.js","practice-workshop.js","case-labs.js","scenario-labs.js","practical-rubrics.js","visual-playground.js","code-challenges.js","concept-visualizer.js","lab-studio.js"];
+const paths=["index.html","curriculum-data.js","grade-catalog.js","experiments.js","challenge.js","advanced-labs.js","microgames.js","missions-data.js","performance-map.js","session-guides.js","lab-specialists.js","numeric-challenges.js","question-factory.js","mastery-engine.js","mistake-review.js","practice-workshop.js","case-labs.js","scenario-labs.js","practical-rubrics.js","visual-playground.js","code-challenges.js","concept-visualizer.js","theory-studio.js","lab-studio.js"];
 for(const name of paths)assert.ok(fs.existsSync(name),name+" must exist");
 const html=fs.readFileSync("index.html","utf8");
 const scripts=paths.slice(1).map(x=>fs.readFileSync(x,"utf8"));
