@@ -1,14 +1,14 @@
 /* Experimental browser learning labs. Source-mapped unit indicators, no learner storage. */
 window.EBDAA_STUDIO=(function(){
-let currentKey="",v=4,ans=null,graded=false,out="",numericChecked=false,numericInput="",editPython="",editSQL="",activeWorker=null,taskFlags=[],activeSection=0;
+let currentKey="",v=4,ans=null,graded=false,out="",numericChecked=false,numericInput="",editPython="",editSQL="",activeWorker=null,activeSection=0;
 const esc=x=>String(x).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const fmt=x=>Number(x).toFixed(3);
 const unit=(g,u)=>window.EBDAA_GRADES.grades[g-1].subjects[0].units[u];
 const profile=(g,u)=>window.EBDAA_PERFORMANCE[g+"-"+(u+1)];
-function reset(){if(activeWorker)activeWorker.terminate();activeWorker=null;currentKey="";v=4;ans=null;graded=false;out="";numericChecked=false;numericInput="";taskFlags=[];activeSection=0;}
+function reset(){if(activeWorker)activeWorker.terminate();activeWorker=null;currentKey="";v=4;ans=null;graded=false;out="";numericChecked=false;numericInput="";activeSection=0;}
 function value(x){v=Number(x);numericChecked=false;numericInput="";const route=currentKey.split("-").map(Number);if(route.length===3&&route[0]>=2)window.EBDA_RUBRIC.markManipulation(route[0],route[1],route[2]);render();}
 function pick(i){if(!graded){ans=i;render()}}
-function check(){graded=true;render()}function markTask(n,checked){taskFlags[n]=!!checked;const node=document.getElementById("task-progress");if(node)node.textContent=taskFlags.filter(Boolean).length+" / 3 steps completed (this visit only)"}function checkNumeric(g,u,i){const el=document.getElementById("numeric-input");numericInput=el?el.value:"";numericChecked=true;const q=window.EBDAA_NUMERIC(g,u,i,v);const valid=numericInput!==""&&Math.abs(Number(numericInput)-q.answer)<=q.tolerance;window.EBDA_RUBRIC.recordEvidence(g,u,i,valid);render()}
+function check(){graded=true;render()}function checkNumeric(g,u,i){const el=document.getElementById("numeric-input");numericInput=el?el.value:"";numericChecked=true;const q=window.EBDAA_NUMERIC(g,u,i,v);const valid=numericInput!==""&&Math.abs(Number(numericInput)-q.answer)<=q.tolerance;window.EBDA_RUBRIC.recordEvidence(g,u,i,valid);render()}
 function select(g,u,i){const key=g+"-"+u+"-"+i;if(currentKey!==key){reset();currentKey=key;v=(i%5)+3;editPython=pythonSample(i);editSQL=sqlSample(i)}}
 function pythonSample(i){const samples=[
 'readings = [3, 5, 8, 13]\nprint("mean:", sum(readings) / len(readings))',
@@ -56,11 +56,7 @@ function session(g,u,i){
  const p=profile(g,u),name=unit(g,u).sessions[i];select(g,u,i);
  const d={family:p.engine,year:g,u,i},mission=window.EBDAA_MISSIONS.find(m=>m.g===g&&m.u===u);
  const q=mission.steps[i%mission.steps.length],guide=window.EBDAA_SESSION_GUIDES[g+"-"+(u+1)+"-"+(i+1)];
- const brief='<section class="interactive"><div class="eyebrow">PRACTICAL BRIEF · '+esc(guide.difficulty.toUpperCase())+'</div><h3>Your learning mission</h3>'+
- '<p class="muted">Try the activity, collect evidence, then explain what the result means.</p>'+
- '<ol>'+guide.instructions.map((x,j)=>'<li style="margin-bottom:10px"><label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer"><input type="checkbox" style="margin-top:4px" '+(taskFlags[j]?'checked':'')+' onchange="EBDAA_STUDIO.markTask('+j+',this.checked)"><span>'+esc(x)+'</span></label></li>').join("")+'</ol>'+
- '<p class="muted" id="task-progress">'+taskFlags.filter(Boolean).length+' / 3 steps completed (this visit only)</p>'+
- '<p><b>Expected evidence:</b> '+esc(guide.artifact)+'</p><p class="muted">'+esc(guide.status)+'</p></section>';
+
  const calc=window.EBDAA_NUMERIC(g,u,i,v),right=numericInput!==""&&Math.abs(Number(numericInput)-calc.answer)<=calc.tolerance;
  const evidence='<section class="interactive"><div class="eyebrow">EVIDENCE CHECK · CALCULATE YOUR ANSWER</div><h3>'+esc(calc.question)+'</h3>'+
  '<label class="lab-workspace__editor-label" for="numeric-input">Your result</label><input id="numeric-input" inputmode="decimal" type="number" step="any" value="'+esc(numericInput)+'" placeholder="Enter calculated result" style="padding:13px;border:1px solid #aeb9b5;border-radius:11px;max-width:260px;width:100%">'+
@@ -73,7 +69,7 @@ function session(g,u,i){
  '<b>Learning outcomes:</b><ul>'+p.outcomes.map(x=>'<li>'+esc(x)+'</li>').join("")+'</ul>'+
  '<b>Performance indicators:</b><ul>'+p.kpis.map(x=>'<li>'+esc(x)+'</li>').join("")+'</ul>'+
  '<p class="muted">This is a proposed session alignment to unit indicators, not a certified official assessment.</p></details>';
- const discover=window.EBDA_THEORY.advanced(g,u,i,guide,p,name)+brief;
+ const discover=window.EBDA_THEORY.advanced(g,u,i,guide,p,name);
  const experiment=(p.engine==="python"||p.engine==="sql"?program(d):calculated(d))+evidence+window.EBDA_CODE_TESTS.panel(g,u,i);
  const understand=window.EBDA_VISUALIZER.panel(g,u,i)+'<details class="lab-support"><summary>Explore the data yourself <span aria-hidden="true">↗</span></summary><div class="lab-support__body">'+window.EBDA_PLAYGROUND.panel(g,u,i)+'</div></details>';
  const practice=window.EBDAA_PRACTICE.panel(g,u,i)+'<details class="lab-support"><summary>Optional investigation and concept check <span aria-hidden="true">↗</span></summary><div class="lab-support__body">'+check+window.EBDAA_STORIES.panel(g,u,i)+window.EBDAA_CASE.panel(g,u,i)+'</div></details>';
@@ -83,7 +79,7 @@ function session(g,u,i){
  '<h1 style="font-size:clamp(26px,3vw,39px);line-height:1.2;margin:12px 0 9px">'+esc(name)+'</h1>'+
  '<p style="font-size:14px;margin:0 0 8px">Five focused stages. Open one at a time, whenever you are ready.</p>'+
  '<div class="lab-journey">'+
- moduleView(g,u,i,0,"Discover","Learning goal and practical brief",discover)+
+ moduleView(g,u,i,0,"Discover","Get curious. Understand the key idea.",discover)+
  moduleView(g,u,i,1,"Experiment","Run code or calculations and check the result",experiment)+
  moduleView(g,u,i,2,"Understand","Explore visual explanations and transform data",understand)+
  moduleView(g,u,i,3,"Practice","Solve the mission and 50 guided questions",practice)+
@@ -120,5 +116,5 @@ a.href=href;a.download="EBDA-year"+g+"-unit"+(u+1)+"-session"+(i+1)+"-evidence.t
 document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(href),5000);
 }
 function runPython(override){const input=document.getElementById("studio-editor"),output=document.getElementById("studio-output");if(!input||!output)return;editPython=input.value;const submittedCode=typeof override==="string"?override:editPython;if(activeWorker)activeWorker.terminate();output.textContent="Loading Python runtime...";const workerCode='importScripts("https://cdn.jsdelivr.net/pyodide/v0.27.7/full/pyodide.js");(async()=>{try{const py=await loadPyodide({stdout:s=>postMessage({type:"print",text:s}),stderr:s=>postMessage({type:"print",text:s})});postMessage({type:"ready"});onmessage=async e=>{try{await py.runPythonAsync(e.data);postMessage({type:"done"})}catch(err){postMessage({type:"error",text:String(err)})}}}catch(e){postMessage({type:"error",text:String(e)})}})();';const url=URL.createObjectURL(new Blob([workerCode],{type:"text/javascript"}));const w=new Worker(url);activeWorker=w;let lines=[];let timeout=setTimeout(()=>{if(activeWorker===w){w.terminate();URL.revokeObjectURL(url);activeWorker=null;output.textContent="Python runtime load exceeded 45 seconds. Check network connectivity."}},45000);w.onmessage=e=>{const m=e.data;if(m.type==="ready"){URL.revokeObjectURL(url);clearTimeout(timeout);timeout=setTimeout(()=>{if(activeWorker===w){w.terminate();activeWorker=null;output.textContent=lines.join("\n")+"\nExecution stopped after 12 seconds (possible infinite loop)."}},12000);output.textContent="Executing...";w.postMessage(submittedCode)}else if(m.type==="print"){lines.push(m.text);output.textContent=lines.join("\n")}else if(m.type==="done"||m.type==="error"){if(m.type==="error")lines.push(m.text);output.textContent=lines.join("\n")||"(no printed output)";if(m.type==="done"){const route=currentKey.split("-").map(Number);if(typeof override==="string"&&route.length===3&&window.EBDA_CODE_TESTS)window.EBDA_CODE_TESTS.reportPython(route[0],route[1],route[2],lines);if(route.length===3)window.EBDA_RUBRIC.observe(route[0],route[1],route[2],{success:true,hasEvidence:lines.length>0,output:lines.join("\n")});}clearTimeout(timeout);w.terminate();activeWorker=null}};w.onerror=()=>{output.textContent="Unable to load Python worker. Check internet access.";clearTimeout(timeout);URL.revokeObjectURL(url);w.terminate();activeWorker=null}}
-return {reset,session,setSection,value,pick,check,markTask,checkNumeric,runSQL,runPython,exportEvidence,saveEditor,resetEditor,editorKey};
+return {reset,session,setSection,value,pick,check,checkNumeric,runSQL,runPython,exportEvidence,saveEditor,resetEditor,editorKey};
 })();
