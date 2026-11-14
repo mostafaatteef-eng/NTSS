@@ -87,9 +87,10 @@ function session(g,u,i,n=0){
  '<b>Performance indicators:</b><ul>'+p.kpis.map(x=>'<li>'+esc(x)+'</li>').join("")+'</ul>'+
  '<p class="muted">This is a proposed session alignment to unit indicators, not a certified official assessment.</p></details>';
  const discover=window.EBDA_THEORY.advanced(g,u,i,guide,p,name);
+ const extraCode=window.EBDA_CODE_TESTS.panel(g,u,i);
  const experiment=(p.engine==="python"||p.engine==="sql"?program(d):calculated(d))+
  '<details class="lab-support"><summary>Check the result with a calculation</summary><div class="lab-support__body">'+evidence+'</div></details>'+
- window.EBDA_CODE_TESTS.panel(g,u,i);
+ (extraCode?'<details class="lab-support"><summary>Try a code challenge with automated tests</summary><div class="lab-support__body">'+extraCode+'</div></details>':'');
  const understand=window.EBDA_VISUALIZER.panel(g,u,i)+
  '<details class="lab-support"><summary>Try the data playground</summary><div class="lab-support__body">'+window.EBDA_PLAYGROUND.panel(g,u,i)+'</div></details>';
  const review=window.EBDA_RUBRIC.panel(g,u,i)+outcomes+
@@ -101,7 +102,7 @@ function session(g,u,i,n=0){
  const bodies=[discover,experiment,understand,check,practice];
  const selected=Math.max(0,Math.min(4,Number(n)||0));
  return '<div class="eyebrow">YEAR '+g+' · UNIT '+(u+1)+' · SESSION '+(i+1)+'</div>'+
- '<h2 class="advanced-lesson-title">'+esc(name)+'</h2>'+
+ (selected===0?'':'<h2 class="advanced-lesson-title">'+esc(name)+'</h2>')+
  '<p class="advanced-lesson-intro">'+esc([
  "Start with one clear idea. Predict what you will observe.",
  "Try the experiment. Run code or change values and compare the results.",
