@@ -11,6 +11,16 @@ A free, browser-based interactive learning experience for Ebdaa National Technic
 
 `grade-catalog.js` holds the year/subject/unit/session taxonomy and is editable only by users with repository write permissions. Additional general-education or technical subjects can be added after their official syllabi are uploaded.
 
+## Challenge Arena — enhanced specialization pedagogy
+
+Every specialization unit in Years 1, 2 and 3 now has its own **three-stage practical decision-making mission** (18 missions, 54 curriculum-aligned checks). Each mission introduces a vocational scenario, one decision per stage, explanatory feedback, optional non-revealing hints, an end-of-mission summary, and an unlimited retry button. These are supplementary formative exercises authored for this platform, not official assessment papers.
+
+- Year 1: missions extend the existing 39 full guided sessions and hands-on visual experiments.
+- Year 2: six missions for automation scripting, relational modeling, database queries, analysis, preprocessing and model evaluation. Unit lesson titles remain indexes pending full lesson authoring.
+- Year 3: six missions on statistical analysis, annotation, monitoring, governance, privacy/fairness, and precision agriculture. The complete unit lesson library still needs full learning-lab authoring.
+
+All mission questions and answers live in `missions-data.js` and require GitHub collaborator access to edit. Tests check every mission. Results and attempts exist only in browser memory during the active visit. Do not treat them as formal assessment or student records.
+
 ## Public learning
 - No student accounts, no student names, no teacher dashboards and no student analytics.
 - Six curriculum units and 39 short concept journeys, with 39 distinct entry questions and a separate application checkpoint.
