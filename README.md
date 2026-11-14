@@ -2,6 +2,15 @@
 
 A free, browser-based interactive learning experience for EBDA National Technical Science Schools (Badr) — Year 1 AI and Data Engineering.
 
+## In-lesson assessment sequence — corrected
+
+- **No separate Practice Workshop card or launch button** is rendered.
+- **Year 1:** students move through prediction → experiment → explanation → concept check → **50 guided questions as the fifth lesson stage**, then advance to the next lesson after completing the questions.
+- **Years 2 and 3:** the 50-question sequence appears directly in the same practical lesson page with its runtime lab and evidence checks, immediately showing Question 1/50.
+- Questions are shuffled **once when starting each lesson attempt**, remain in the same order through all checkpoints, and shuffle anew on retry. The full 50-question pool is preserved.
+- All states are kept in memory; no student accounts, profile data or server scores. Intermediate feedback, mastery checkpoints and explanations remain available.
+- A scripted functional regression traversed 116 lessons and all 50 steps of a first-year lesson, including end-of-lesson navigation. This is not a confirmed live GitHub Pages/Chromium run.
+
 ## Adaptive learning, named skill mastery and applied laboratories
 
 The EBDA Learning Hub now has four integrated additions:
