@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import vm from "node:vm";
 
-const paths=["index.html","curriculum-data.js","grade-catalog.js","experiments.js","challenge.js","advanced-labs.js","microgames.js","missions-data.js","performance-map.js","session-guides.js","lab-specialists.js","numeric-challenges.js","question-factory.js","mastery-engine.js","mistake-review.js","practice-workshop.js","case-labs.js","scenario-labs.js","practical-rubrics.js","visual-playground.js","code-challenges.js","concept-visualizer.js","theory-studio.js","lab-studio.js"];
+const paths=["index.html","curriculum-data.js","grade-catalog.js","experiments.js","challenge.js","advanced-labs.js","microgames.js","missions-data.js","performance-map.js","session-guides.js","lab-specialists.js","numeric-challenges.js","question-factory.js","mastery-engine.js","mistake-review.js","practice-workshop.js","case-labs.js","scenario-labs.js","practical-rubrics.js","visual-playground.js","code-challenges.js","concept-visualizer.js","lesson-puzzles.js","theory-studio.js","lab-studio.js"];
 for(const name of paths)assert.ok(fs.existsSync(name),name+" must exist");
 const html=fs.readFileSync("index.html","utf8");
 const scripts=paths.slice(1).map(x=>fs.readFileSync(x,"utf8"));
@@ -87,6 +87,8 @@ for(const s of data.sessions){
   context.setLab(4);
   assert.ok(content.innerHTML.includes('type="range"'),"Experiment: "+s.id);
   context.next();
+  assert.ok(content.innerHTML.includes("ebda-puzzle"),"Year 1 mini-game missing: "+s.id);
+  assert.ok(content.innerHTML.includes("Unlock a factory mystery"),"Year 1 mission route missing: "+s.id);
   context.next();
   const q=vm.runInContext("currentChallenge()",context);
   assert.equal(q.options.length,4);
@@ -104,6 +106,36 @@ for(const s of data.sessions){
   assert.ok(!content.innerHTML.includes("Begin 50-question workshop"),"Standalone workshop remains");
 
 }
+// Review actual puzzle answers and full game flows for all three grades.
+const puzzleEngine=context.window.EBDA_PUZZLES;
+let puzzleLessons=0,gameRounds=0;
+for(const year of [1,2,3]){
+ for(let unit=0;unit<6;unit++){
+  const sessions=year===1?data.sessions.filter(s=>s.unit===unit+1):grades[year-1].subjects[0].units[unit].sessions;
+  for(let i=0;i<sessions.length;i++){
+   assert.ok(puzzleEngine.panel(year,unit,i).includes("puzzle-choice"),"Puzzles must be visible");
+   for(let r=0;r<3;r++){
+    const problem=puzzleEngine.task(year,unit,i,r);
+    assert.equal(new Set(problem.options).size,problem.options.length,"Duplicate puzzle options");
+    assert.ok(problem.answerIndex>=0 && problem.answerIndex<problem.options.length);
+    puzzleEngine.choose(year,unit,i,(problem.answerIndex+1)%problem.options.length);
+    assert.equal(puzzleEngine.progress(year,unit,i).solved,r,"Wrong choice must not unlock puzzle");
+    puzzleEngine.hint(year,unit,i);
+    assert.ok(puzzleEngine.panel(year,unit,i).includes("puzzle-tip"),"Hint missing");
+    puzzleEngine.choose(year,unit,i,problem.answerIndex);
+    assert.equal(puzzleEngine.progress(year,unit,i).solved,r+1,"Correct answer not registered");
+    puzzleEngine.next(year,unit,i);
+    gameRounds++;
+   }
+   assert.ok(puzzleEngine.progress(year,unit,i).done,"Mini-game does not complete");
+   puzzleEngine.restart(year,unit,i);
+   assert.equal(puzzleEngine.progress(year,unit,i).solved,0,"Replay must reset progress");
+   puzzleLessons++;
+  }
+ }
+}
+assert.equal(puzzleLessons,116);
+assert.equal(gameRounds,348);
 const academic=context.window.EBDAA_PERFORMANCE;
 assert.equal(Object.keys(academic).length,12);
 assert.equal(Object.keys(context.window.EBDAA_SESSION_GUIDES).length,77);
@@ -127,6 +159,9 @@ for(const year of [2,3]){
    assert.ok(content.innerHTML.includes("EVIDENCE CHECK"),"Numeric evidence missing: "+tag);
    if(context.window.EBDA_CODE_TESTS.task(year,unit,i))assert.ok(content.innerHTML.includes("EXECUTABLE CODE CHALLENGE"),"Code challenge missing: "+tag);
    vm.runInContext("goAdvancedStep(2)",context);
+   assert.ok(content.innerHTML.includes("ebda-puzzle"),"Playable puzzle missing: "+tag);
+   assert.ok(content.innerHTML.includes("PLAY & LEARN"),"Game entry is not visible: "+tag);
+   assert.ok(content.innerHTML.includes("Unlock the factory mystery"),"Factory puzzle route is missing: "+tag);
    assert.ok(content.innerHTML.includes("INTERACTIVE CONCEPT VISUALIZER"),"Visualization missing: "+tag);
    assert.ok(content.innerHTML.includes("VISUAL DATA PLAYGROUND"),"Data playground missing: "+tag);
    vm.runInContext("goAdvancedStep(3)",context);
