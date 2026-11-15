@@ -2,6 +2,20 @@
 
 A free, browser-based interactive learning experience for EBDA National Technical Science Schools (Badr) — Year 1 AI and Data Engineering.
 
+## Visible in-lesson games and factory puzzles — 15 November 2026
+
+Interactive activities are no longer confined to a hidden optional panel or the separate 50-question Focus Practice screen. **Understand** in all 116 lessons now starts with a directly playable **three-round mini-game**, choosing the computed game family from the unit's teaching engine:
+
+- **SQL / data modeling:** *SQL Key Detective* matches inspection foreign keys to machine primary keys, including an unmatched row excluded by INNER JOIN
+- **Python:** *Python Loop Runner* asks the learner to trace a real calculated program result
+- **Statistics:** *Data Detective* checks a sample mean
+- **Machine learning:** *KNN Prediction Quest* compares distances and a three-neighbor vote
+- **Sensors / quality:** *Sensor Alert Rescue* applies a strict threshold condition
+
+Each game gives immediate feedback, an optional hint, a three-puzzle progress bar and replay, without student accounts. The following learning material remains available as **clear, optional disclosures** within the same Understand stage: *Explore the visual explanation*, *Try the data playground* and *Unlock the factory mystery*. The long-form 50-question challenge is prominently accessible from every lesson and remains in its fully distraction-free Focus Practice view. This structure gives priority to one activity at a time rather than stacking all sections.
+
+**Coverage and boundaries:** 348 question rounds across the 116 lessons were exercised in JavaScript simulations, including correct and incorrect answers, hints, completion and replay. These puzzles reuse synthetic unit-level data to strengthen concepts; they do **not** claim to individually reproduce each lesson's official practical checklist. Chromium, Pyodide, SQLite and deployed GitHub Pages checks still require successful GitHub Actions runs before final operational signoff.
+
 ## Focus Practice — question-only responsive interface (15 November 2026)
 
 When a learner opens the 50 questions in **any grade**, the standard learning layout is replaced by a dedicated **question-only focus screen**. Navigation menus, lesson sidebars, the five-stage map, lab tools, industrial missions, academic rubrics, and source-details blocks are not shown during questions.
