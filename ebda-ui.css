@@ -675,3 +675,84 @@ body.practice-focus-active{background:#f8faf9}
  .practice-focus .focus-mistake #mistake-review{padding:0 6px 8px}
 }
 @media(prefers-reduced-motion:reduce){.practice-focus__track>i{transition:none}}
+
+
+/* In-lesson game-first learning v1 — no new dashboards, one interactive puzzle at a time. */
+.ebda-puzzle{
+  background:#fff;border:1px solid #cfdfd6;border-radius:22px;
+  padding:clamp(22px,3vw,34px);
+  box-shadow:0 12px 35px rgb(13 94 79 / 6%);
+  margin:8px 0 18px;min-width:0;overflow-wrap:anywhere;
+}
+.puzzle-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+.puzzle-heading h3{margin:6px 0 0;font-size:clamp(20px,2.2vw,26px);letter-spacing:-.03em}
+.puzzle-kicker{font-size:11px;font-weight:800;letter-spacing:.12em;color:#117e74}
+.puzzle-number{
+  flex-shrink:0;background:#fff3cd;color:#795e19;border:1px solid #ffe299;
+  border-radius:99px;padding:8px 12px;font-size:11px;font-weight:800;white-space:nowrap;
+}
+.puzzle-meter{height:6px;overflow:hidden;border-radius:99px;background:#e8f0eb;margin:20px 0 23px}
+.puzzle-meter i{display:block;background:#17a092;border-radius:99px;height:100%;transition:width .2s ease}
+.puzzle-prompt{font-size:clamp(17px,1.9vw,21px)!important;line-height:1.5;color:#203c34;font-weight:700;margin:0 0 17px}
+.puzzle-evidence{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin:14px 0 22px}
+.puzzle-evidence span{
+  border-radius:12px;background:#ebf6f1;border:1px solid #d7e9e0;
+  padding:11px 15px;color:#20665c;font-weight:720;font-size:13px;
+}
+.puzzle-evidence .puzzle-hot{background:#fff1e9;color:#9c5635;border-color:#f0d6c7}
+.puzzle-program{
+  overflow-x:auto;background:#202e35;color:#e5f9f1;
+  border-radius:14px;padding:18px 21px;font-size:14px;line-height:1.7;
+  margin:12px 0 20px;white-space:pre;
+}
+.puzzle-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+.puzzle-choice{
+  min-height:64px;display:flex;align-items:center;gap:12px;
+  padding:12px 15px;border:1.5px solid #d9e6de;border-radius:14px;
+  background:#fff;text-align:left;color:#213a32;line-height:1.4;
+  font-size:clamp(13px,1.3vw,15px);font-weight:650;
+}
+.puzzle-choice:hover:not(:disabled){border-color:#139788;background:#f2faf6}
+.puzzle-choice:focus-visible{outline:3px solid #17a092;outline-offset:3px}
+.puzzle-choice__key{
+  display:grid;place-items:center;width:31px;height:31px;flex:0 0 31px;
+  border-radius:9px;background:#edf4ef;color:#567768;font-size:12px;font-weight:800;
+}
+.puzzle-choice--correct,.puzzle-choice--correct:disabled{
+  background:#e5f7ee!important;border-color:#2ca884!important;color:#116451!important;opacity:1;
+}
+.puzzle-choice--correct .puzzle-choice__key{background:#c7ebdc;color:#116451}
+.puzzle-result{padding:17px 19px;border-radius:15px;border:1px solid #cde9dc;background:#effaf3;margin-top:20px}
+.puzzle-result h4{font-size:21px;margin:0 0 8px}
+.puzzle-result p{margin:5px 0 12px;font-size:14px}
+.puzzle-try{margin-top:16px;padding:12px 14px;border-radius:12px;background:#fff8ec;color:#805b24;font-size:13px}
+.puzzle-tip{font-size:13px!important;color:#5d563e;background:#fff9ed;padding:11px 14px;border-radius:11px;margin-top:12px}
+.puzzle-controls{display:flex;justify-content:flex-end;margin-top:18px}
+.puzzle-controls .btn{min-height:45px;border-radius:12px}
+.puzzle-expand{border-color:#d9e8df}
+.puzzle-expand>summary{min-height:56px;padding:16px 18px;color:#197468;font-weight:750}
+.puzzle-expand[open]>summary{background:#f4faf7}
+.lesson-shortcut .lesson-jump{
+  background:#e7f7f0;border:1px solid #badfcf;color:#0c7066;
+  border-radius:999px;padding:12px 18px;min-height:44px;font-size:13px;
+  display:inline-flex;align-items:center;gap:8px;text-decoration:none;
+}
+.lesson-shortcut .lesson-jump:before{content:"🧠";font-size:15px}
+.lesson-shortcut .lesson-jump:hover{background:#d7f1e5;border-color:#94cbb6;text-decoration:none}
+@media(max-width:760px){
+ .ebda-puzzle{padding:20px 17px;border-radius:18px}
+ .puzzle-options{grid-template-columns:1fr}
+ .puzzle-choice{min-height:58px;font-size:14px}
+ .puzzle-program{font-size:13px}
+ .puzzle-prompt{font-size:19px!important}
+}
+@media(max-width:430px){
+ .puzzle-heading{gap:9px}
+ .puzzle-heading h3{font-size:20px}
+ .puzzle-number{padding:7px 9px;font-size:10px}
+ .puzzle-evidence{gap:7px}
+ .puzzle-evidence span{font-size:12px;padding:9px 12px}
+ .puzzle-controls .btn{width:100%}
+ .lesson-shortcut .lesson-jump{width:100%;justify-content:center}
+}
+@media(prefers-reduced-motion:reduce){.puzzle-meter i{transition:none}}
