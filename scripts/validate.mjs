@@ -136,6 +136,10 @@ for(const year of [1,2,3]){
 }
 assert.equal(puzzleLessons,116);
 assert.equal(gameRounds,348);
+const missingKeyPuzzle=puzzleEngine.task(2,1,0,2);
+assert.equal(missingKeyPuzzle.options[missingKeyPuzzle.answerIndex],"No match — excluded","INNER JOIN must exclude unmatched rows");
+const loopPuzzle=puzzleEngine.task(2,0,0,0);
+assert.equal(loopPuzzle.options[loopPuzzle.answerIndex],"6","Python trace arithmetic must be correct");
 const academic=context.window.EBDAA_PERFORMANCE;
 assert.equal(Object.keys(academic).length,12);
 assert.equal(Object.keys(context.window.EBDAA_SESSION_GUIDES).length,77);
