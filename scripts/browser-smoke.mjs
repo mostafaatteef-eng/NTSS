@@ -77,10 +77,12 @@ try{
  await page.getByRole("button",{name:"Check answer",exact:true}).click();
  if(!await page.locator(".advanced-stage-content").getByText(/Correct/).count())throw Error("Concept feedback missing");
  await next();
- if(!await page.getByText("QUESTION 1 / 50").count())throw Error("Integrated practice missing");
- await page.locator(".advanced-stage-content details.lab-support > summary").first().click();
- if(!await page.getByText("PRACTICAL RUBRIC").count())throw Error("Practical rubric unavailable");
- if(!await page.locator("#rubric-progress").getByText(/Automatically verified: 35 \/ 65/).count())throw Error("Numerical evidence score lost between stages");
+ if(!await page.locator(".practice-focus").count())throw Error("Focus Practice view missing");
+ if(await page.locator(".side-list, .lesson-steps, .lab-support").count())throw Error("Distractions still visible during practice");
+ if(await page.locator(".practice-focus").getByText(/PRACTICAL RUBRIC|UNIT CASEFILE/).count())throw Error("Extraneous modules in Focus Practice");
+ if((await page.locator("#focus-counter").textContent())!=="Question 1 / 50")throw Error("Question counter missing");
+ if(!await page.locator("#ebdaa-practice-stage").count())throw Error("Question panel missing");
+ if(await page.evaluate(()=>window.EBDA_RUBRIC.score(2,0,0).earned)!==35)throw Error("Numeric evidence state was not preserved");
  const prior=await page.evaluate(()=>window.EBDAA_PRACTICE.questionOrder());
  await page.evaluate(()=>window.EBDAA_PRACTICE.restart());
  const current=await page.evaluate(()=>window.EBDAA_PRACTICE.questionOrder());
@@ -96,9 +98,9 @@ try{
  await page.locator("#ebdaa-practice-stage").getByRole("button",{name:"Check answer",exact:true}).click();
  if(!await page.locator("#ebdaa-practice-stage").getByText(/Correct!|Not quite yet/).count())throw Error("Practice feedback missing");
  await page.locator("#ebdaa-practice-stage").getByRole("button",{name:/Next question/i}).click();
- if(!await page.getByText("QUESTION 2 / 50").count())throw Error("Next practice question missing");
+ if((await page.locator("#focus-counter").textContent())!=="Question 2 / 50")throw Error("Next practice question missing");
  await page.locator("#ebdaa-practice-stage").getByRole("button",{name:/Previous/i}).click();
- if(!await page.getByText("QUESTION 1 / 50").count())throw Error("Practice question history missing");
+ if((await page.locator("#focus-counter").textContent())!=="Question 1 / 50")throw Error("Practice question history missing");
  await goHome();
  await page.getByRole("button",{name:/View subjects/i}).nth(2).click();
  await page.getByRole("button",{name:/Explore subject/i}).click();
@@ -114,11 +116,28 @@ try{
  await page.locator(".advanced-stage-content button.choice").nth(yearThreeAnswer).click();
  await page.getByRole("button",{name:"Check answer",exact:true}).click();
  await page.locator(".stage .stepfooter .btn.teal").click();
- if(!await page.getByText("QUESTION 1 / 50").count())throw Error("Year 3 integrated practice missing");
+ if((await page.locator("#focus-counter").textContent())!=="Question 1 / 50")throw Error("Year 3 integrated practice missing");
  if(await page.evaluate(()=>window.EBDAA_PRACTICE.questionOrder().length)!==50)throw Error("Year 3 full question bank missing");
+ // Verify the actual question-only UI at laptop, tablet and phone widths.
+ for(const width of [1366,820,390]){
+   await page.setViewportSize({width,height:844});
+   const dimensions=await page.evaluate(()=>{
+     const footer=document.querySelector(".practice-focus .stepfooter");
+     const content=document.querySelector(".practice-focus__content");
+     return {overflow:document.documentElement.scrollWidth-innerWidth,
+       footer:footer?getComputedStyle(footer).position:null,
+       footerRight:footer?.getBoundingClientRect().right,
+       contentRight:content?.getBoundingClientRect().right,
+       topHidden:getComputedStyle(document.querySelector(".top")).display==="none"};
+   });
+   if(dimensions.overflow>2||dimensions.footer!=="fixed"||!dimensions.topHidden)throw Error("Focus Practice layout broken at "+width+"px: "+JSON.stringify(dimensions));
+   if(dimensions.contentRight>width+2||dimensions.footerRight>width+2)throw Error("Overflowing question controls at "+width+"px");
+ }
+ await page.locator(".practice-focus__exit").click();
+ if(await page.locator(".practice-focus").count())throw Error("Exit practice did not restore the lesson");
  await page.setViewportSize({width:390,height:844});
  await page.reload({waitUntil:"load"});
  if(await page.locator("body").evaluate(el=>el.scrollWidth)>410)throw Error("Mobile horizontal overflow");
  if(errors.length)throw Error("JS errors: "+errors.join("; "));
- console.log("Browser smoke PASS: minimal UI, five sequential learning stages, search, rubric, data transforms, guided practice, mobile width.");
+ console.log("Browser smoke PASS: focused question-only view on laptop, tablet and mobile, 50-question navigation, retained lab evidence and safe exit.");
 } finally {await browser.close();await new Promise(ok=>server.close(ok))}
