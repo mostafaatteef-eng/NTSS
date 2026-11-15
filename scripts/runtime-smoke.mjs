@@ -18,12 +18,15 @@ const browser=await chromium.launch({headless:true,args:["--no-sandbox"]});
 const page=await browser.newPage({viewport:{width:1360,height:900}});
 page.setDefaultTimeout(30000);
 const errors=[];page.on("pageerror",e=>errors.push(e.message));
-const stage=async n=>{
- if(n===4){await page.evaluate(()=>jumpAdvancedPractice())}
- else{await page.evaluate(n=>goAdvancedStep(n),n)}
- if(n===4){
-  const optional=page.locator(".advanced-stage-content details.lab-support").first();
-  if(!(await optional.evaluate(el=>el.open)))await optional.locator("summary").first().click();
+const stage=async(n,expand)=>{
+ await page.evaluate(n=>goAdvancedStep(n),n);
+ if(expand==="mystery"){
+   const summary=page.locator(".advanced-stage-content details.lab-support > summary").filter({hasText:/factory mystery/i});
+   await summary.click();
+ }
+ if(expand==="code"){
+   const summary=page.locator(".advanced-stage-content details.lab-support > summary").filter({hasText:/code challenge with automated tests/i});
+   await summary.click();
  }
 };
 const enter=async(g,u,i)=>{
@@ -37,7 +40,7 @@ const enter=async(g,u,i)=>{
 try{
  // Start the case with proof-gating: guessing an answer before executing SQL must fail.
  await enter(2,1,0);
- await stage(4);
+ await stage(2,"mystery");
  await page.locator("#case-answer").fill("3");
  await page.getByRole("button",{name:/Verify evidence & unlock/i}).click();
  if(!await page.getByText(/Execute a relevant SQL query first/i).count())throw Error("Case did not block unverified guess");
@@ -45,7 +48,7 @@ try{
  await page.locator("#studio-editor").fill("SELECT COUNT(*) AS machine_count FROM machines;");
  await page.getByRole("button",{name:/Execute SQL|Run SQL/i}).click();
  await page.waitForFunction(()=>document.querySelector("#studio-output")?.textContent?.includes("machine_count")&&document.querySelector("#studio-output")?.textContent?.includes("3"),null,{timeout:90000});
- await stage(4);
+ await stage(2,"mystery");
  await page.locator("#case-answer").fill("3");
  await page.getByRole("button",{name:/Verify evidence & unlock/i}).click();
  if(!await page.getByRole("button",{name:/Next clue/i}).count())throw Error("Valid SQL evidence did not unlock first clue");
@@ -58,7 +61,7 @@ try{
  await page.waitForFunction(()=>document.querySelector("#studio-output")?.textContent?.includes("Laser-C | 7"),null,{timeout:90000});
  const sqlOutput=await page.locator("#studio-output").textContent();
  if(!sqlOutput.includes("Press-A | 3"))throw Error("SQL JOIN result inaccurate");
- await stage(4);
+ await stage(2,"mystery");
  await page.locator("#case-answer").fill("Laser-C");
  await page.getByRole("button",{name:/Verify evidence & unlock/i}).click();
  if(!await page.getByRole("button",{name:/Next clue/i}).count())throw Error("JOIN evidence did not unlock second clue");
@@ -71,6 +74,7 @@ try{
  await stage(1);
  if(!await page.locator("#studio-output").textContent().then(t=>t?.includes("Read-only")))throw Error("SQL feedback lost after returning to the code editor");
  // Validate SQL challenge against two independent database fixtures.
+ await stage(1,"code");
  await page.locator("#studio-editor").fill("SELECT COUNT(*) AS machine_count FROM machines;");
  await page.getByRole("button",{name:/Run test cases/i}).click();
  await page.waitForFunction(()=>document.querySelector("#ebda-code-results")?.textContent?.includes("2/2 SQL test cases passed"),null,{timeout:90000});
@@ -83,6 +87,7 @@ try{
  const pythonOutput=await page.locator("#studio-output").textContent();
  if(!pythonOutput.includes("mean: 7.25"))throw Error("Pyodide output invalid");
  // Validate student-defined Python function using three real test inputs.
+ await stage(1,"code");
  await page.locator("#studio-editor").fill("def average(values):\n    return sum(values)/len(values)");
  await page.getByRole("button",{name:/Run test cases/i}).click();
  await page.waitForFunction(()=>document.querySelector("#ebda-code-results")?.textContent?.includes("3 / 3 Python test cases passed"),null,{timeout:90000});
