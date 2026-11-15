@@ -215,7 +215,7 @@ window.EBDAA_ENGLISH_UNITS={
       "term": 1,
       "focus": "Reported statements and commands",
       "sessions": [
-        "Machines Through Time",
+        "Machines in Egypt: Past and Present",
         "Technical Support Call",
         "The Role of Machines",
         "Our Machine-Driven World",
@@ -241,7 +241,7 @@ window.EBDAA_ENGLISH_UNITS={
       "term": 1,
       "focus": "Adjectives and compound adjectives",
       "sessions": [
-        "Life Beneath the Waves",
+        "A Colorful Underwater City",
         "The Ocean’s Gentle Giants",
         "The Underwater World",
         "Into the Depths of the Ocean",
