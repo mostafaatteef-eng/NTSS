@@ -91,8 +91,11 @@ function session(g,u,i,n=0){
  const experiment=(p.engine==="python"||p.engine==="sql"?program(d):calculated(d))+
  '<details class="lab-support"><summary>Check the result with a calculation</summary><div class="lab-support__body">'+evidence+'</div></details>'+
  (extraCode?'<details class="lab-support"><summary>Try a code challenge with automated tests</summary><div class="lab-support__body">'+extraCode+'</div></details>':'');
- const understand=window.EBDA_VISUALIZER.panel(g,u,i)+
- '<details class="lab-support"><summary>Try the data playground</summary><div class="lab-support__body">'+window.EBDA_PLAYGROUND.panel(g,u,i)+'</div></details>';
+ const understand=window.EBDA_PUZZLES.panel(g,u,i)+
+ '<details class="lab-support puzzle-expand"><summary>👁 Explore the visual explanation</summary><div class="lab-support__body">'+window.EBDA_VISUALIZER.panel(g,u,i)+'</div></details>'+
+ '<details class="lab-support puzzle-expand"><summary>🧪 Try the data playground</summary><div class="lab-support__body">'+window.EBDA_PLAYGROUND.panel(g,u,i)+'</div></details>'+
+ '<details class="lab-support puzzle-expand"><summary>🔎 Unlock the factory mystery</summary><div class="lab-support__body">'+
+ window.EBDAA_STORIES.panel(g,u,i)+window.EBDAA_CASE.panel(g,u,i)+'</div></details>';
  const review=window.EBDA_RUBRIC.panel(g,u,i)+outcomes+
  '<div class="actions"><button class="btn light" onclick="EBDAA_STUDIO.exportEvidence('+g+','+u+','+i+')">↓ Save my lab evidence (.txt)</button></div>';
  const practice=window.EBDAA_PRACTICE.panel(g,u,i)+
@@ -106,7 +109,7 @@ function session(g,u,i,n=0){
  '<p class="advanced-lesson-intro">'+esc([
  "Start with one clear idea. Predict what you will observe.",
  "Try the experiment. Run code or change values and compare the results.",
- "Look for the pattern. Explain why the experiment behaved that way.",
+ "Solve three quick puzzles, then explore the visual explanation.",
  "Check your understanding with one short question.",
  "Apply what you learned in 50 guided questions, with help when needed."
  ][selected])+'</p>'+
