@@ -26,31 +26,90 @@ const vocabulary=[[["employee","worker at a company"],["employer","provider of j
 let state={g:1,u:0,i:0,cursor:0,answers:{},items:[],done:false};
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 function build(g,u,i){
-const unit=window.EBDAA_ENGLISH_UNITS[g][u],pool=rules[unit.focus],wordset=vocabulary[(g===1?0:g===2?3:15)+u],arr=[];
-function add(prompt,opts,why,type,passage){
-const shift=(arr.length*3+i)%4;
-arr.push({question:prompt,options:opts.slice(shift).concat(opts.slice(0,shift)),answer:(4-shift)%4,explanation:why,type,passage:passage||""});
-}
-for(let k=0;k<10;k++){const v=pool[(k+i)%pool.length];add(v[0],v[1],"Correct: "+v[1][0]+".","Grammar")}
-for(let k=0;k<25;k++){const idx=(k+i)%5,w=wordset[idx],alts=[1,2,3].map(d=>wordset[(idx+d)%5]);
-if(k%2===0)add("What is the meaning of '"+w[0]+"'?",[w[1],...alts.map(x=>x[1])],w[0]+" means "+w[1]+".","Vocabulary");
-else add("Which word means '"+w[1]+"'?",[w[0],...alts.map(x=>x[0])],w[0]+" means "+w[1]+".","Vocabulary");}
-for(let j=0;j<3;j++){const x=wordset[(j+i)%5],y=wordset[(j+i+1)%5],z=wordset[(j+i+2)%5];const passage="In a school activity about "+unit.title+", students first learned '"+x[0]+"', meaning "+x[1]+". Next, they learned '"+y[0]+"', meaning "+y[1]+". Finally, they discussed '"+z[0]+"', meaning "+z[1]+". They worked together in small groups and presented their findings on Friday.";
-add("Which word was introduced first?",[x[0],y[0],z[0],"none of these"],"The first word was "+x[0]+".","Reading",passage);
-add("Which word was introduced second?",[y[0],z[0],x[0],"none of these"],"The second word was "+y[0]+".","Reading",passage);
-add("Which word was discussed last?",[z[0],y[0],x[0],"none of these"],"The final word was "+z[0]+".","Reading",passage);
-add("How did the students work?",["In small groups","Alone at home","By telephone","Without discussion"],"The passage says small groups.","Reading",passage);
-add("When did they present their findings?",["Friday","Monday","Tuesday","Sunday"],"The passage says Friday.","Reading",passage);
-}
-if(arr.length!==50)throw Error("Expected 50 questions");return arr;
+ const unit=window.EBDAA_ENGLISH_UNITS[g][u],pool=rules[unit.focus],words=vocabulary[(g===1?0:g===2?3:15)+u],arr=[],lesson=unit.sessions[i];
+ function add(question,options,explanation,type,passage){
+  if(options.length!==4||new Set(options).size!==4)throw Error("Invalid distractors: "+question);
+  const shift=(arr.length*3+i)%4;
+  arr.push({id:g+"-"+u+"-"+i+"-"+arr.length,question,options:options.slice(shift).concat(options.slice(0,shift)),answer:(4-shift)%4,explanation,type,passage:passage||""});
+ }
+ const wordsAt=n=>words[(n+i)%words.length];
+ // Grammar questions target the exact language focus listed in the supplied guide.
+ for(let k=0;k<6;k++){const v=pool[(k+i)%pool.length];add(v[0],v[1],"The correct form is: "+v[1][0]+". Review "+unit.focus+".","Grammar")}
+ // Three distinct vocabulary task types per word; avoid 25 near-identical definitions.
+ for(let k=0;k<15;k++){
+  const j=k%5,w=wordsAt(j),other=[1,2,3].map(d=>wordsAt((j+d)%5));
+  if(k<5)add("What does '"+w[0]+"' mean?",[w[1],...other.map(v=>v[1])],w[0]+": "+w[1]+".","Vocabulary");
+  else if(k<10)add("Which word means '"+w[1]+"'?",[w[0],...other.map(v=>v[0])],"The word is "+w[0]+".","Vocabulary");
+  else add("Select the best term for this clue: "+w[1]+".",[w[0],...other.map(v=>v[0])],"The target term is "+w[0]+".","Word in Context");
+ }
+ // Three original short reading scenarios, linked to the chosen lesson title.
+ for(let j=0;j<3;j++){
+  const x=wordsAt(j),y=wordsAt(j+1),z=wordsAt(j+2);
+  const lead=["During a practical workshop","While preparing a class presentation","For a community learning activity"][j];
+  const place=["the school library","a technical classroom","the project hall"][j];
+  const day=["Tuesday","Thursday","Saturday"][j];
+  const passage=lead+" about "+lesson+", students met in "+place+". Their task was to explain "+x[0]+" ("+x[1]+") and compare it with "+y[0]+" ("+y[1]+"). The group also included "+z[0]+" ("+z[1]+") in its summary. They checked their ideas with their teacher before sharing their conclusions on "+day+".";
+  add("Where did the activity take place?",[place,"the sports stadium","a train station","a restaurant"],"The first sentence names "+place+".","Reading",passage);
+  add("Which concept did the students explain?",[x[0],y[0],z[0],"a travel ticket"],"The task focused on "+x[0]+".","Reading",passage);
+  add("What was "+x[0]+" compared with?",[y[0],x[0],z[0],"the weather forecast"],"The passage explicitly compares "+x[0]+" with "+y[0]+".","Reading",passage);
+  add("Who checked the students' ideas?",["Their teacher","A taxi driver","A shop assistant","A doctor"],"They checked their ideas with their teacher.","Reading",passage);
+  add("When were the conclusions shared?",[day,...["Monday","Wednesday","Friday","Sunday"].filter(v=>v!==day).slice(0,3)],"The presentation happened on "+day+".","Reading",passage);
+ }
+ // Listening is browser speech synthesis; audio text is original, not an official textbook recording.
+ const a=wordsAt(0),b=wordsAt(1),c=wordsAt(2);
+ const audio="Hello! This is a short update about "+lesson+". Our class met in the science room on Wednesday. We discussed "+a[0]+" and "+b[0]+". We chose "+c[0]+" for our final presentation. Three students presented the results to the teacher.";
+ add("Where did the class meet?",["the science room","the library","the playground","the gym"],"The recording says science room.","Listening",audio);
+ add("On which day did the class meet?",["Wednesday","Monday","Thursday","Saturday"],"The recording names Wednesday.","Listening",audio);
+ add("Which topic was mentioned first?",[a[0],b[0],c[0],wordsAt(3)[0]],"The first topic was "+a[0]+".","Listening",audio);
+ add("Which topic was selected for the final presentation?",[c[0],b[0],a[0],wordsAt(4)[0]],"The class selected "+c[0]+".","Listening",audio);
+ add("How many students presented?",["Three","Two","Four","Five"],"Three students presented.","Listening",audio);
+ add("Who received the presentation?",["The teacher","The head chef","A driver","A shopkeeper"],"The results were presented to the teacher.","Listening",audio);
+ // Writing and speaking tasks combine a free-response practice prompt with an answerable model-choice item.
+ const topic=lesson.toLowerCase();
+ const writing=[
+  ["Choose the clearest opening sentence for a paragraph about "+topic+".",["This paragraph explains key ideas about "+topic+".","About this and that stuff.","Because yes everything there.","Thing in this world topic."]],
+  ["Which sentence makes an appropriate concluding statement?",["In summary, these ideas can help us understand "+topic+".","And that was it things.","Because they and then.","The end but anyway and."]],
+  ["Choose the best formal sentence for a school report.",["The class completed the activity and recorded the results.","We done stuff and it was cool.","They was did a report.","Results is make yesterday."]],
+  ["Which sentence uses a clear supporting reason?",["This method is useful because it helps students organize their work.","This method because because.","Useful is method it.","Method useful without explain."]]
+ ];
+ for(let k=0;k<4;k++)add(writing[k][0],writing[k][1],"Model response: "+writing[k][1][0]+".","Writing");
+ const speaking=[
+  ["How should you politely ask a classmate to explain "+a[0]+"?",["Could you explain "+a[0]+" to me, please?","Explain it, now!","You explain because.","What you meaning this?"]],
+  ["Which response agrees politely during a discussion?",["I agree, and I would like to add another example.","You are wrong, stop.","That's stupid.","No talking allowed."]],
+  ["How can you ask for clarification?",["Could you repeat that more slowly, please?","Speak right!","Repeat is you.","I do not hear because." ]],
+  ["How should you close a brief class presentation?",["Thank you for listening. Do you have any questions?","Okay bye whatever.","You all leave now.","Done presentation thanks not."]]
+ ];
+ for(let k=0;k<4;k++)add(speaking[k][0],speaking[k][1],"A suitable response is: "+speaking[k][1][0]+".","Speaking");
+ if(arr.length!==50)throw Error("Expected 50 questions, got "+arr.length);
+ return arr;
 }
 function draw(){window.EBDA_APP_RENDER?.()}
-function start(g,u,i){state={g,u,i,cursor:0,answers:{},items:build(g,u,i),done:false};draw()}
+function start(g,u,i){state={g,u,i,cursor:0,answers:{},items:build(g,u,i),done:false};transcriptOpen=false;drafts={};draw()}
 function choose(j){if(state.answers[state.cursor]?.checked)return;state.answers[state.cursor]={value:j};draw()}
 function check(){let a=state.answers[state.cursor];if(!a||a.checked)return;a.checked=true;a.correct=a.value===state.items[state.cursor].answer;draw()}
-function next(){if(!state.answers[state.cursor]?.checked)return;if(state.cursor===state.items.length-1)state.done=true;else state.cursor++;draw()}
-function previous(){if(state.cursor>0){state.cursor--;draw()}}
+function next(){if(!state.answers[state.cursor]?.checked)return;if(state.cursor===state.items.length-1)state.done=true;else state.cursor++;transcriptOpen=false;draw()}
+function previous(){if(state.cursor>0){state.cursor--;transcriptOpen=false;draw()}}
 function restart(){start(state.g,state.u,state.i)}
-function render(){const s=state,unit=window.EBDAA_ENGLISH_UNITS[s.g][s.u],q=s.items[s.cursor],a=s.answers[s.cursor],answered=Object.values(s.answers).filter(x=>x.checked).length,correct=Object.values(s.answers).filter(x=>x.correct).length;let content=s.done?'<div class="feedback"><h2>Practice complete</h2><p>Correct: '+correct+' / '+s.items.length+'</p><button class="btn teal" onclick="EBDAA_ENGLISH_PRACTICE.restart()">Practice again</button></div>':'<div class="eyebrow">'+esc(q.type)+' · '+esc(unit.focus)+'</div>'+(q.passage?'<div class="hint"><strong>Reading passage</strong><p>'+esc(q.passage)+'</p></div>':'')+'<h2 class="practice-question">'+esc(q.question)+'</h2><div class="choices">'+q.options.map((o,j)=>'<button class="choice '+(a?.value===j?'chosen ':'')+(a?.checked&&q.answer===j?'correct':'')+'" '+(a?.checked?'disabled':'')+' onclick="EBDAA_ENGLISH_PRACTICE.choose('+j+')">'+esc(o)+'</button>').join('')+'</div>'+(a?.checked?'<div class="feedback '+(a.correct?'':'error')+'"><strong>'+(a.correct?'✓ Correct':'Review your answer')+'</strong><p>'+esc(q.explanation)+'</p></div>':'')+'<div class="stepfooter"><button class="btn light" '+(s.cursor===0?'disabled':'')+' onclick="EBDAA_ENGLISH_PRACTICE.previous()">← Previous</button><button class="btn teal" '+(!a?'disabled':'')+' onclick="EBDAA_ENGLISH_PRACTICE.'+(a?.checked?'next':'check')+'()">'+(a?.checked?'Next →':'Check answer')+'</button></div>';return '<section class="practice-focus"><header class="practice-focus__header"><div class="practice-focus__header-row"><button class="practice-focus__exit" onclick="englishBackToUnit()">← All English lessons</button><span class="practice-focus__year">YEAR '+s.g+' · ENGLISH</span></div><div class="practice-focus__info"><h1 class="practice-focus__lesson">'+esc(unit.sessions[s.i])+'</h1><span class="practice-focus__counter">Question '+(s.done?s.items.length:s.cursor+1)+' / '+s.items.length+'</span></div><div class="practice-focus__track"><i style="width:'+(100*answered/s.items.length)+'%"></i></div></header><div class="practice-focus__content"><div class="guided-question">'+content+'<p class="muted" style="font-size:12px">50 formative grammar, vocabulary and original reading questions. Templates repeat; these are not 50 independently authored textbook exercises. Listening, speaking and writing remain outside the auto-graded assessment.</p></div></div></section>'}
-return {start,choose,check,next,previous,restart,render,build};
+let transcriptOpen=false;let drafts={};
+function playAudio(){
+ const q=state.items[state.cursor];if(q?.type!=="Listening")return;
+ if(typeof window.speechSynthesis==="undefined"){transcriptOpen=true;draw();return}
+ try{window.speechSynthesis.cancel();const utterance=new SpeechSynthesisUtterance(q.passage);utterance.lang="en-US";utterance.rate=.88;window.speechSynthesis.speak(utterance)}catch(e){transcriptOpen=true;draw()}
+}
+function showTranscript(){transcriptOpen=!transcriptOpen;draw()}
+function draft(value){drafts[state.cursor]=String(value)}
+function render(){
+ const s=state,unit=window.EBDAA_ENGLISH_UNITS[s.g][s.u],q=s.items[s.cursor],a=s.answers[s.cursor],answered=Object.values(s.answers).filter(x=>x.checked).length,correct=Object.values(s.answers).filter(x=>x.correct).length;
+ const isAudio=q.type==="Listening";
+ const reading=q.type==="Reading"?'<div class="hint"><strong>Read the passage</strong><p>'+esc(q.passage)+'</p></div>':'';
+ const listening=isAudio?'<div class="hint"><strong>Listening task</strong><p>Listen to the original short audio, then answer. The transcript can be opened for accessibility.</p><div class="actions"><button class="btn light" onclick="EBDAA_ENGLISH_PRACTICE.playAudio()">▶ Play / replay</button><button class="btn light" onclick="EBDAA_ENGLISH_PRACTICE.showTranscript()">'+(transcriptOpen?'Hide transcript':'Show transcript')+'</button></div>'+(transcriptOpen?'<p>'+esc(q.passage)+'</p>':'')+'</div>':'';
+ const practice=q.type==="Writing"?'<div class="hint"><label for="english-draft"><strong>Optional writing practice</strong></label><p>Write your own short sentence. Compare it with the model after checking; your draft is not automatically graded.</p><textarea id="english-draft" style="width:100%;min-height:90px;padding:12px;border:1px solid #ddd;border-radius:10px" oninput="EBDAA_ENGLISH_PRACTICE.draft(this.value)">'+esc(drafts[s.cursor]||"")+'</textarea></div>':q.type==="Speaking"?'<div class="hint"><strong>Speaking practice</strong><p>Say your response aloud before selecting the most appropriate answer. Voice pronunciation is not scored.</p></div>':'';
+ const choices='<div class="choices">'+q.options.map((o,j)=>'<button class="choice '+(a?.value===j?'chosen ':'')+(a?.checked&&q.answer===j?'correct':'')+'" '+(a?.checked?'disabled':'')+' onclick="EBDAA_ENGLISH_PRACTICE.choose('+j+')">'+esc(o)+'</button>').join('')+'</div>';
+ const body=s.done?'<div class="feedback"><h2>Session complete</h2><p>Correct: '+correct+' / '+s.items.length+'. Activities are formative, not accredited assessments.</p><button class="btn teal" onclick="EBDAA_ENGLISH_PRACTICE.restart()">Try a fresh attempt</button></div>':
+ '<div class="eyebrow">'+esc(q.type)+' · '+esc(unit.focus)+'</div>'+reading+listening+'<h2 class="practice-question">'+esc(q.question)+'</h2>'+practice+choices+
+ (a?.checked?'<div class="feedback '+(a.correct?'':'error')+'"><strong>'+(a.correct?'✓ Correct':'Review your answer')+'</strong><p>'+esc(q.explanation)+'</p></div>':'')+
+ '<div class="stepfooter"><button class="btn light" '+(s.cursor===0?'disabled':'')+' onclick="EBDAA_ENGLISH_PRACTICE.previous()">← Previous</button><button class="btn teal" '+(!a?'disabled':'')+' onclick="EBDAA_ENGLISH_PRACTICE.'+(a?.checked?'next':'check')+'()">'+(a?.checked?(s.cursor===49?'Show result':'Next question →'):'Check answer')+'</button></div>';
+ return '<section class="practice-focus"><header class="practice-focus__header"><div class="practice-focus__header-row"><button class="practice-focus__exit" onclick="englishBackToUnit()">← All English lessons</button><span class="practice-focus__year">YEAR '+s.g+' · ADVANCED ENGLISH</span></div><div class="practice-focus__info"><h1 class="practice-focus__lesson">'+esc(unit.sessions[s.i])+'</h1><span class="practice-focus__counter">Question '+(s.done?s.items.length:s.cursor+1)+' / '+s.items.length+'</span></div><div class="practice-focus__track" role="progressbar" aria-label="Questions answered" aria-valuemin="0" aria-valuemax="50" aria-valuenow="'+answered+'"><i style="width:'+(answered*2)+'%"></i></div></header><div class="practice-focus__content"><div class="guided-question">'+body+'<p class="muted" style="font-size:12px">Original formative practice aligned to unit themes: grammar, vocabulary, reading, synthesized listening, guided writing and speaking. Writing drafts and spoken pronunciation are not automatically graded. Some question structures recur, and teacher review remains necessary.</p></div></div></section>';
+}
+return {start,choose,check,next,previous,restart,render,build,playAudio,showTranscript,draft};
 })();
