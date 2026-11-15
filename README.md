@@ -4,7 +4,7 @@ A free, browser-based interactive learning experience for EBDA National Technica
 
 ## Visible in-lesson games and factory puzzles — 15 November 2026
 
-Interactive activities are no longer confined to a hidden optional panel or the separate 50-question Focus Practice screen. **Understand** in all 116 lessons now starts with a directly playable **three-round mini-game**, choosing the computed game family from the unit's teaching engine:
+Interactive activities are no longer confined to a hidden optional panel or the separate 50-question Focus Practice screen. **Play** (the third learning stage) in all 116 lessons now starts with a directly playable **three-round mini-game**, choosing the computed game family from the unit's teaching engine:
 
 - **SQL / data modeling:** *SQL Key Detective* matches inspection foreign keys to machine primary keys, including an unmatched row excluded by INNER JOIN
 - **Python:** *Python Loop Runner* asks the learner to trace a real calculated program result
@@ -12,7 +12,7 @@ Interactive activities are no longer confined to a hidden optional panel or the 
 - **Machine learning:** *KNN Prediction Quest* compares distances and a three-neighbor vote
 - **Sensors / quality:** *Sensor Alert Rescue* applies a strict threshold condition
 
-Each game gives immediate feedback, an optional hint, a three-puzzle progress bar and replay, without student accounts. The following learning material remains available as **clear, optional disclosures** within the same Understand stage: *Explore the visual explanation*, *Try the data playground* and *Unlock the factory mystery*. The long-form 50-question challenge is prominently accessible from every lesson and remains in its fully distraction-free Focus Practice view. This structure gives priority to one activity at a time rather than stacking all sections.
+Each game gives immediate feedback, an optional hint, a three-puzzle progress bar and replay, without student accounts. The following learning material remains available as **clear, optional disclosures** within the same Play stage: *Explore the visual explanation*, *Try the data playground* and *Unlock the factory mystery*. The long-form 50-question challenge is prominently accessible from every lesson and remains in its fully distraction-free Focus Practice view. This structure gives priority to one activity at a time rather than stacking all sections.
 
 **Coverage and boundaries:** 348 question rounds across the 116 lessons were exercised in JavaScript simulations, including correct and incorrect answers, hints, completion and replay. These puzzles reuse synthetic unit-level data to strengthen concepts; they do **not** claim to individually reproduce each lesson's official practical checklist. Chromium, Pyodide, SQLite and deployed GitHub Pages checks still require successful GitHub Actions runs before final operational signoff.
 
@@ -32,7 +32,7 @@ All three grades now use **the same learning-page interaction model**, with a vi
 
 1. **Discover** — a focused interactive concept and prediction
 2. **Experiment** — executable Python/SQL or a computed lab, with optional numerical evidence and code tests
-3. **Understand** — a step-through concept visualizer, with an optional data playground
+3. **Play** — a three-round mini-game, with optional concept visualizer, data playground and factory mystery
 4. **Check** — one immediate-feedback applied question; checking the answer unlocks the standard Continue action
 5. **Practice** — 50 sequential formative questions with hints and mistake review; optional industrial missions, rubric inspection and local evidence export
 
