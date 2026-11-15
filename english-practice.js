@@ -26,7 +26,7 @@ const vocabulary=[[["employee","worker at a company"],["employer","provider of j
 let state={g:1,u:0,i:0,cursor:0,answers:{},items:[],done:false};
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 function build(g,u,i){
- const unit=window.EBDAA_ENGLISH_UNITS[g][u],pool=rules[unit.focus],words=vocabulary[(g===1?0:g===2?3:15)+u],arr=[],lesson=unit.sessions[i];
+ const unit=window.EBDAA_ENGLISH_UNITS[g][u],pool=rules[unit.focus].concat(window.EBDAA_ENGLISH_GRAMMAR_EXT[unit.focus]||[]),words=vocabulary[(g===1?0:g===2?3:15)+u],arr=[],lesson=unit.sessions[i];
  function add(question,options,explanation,type,passage){
   if(options.length!==4||new Set(options).size!==4)throw Error("Invalid distractors: "+question);
   const shift=(arr.length*3+i)%4;
@@ -47,6 +47,7 @@ function build(g,u,i){
   const x=wordsAt(j),y=wordsAt(j+1),z=wordsAt(j+2);
   const lead=["During a practical workshop","While preparing a class presentation","For a community learning activity"][j];
   const place=["the school library","a technical classroom","the project hall"][j];
+  // Reading passages are original assessment scenarios, not a reproduction of the textbook.
   const day=["Tuesday","Thursday","Saturday"][j];
   const passage=lead+" about "+lesson+", students met in "+place+". Their task was to explain "+x[0]+" ("+x[1]+") and compare it with "+y[0]+" ("+y[1]+"). The group also included "+z[0]+" ("+z[1]+") in its summary. They checked their ideas with their teacher before sharing their conclusions on "+day+".";
   add("Where did the activity take place?",[place,"the sports stadium","a train station","a restaurant"],"The first sentence names "+place+".","Reading",passage);
