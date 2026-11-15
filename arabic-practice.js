@@ -7,15 +7,29 @@ function build(g,u,i){
  const unit=window.EBDAA_ARABIC_UNITS[g][u],section=unit.title,lesson=unit.sessions[i];
  const group=section==="القواعد النحوية"?0:section==="الأدب والنصوص"||section==="الأساليب"?1:2,bank=packs[group];
  const source=window.EBDAA_ARABIC_SOURCE_QUESTIONS?.[g]?.[lesson]||[];
+ const grammar=window.EBDAA_ARABIC_GRAMMAR_ITEMS||{};
+ const specific=grammar[lesson]||grammar[lesson.replace(/ \(.+\)$/,"")]||[];
  const out=[];
- function push(q,n,isSource){
-  if(q.options.length!==4||new Set(q.options).size!==4)throw Error("Invalid Arabic options: "+lesson);
-  const rot=(n+i+u)%4;
-  const opts=q.options.slice(rot).concat(q.options.slice(0,rot));
-  out.push({id:g+"-"+u+"-"+i+"-"+n,question:q.question,options:opts,answer:(q.answer-rot+4)%4,explanation:q.explanation,kind:isSource?"فهم من نص الدرس":"مراجعة مهارات عامة",sourcePage:q.sourcePage||null,relatedSection:section,lesson});
+ function push(q,n,kind){
+  if(q.options.length!==4||new Set(q.options).size!==4)throw Error("Invalid Arabic options: "+lesson+" "+n);
+  const rot=(n+i+u)%4,opts=q.options.slice(rot).concat(q.options.slice(0,rot));
+  out.push({id:g+"-"+u+"-"+i+"-"+n,question:q.question,options:opts,answer:(q.answer-rot+4)%4,explanation:q.explanation,kind,sourcePage:q.sourcePage||null,relatedSection:section,lesson});
  }
- for(let n=0;n<source.length;n++)push(source[n],n,true);
- for(let n=source.length;n<50;n++){const q=bank[(n+i*3+u)%bank.length];push({question:q[0],options:q[1],answer:0,explanation:q[2]},n,false)}
+ for(const q of source)push(q,out.length,"فهم من نص الدرس");
+ for(const q of specific)push({question:q[0],options:q.slice(1),answer:0,explanation:"الإجابة الصحيحة: "+q[1]+"."},out.length,"تدريب مرتبط بقاعدة الدرس");
+ // General skills are supplementary only; never label them as text-derived.
+ const used=new Set(out.map(q=>q.question));
+ for(let z=0;out.length<50&&z<250;z++){
+  const q=bank[(z+i*3+u)%bank.length];
+  // The general pool is finite: after unique items are exhausted, display an explicit
+  // contextual review variation rather than claiming a distinct source-derived question.
+  const cycle=Math.floor(z/bank.length);
+  const prefix=cycle===0?"":cycle===1?"مراجعة ثانية — ":cycle===2?"تثبيت المهارة — ":cycle===3?"إعادة تطبيق — ":"تدريب إضافي — ";
+  const question=prefix+q[0];
+  if(used.has(question))continue;used.add(question);
+  push({question,options:q[1],answer:0,explanation:q[2]},out.length,"مراجعة عامة متكررة");
+ }
+ if(out.length!==50)throw Error("Arabic practice requires 50 items for "+lesson+": "+out.length);
  return out;
 }
 function refresh(){window.EBDA_APP_RENDER?.()}
@@ -27,6 +41,6 @@ function previous(){if(state.cursor>0){state.cursor--;refresh()}}
 function restart(){start(state.grade,state.unit,state.lesson)}
 function render(){const s=state,unit=window.EBDAA_ARABIC_UNITS[s.grade][s.unit],q=s.questions[s.cursor],a=s.answers[s.cursor],done=Object.values(s.answers).filter(v=>v.checked).length,correct=Object.values(s.answers).filter(v=>v.correct).length;
 const question='<div class="eyebrow">'+e(q.kind)+' · '+e(unit.title)+(q.sourcePage?' · صفحة PDF '+q.sourcePage:'')+'</div><h2 class="practice-question">'+e(q.question)+'</h2><div class="choices">'+q.options.map((v,j)=>'<button class="choice '+(a?.value===j?'chosen ':'')+(a?.checked&&q.answer===j?'correct':'')+'" '+(a?.checked?'disabled':'')+' onclick="EBDAA_ARABIC_PRACTICE.choose('+j+')">'+e(v)+'</button>').join('')+'</div>'+(a?.checked?'<div class="feedback '+(a.correct?'':'error')+'"><strong>'+(a.correct?'✓ إجابة صحيحة':'راجع الإجابة')+'</strong><p>'+e(q.explanation)+'</p></div>':'')+'<div class="stepfooter"><button class="btn light" '+(s.cursor===0?'disabled':'')+' onclick="EBDAA_ARABIC_PRACTICE.previous()">السابق</button><button class="btn teal" '+(!a?'disabled':'')+' onclick="EBDAA_ARABIC_PRACTICE.'+(a?.checked?'next':'check')+'()">'+(a?.checked?'التالي ←':'تحقق من الإجابة')+'</button></div>';
-return '<section class="practice-focus" dir="rtl" lang="ar"><header class="practice-focus__header"><div class="practice-focus__header-row"><button class="practice-focus__exit" onclick="arabicBackToUnit()">العودة إلى الدروس</button><span class="practice-focus__year">الصف '+s.grade+' · اللغة العربية</span></div><div class="practice-focus__info"><h1 class="practice-focus__lesson">'+e(unit.sessions[s.lesson])+'</h1><span class="practice-focus__counter">'+(s.finished?'مكتمل':'سؤال '+(s.cursor+1))+' / 50</span></div><div class="practice-focus__track"><i style="width:'+(done*2)+'%"></i></div></header><div class="practice-focus__content"><div class="guided-question">'+(s.finished?'<div class="feedback"><h2>اكتمل التدريب</h2><p>عدد الإجابات الصحيحة: '+correct+' من 50</p><button class="btn teal" onclick="EBDAA_ARABIC_PRACTICE.restart()">إعادة المحاولة</button></div>':question)+'<p class="muted" style="font-size:12px">أُضيفت أسئلة فهم مرتبطة بنصوص 12 درس قراءة، مع صفحة المصدر، لكنها تحتاج مراجعة المعلم. بقية الأسئلة مراجعة مهارية عامة متكررة، ولا تمثل 50 سؤالًا مستقلًا مستخرجًا من كل درس.</p></div></div></section>'}
+return '<section class="practice-focus" dir="rtl" lang="ar"><header class="practice-focus__header"><div class="practice-focus__header-row"><button class="practice-focus__exit" onclick="arabicBackToUnit()">العودة إلى الدروس</button><span class="practice-focus__year">الصف '+s.grade+' · اللغة العربية</span></div><div class="practice-focus__info"><h1 class="practice-focus__lesson">'+e(unit.sessions[s.lesson])+'</h1><span class="practice-focus__counter">'+(s.finished?'مكتمل':'سؤال '+(s.cursor+1))+' / 50</span></div><div class="practice-focus__track"><i style="width:'+(done*2)+'%"></i></div></header><div class="practice-focus__content"><div class="guided-question">'+(s.finished?'<div class="feedback"><h2>اكتمل التدريب</h2><p>عدد الإجابات الصحيحة: '+correct+' من 50</p><button class="btn teal" onclick="EBDAA_ARABIC_PRACTICE.restart()">إعادة المحاولة</button></div>':question)+'<p class="muted" style="font-size:12px">أُضيفت أسئلة من مضمون بعض دروس القراءة وأسئلة نحوية مخصصة لقواعد بعض الدروس؛ الأسئلة الأخرى مراجعات عامة متكررة. لم تُراجع كل أسئلة الكتاب أكاديميًا بعد.</p></div></div></section>'}
 return {build,start,render,choose,check,next,previous,restart};
 })();
