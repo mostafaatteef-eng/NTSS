@@ -4,13 +4,18 @@ const packs=[[["أي الجمل الآتية جملة اسمية؟",["الطال
 let state={grade:1,unit:0,lesson:0,questions:[],cursor:0,answers:{},finished:false};
 const e=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 function build(g,u,i){
- const unit=window.EBDAA_ARABIC_UNITS[g][u],section=unit.title;
- const group=section==="القواعد النحوية"?0:section==="الأدب والنصوص"||section==="الأساليب"?1:2;
- const bank=packs[group],out=[],lesson=unit.sessions[i];
- for(let n=0;n<50;n++){
-  const q=bank[(n+i*3+u)%bank.length],rot=(n+i+u)%4;
-  out.push({id:g+"-"+u+"-"+i+"-"+n,question:q[0],options:q[1].slice(rot).concat(q[1].slice(0,rot)),answer:(4-rot)%4,explanation:q[2],kind:"مراجعة مهارات عامة",relatedSection:section,lesson});
+ const unit=window.EBDAA_ARABIC_UNITS[g][u],section=unit.title,lesson=unit.sessions[i];
+ const group=section==="القواعد النحوية"?0:section==="الأدب والنصوص"||section==="الأساليب"?1:2,bank=packs[group];
+ const source=window.EBDAA_ARABIC_SOURCE_QUESTIONS?.[g]?.[lesson]||[];
+ const out=[];
+ function push(q,n,isSource){
+  if(q.options.length!==4||new Set(q.options).size!==4)throw Error("Invalid Arabic options: "+lesson);
+  const rot=(n+i+u)%4;
+  const opts=q.options.slice(rot).concat(q.options.slice(0,rot));
+  out.push({id:g+"-"+u+"-"+i+"-"+n,question:q.question,options:opts,answer:(q.answer-rot+4)%4,explanation:q.explanation,kind:isSource?"فهم من نص الدرس":"مراجعة مهارات عامة",sourcePage:q.sourcePage||null,relatedSection:section,lesson});
  }
+ for(let n=0;n<source.length;n++)push(source[n],n,true);
+ for(let n=source.length;n<50;n++){const q=bank[(n+i*3+u)%bank.length];push({question:q[0],options:q[1],answer:0,explanation:q[2]},n,false)}
  return out;
 }
 function refresh(){window.EBDA_APP_RENDER?.()}
