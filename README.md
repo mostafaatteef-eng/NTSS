@@ -2,6 +2,16 @@
 
 A free, browser-based interactive learning experience for EBDA National Technical Science Schools (Badr) — Year 1 AI and Data Engineering.
 
+## Focus Practice — question-only responsive interface (15 November 2026)
+
+When a learner opens the 50 questions in **any grade**, the standard learning layout is replaced by a dedicated **question-only focus screen**. Navigation menus, lesson sidebars, the five-stage map, lab tools, industrial missions, academic rubrics, and source-details blocks are not shown during questions.
+
+The focused screen has a small **Back to lesson** link, lesson title, answered-question progress, one question and its controls, and a fixed **Previous / Check answer / Next question** footer. A wrong answer offers short feedback and an optional collapsed step-by-step mistake review; the answer is not spoiled by default. Question order stays fixed within each attempt and changes on a new attempt, with the first-try grade and responses retained in browser memory for review.
+
+The layout is responsive for laptops, tablets and phones, with comfortable touch targets, a vertically stacked answer list, a two-column ordering view on desktop, a single-column ordering view on phones, iOS safe-area padding and reduced-motion support. Keyboard shortcuts (only when focus is not inside an interactive control) are **1–4** to choose answers, **Enter/Right Arrow** to check or advance, and **Left Arrow** to review a previous question. The original lessons, academic source records and advanced labs remain accessible after exiting.
+
+**Verification:** scripted functional simulations were run on all 116 lesson entries (5,800 lesson-question items), including a complete 50-question attempt, reshuffling and exiting focus. The repository's browser smoke script now has checks at laptop (1366 px), tablet (820 px) and mobile (390 px) widths. GitHub Actions and live WebAssembly/browser execution have not been independently confirmed to pass.
+
 ## Unified Year 1–3 five-stage learning experience (November 2026)
 
 All three grades now use **the same learning-page interaction model**, with a visible five-step progress bar, lesson navigation in the sidebar, a single focused activity per screen, and **Back / Continue** controls:
