@@ -173,6 +173,7 @@ function render(){
  if(document.body?.classList)document.body.classList.toggle("practice-focus-active",focused);
  app.innerHTML=focused?focusPractice():mode==="home"?home():mode==="browse"?browse():mode==="subject"?subjectUnits():mode==="unitPreview"?previewUnit():mode==="advancedLab"?advancedLab():mode==="learn"?learn():about()
 }
+window.EBDA_APP_RENDER=render;
 document.addEventListener?.("keydown",function(event){
  if(!practiceActive()||event.altKey||event.metaKey||event.ctrlKey||event.repeat)return;
  const tag=event.target?.tagName?.toLowerCase();
