@@ -8,7 +8,7 @@ const esc=x=>String(x).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"
 const attr=x=>esc(JSON.stringify(x));
 const norm=x=>String(x).normalize("NFKC").toLowerCase().replace(/[\u064B-\u065F\u0670\u0640]/g,"").replace(/\s+/g," ").trim();
 function record(k){if(!state.has(k))state.set(k,{first:null,matches:[],message:"",done:false,choice:null});return state.get(k)}
-function reset(subject,lesson){const pref=subject+":"+lesson+":";for(const k of state.keys())if(k.startsWith(pref))state.delete(k);for(const k of skillResults.keys())if(k.startsWith(pref))skillResults.delete(k);for(const k of missed)if(k.startsWith(pref))missed.delete(k)}
+function reset(subject,lesson){const pref=subject+":"+lesson+":";for(const k of state.keys())if(k.startsWith(pref))state.delete(k);for(const k of skillResults.keys())if(k.startsWith(pref))skillResults.delete(k);for(const k of missed)if(k.startsWith(pref))missed.delete(k);for(const k of mathDrafts.keys())if(k.startsWith(pref))mathDrafts.delete(k)}
 function mark(k,skill,success){if(skillResults.has(k))return;if(success){skillResults.set(k,{skill,success:!missed.has(k)});}else missed.add(k)}
 function assess(subject,lesson){const prefix=subject+":"+lesson+":";const entries=[...skillResults.entries()].filter(([k])=>k.startsWith(prefix)).map(([,v])=>v);const correct=entries.filter(x=>x.success).length;return {attempted:entries.length,correct,rate:entries.length?Math.round(correct/entries.length*100):0,skills:[...new Set(entries.map(x=>x.skill))]}}
 function report(subject,lesson,arabic=false){const a=assess(subject,lesson);if(!a.attempted)return "";return '<details class="context-report" aria-label="Independent practical skill assessment"><summary>🏅 '+(arabic?"التقييم العملي":"Practical skills")+': '+a.correct+'/'+a.attempted+' · '+a.rate+'%</summary><div class="context-report-body"><strong>🧪 '+(arabic?"تقييم المهارات العملية":"Practical skill assessment")+'</strong><div class="context-report-metrics"><span>🏅 '+a.correct+'/'+a.attempted+'</span><span>'+a.rate+'%</span><span>'+(arabic?"أنشطة مكتملة":"completed mini-games")+'</span></div><p>'+(arabic?"تُحتسب المحاولة الأولى فقط. يمكن إعادة الألعاب للتدرب، ولا تتغير درجة أسئلة الدرس.":"First-attempt performance only. Replay is for practice and does not change the 50-question grade.")+'</p></div></details>'}
@@ -31,7 +31,7 @@ function matching(subject,lesson,n,items,ar){
 }
 function pick(k,i){const s=record(k);if(s.done||s.matches.includes(i))return;s.first=i;s.message="✓ "+(i+1)+" selected — choose the matching answer";draw()}
 function pair(k,i){const s=record(k);if(s.first===null||s.done||s.matches.includes(i))return;if(i===s.first){s.matches.push(i);s.message="✓ Correct pair";s.done=s.matches.length===3;if(s.done)mark(k,"matching",true)}else {s.message="Try another answer";mark(k,"matching",false)}s.first=null;draw()}
-function restart(k){state.delete(k);draw()}
+function restart(k){state.delete(k);mathDrafts.delete(k);draw()}
 const missions={
  python:[
  {title:"Debug Python",code:"scores = [70, 80, 90]\nprint(sum(scores) / len(score))",options:["Replace len(score) with len(scores)","Replace sum(scores) with max(scores)","Remove print()"],correct:0,why:"The list variable is named scores, not score."},
