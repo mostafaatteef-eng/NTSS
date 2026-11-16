@@ -1,0 +1,29 @@
+name: NTSS browser and CSP smoke test
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  browser-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install browser test runner
+        run: npm install --no-save --no-package-lock playwright@1.56.1
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Start local static HTTP server
+        run: |
+          python3 -m http.server 8765 --bind 127.0.0.1 > /tmp/ntss-browser-server.log 2>&1 &
+          echo $! > /tmp/ntss-browser-server.pid
+      - name: Run Chromium smoke tests
+        run: node browser-security-smoke.cjs
+      - name: Print server log on failure
+        if: failure()
+        run: cat /tmp/ntss-browser-server.log
