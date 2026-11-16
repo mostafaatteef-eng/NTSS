@@ -1,0 +1,17 @@
+
+/* Practical decision missions — intentional, compact and accessible */
+.ntss-applied{margin:20px 0;padding:20px;border:1px solid #cde8df;border-radius:18px;background:#fbfffc;color:#1c443b;display:grid;gap:13px}
+.ntss-applied-head{display:flex;align-items:center;gap:11px}.ntss-applied-symbol{display:grid;place-items:center;width:40px;height:40px;border-radius:13px;background:#e5f8f1;color:#158776;font-size:23px}
+.ntss-applied-head>div{flex:1;display:grid;gap:2px}.ntss-applied-head small{font-size:10px;color:#6a857b;letter-spacing:.05em;font-weight:750}.ntss-applied-head strong{font-size:16px}
+.ntss-applied-status{font-size:12px;background:#e9f6ee;color:#267760;border-radius:20px;padding:7px 10px;font-weight:800;font-variant-numeric:tabular-nums}
+.ntss-applied-scenario{font-size:clamp(15px,2vw,19px);font-weight:650;line-height:1.6;margin:0}
+.ntss-applied-choices{display:grid;gap:9px}
+.ntss-applied-option{border:1px solid #cfdfd6;border-radius:12px;background:#fff;min-height:50px;padding:12px 15px;font:inherit;font-size:14px;text-align:start;color:#254b42;cursor:pointer}
+.ntss-applied-option:hover:not(:disabled){border-color:#1CA29A;background:#f0faf5}
+.ntss-applied-option:focus-visible,.ntss-applied-foot button:focus-visible{outline:3px solid #8bdbc0;outline-offset:2px}
+.ntss-applied-option:disabled{cursor:default;opacity:.65}.ntss-applied-option.is-right{border-color:#1CA29A;background:#e9f8f0;opacity:1}
+.ntss-applied-feedback{min-height:20px;font-size:13px;color:#3a7160;line-height:1.6;margin:0}
+.ntss-applied-foot{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:9px;font-size:11px;color:#729186;border-top:1px solid #e5efe9;padding-top:12px}
+.ntss-applied-foot button{border:0;background:transparent;text-decoration:underline;font:inherit;color:#167963;cursor:pointer;padding:6px}
+@media(max-width:480px){.ntss-applied{padding:14px;gap:11px}.ntss-applied-head strong{font-size:14px}.ntss-applied-option{font-size:13px}}
+@media(prefers-reduced-motion:reduce){.ntss-applied *{transition:none!important}}
