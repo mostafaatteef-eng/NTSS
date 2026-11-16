@@ -85,7 +85,7 @@ function build(g,u,i){
  // Shift the start of the question cycle between attempts, without changing correctness.
  return items;
 }
-function start(g,u,i){state={g,u,i,cursor:0,answers:{},done:false,items:build(g,u,i)};renderInto()}
+function start(g,u,i){window.EBDAA_GAME.resetLesson('math',[g,u,i].join('-'));state={g,u,i,cursor:0,answers:{},done:false,items:build(g,u,i)};renderInto()}
 function current(){return state.items[state.cursor]}
 function record(){return state.answers[state.cursor]}
 function respond(j){const q=current(),a=record();if(a?.checked)return;state.answers[state.cursor]={value:j,checked:false};if(q.mode==="number"){const button=document.getElementById("math-check");if(button)button.disabled=String(j).trim()==="";return}renderInto()}
@@ -97,7 +97,7 @@ function render(){
  const {unit,title}=lesson(),q=current(),a=record(),answered=Object.values(state.answers).filter(v=>v.checked).length,correct=Object.values(state.answers).filter(v=>v.checked&&v.correct).length;
  const percentage=Math.round(answered/50*100),s=state;
  const choices=q.mode==="number"?'<label for="math-answer">Your calculated answer</label><input id="math-answer" type="number" step="any" inputmode="decimal" value="'+(a?escapeAttr(a.value):'')+'" '+(a?.checked?'disabled':'')+' oninput="EBDAA_MATH_PRACTICE.respond(this.value)" style="display:block;width:100%;max-width:280px;margin:12px 0;padding:14px;border:1px solid #d6d7d8;border-radius:12px">':window.EBDAA_GAME.render(q,s.cursor,a?.value,a?.checked,"math",[s.g,s.u,s.i].join("-"),"EBDAA_MATH_PRACTICE.respond");
- const content=s.done?'<div class="feedback"><h2>Practice complete</h2><p>Answered: '+answered+' / 50 · Correct: '+correct+' / 50</p><p>This is formative practice, not an accredited assessment.</p><button class="btn teal" onclick="EBDAA_MATH_PRACTICE.restart()">Try again</button></div>':
+ const content=s.done?window.EBDAA_GAME.results(s.answers,s.items.length,false)+'<div class="feedback"><h2>Practice complete</h2><p>Answered: '+answered+' / 50 · Correct: '+correct+' / 50</p><p>This is formative practice, not an accredited assessment.</p><button class="btn teal" onclick="EBDAA_MATH_PRACTICE.restart()">Try again</button></div>':
  window.EBDAA_GAME.stats(s.answers,s.items.length,false)+'<div class="eyebrow">'+escape(unit.title)+'</div><h2 class="practice-question">'+escape(q.question)+'</h2>'+choices+
  (a?.checked?'<div class="feedback '+(a.correct?'':'error')+'" role="status"><strong>'+(a.correct?'✓ Correct':'Review your answer')+'</strong><p>'+escape(q.explanation)+'</p></div>':'')+
  '<div class="stepfooter"><button class="btn light" onclick="EBDAA_MATH_PRACTICE.move(-1)" '+(s.cursor===0?'disabled':'')+'>← Previous</button><button id="math-check" class="btn teal" '+(!a||(!a.checked&&String(a.value).trim()==="")?'disabled':'')+' onclick="'+(a?.checked?'EBDAA_MATH_PRACTICE.move(1)':'EBDAA_MATH_PRACTICE.check()')+'">'+(a?.checked?(s.cursor===49?'Show result':'Next question →'):'Check answer →')+'</button></div>';
