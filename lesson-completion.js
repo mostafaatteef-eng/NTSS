@@ -2,7 +2,7 @@
    This is an unverified practice certificate, not a school-issued credential.
    Student name lives in memory only; no network, localStorage or account data. */
 window.EBDA_COMPLETION=(function(){
- const names=new Map(),shown=new Set(),subjects={math:"Mathematics",en:"Advanced English",ar:"اللغة العربية",de:"Deutsch",physics:"Physics STEM",be:"Business English",social:"الدراسات الاجتماعية",civics:"التربية الوطنية",economics:"الاقتصاد",ai:"AI & Data Analysis"};
+ const names=new Map(),shown=new Set(),subjects={math:"Mathematics",en:"Advanced English",ar:"Arabic Language",de:"German",physics:"Physics STEM",be:"Business English",social:"Social Studies",civics:"National Education",economics:"Economics",ai:"AI & Data Analysis"};
  const esc=x=>String(x??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
  const id=x=>String(x).replace(/[^a-z0-9:_-]/gi,"");
  const key=({subject,grade,unit,index})=>[subject,grade,unit,index].join(":");
