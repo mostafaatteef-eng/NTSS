@@ -46,9 +46,34 @@ const missions={
  {title:"Filter and limit",code:"Show the two best student scores",tokens:["SELECT name, grade","FROM students","ORDER BY grade DESC","LIMIT 2;"],why:"Sort descending first, then take two rows."}
  ]
 };
-function ai(subject,lesson,n,topic){
+
+// Further original, curriculum-oriented coding micro-challenges. These are illustrative,
+// keyed to the lesson topic, and are not copied from a textbook.
+missions.python.push(
+ {title:"Fix a missing return",code:"def square(x):\n    x * x\nprint(square(5))",options:["Return x * x from the function","Replace x*x with x+x","Remove the function call"],correct:0,why:"Without return, a Python function returns None."},
+ {title:"Fix the dictionary key",code:"person = {'name': 'Mona'}\nprint(person['age'])",options:["Use person['name'] for the available key","Change print into input","Remove the dictionary"],correct:0,why:"Accessing a missing dictionary key raises KeyError."},
+ {title:"Repair data types",code:"count = '3'\nprint(count + 2)",options:["Convert count to int(count) before addition","Add another string to count","Rename count to total"],correct:0,why:"A string and an integer cannot be added as numbers directly."},
+ {title:"Fix a comparison",code:"score = 80\nif score = 80:\n    print('Match')",options:["Use == when checking equality","Replace if with print","Write score = = 80"],correct:0,why:"== tests equality; = assigns a value."}
+);
+missions.sql.push(
+ {title:"Count records safely",code:"Count all students in the sample table",tokens:["SELECT COUNT(*)","FROM students","WHERE grade >= 0","ORDER BY 1;"],why:"Aggregate records after the table and filter. The final ordering is syntactically valid but unnecessary for one row."},
+ {title:"Find unique cities",code:"List distinct student cities",tokens:["SELECT DISTINCT city","FROM students","WHERE city IS NOT NULL","ORDER BY city;"],why:"DISTINCT removes duplicates; IS NOT NULL excludes missing cities."},
+ {title:"Sort above threshold",code:"Show top students with grade > 80",tokens:["SELECT name, grade","FROM students","WHERE grade > 80","ORDER BY grade DESC;"],why:"Filtering comes before sorting."},
+ {title:"Select matching project",code:"Find students working on AI",tokens:["SELECT s.name","FROM students s","JOIN projects p ON p.student_id = s.id","WHERE p.topic = 'AI';"],why:"JOIN connects tables, and WHERE filters the topic."}
+);
+function topicHash(t){let h=0;for(const c of String(t))h=(h*31+c.charCodeAt(0))>>>0;return h}
+function math(lesson,n,items){if(n%10!==4)return "";const panel=matching("math",lesson,n,items,false);return panel.replace("Match & Discover","🧮 Solve & Match").replace("Match & Discover","Solve & Match")}
+function physicsModel(lesson,n,q){if(n%10!==4||!q||!Number.isFinite(q.value))return "";
+ const k="physics:"+lesson+":model:"+n,st=record(k),v=q.value,unit=q.model?.[1]||"units";
+ const wrong=[v+Math.max(1,Math.abs(v)*.5),v-Math.max(1,Math.abs(v)*.3),v+Math.max(2,Math.abs(v))].map(x=>Number(x.toFixed(3)));
+ const vals=[v,...wrong],order=[2,0,3,1];
+ const options=order.map(j=>'<button class="context-tile" '+(st.done?"disabled":"")+' onclick="EBDAA_CONTEXT_GAMES.debug('+attr(k)+','+j+',0)">'+esc(vals[j])+' '+esc(unit)+'</button>').join("");
+ return '<section class="context-game"><div class="context-head"><strong>🔬 Experimental Prediction</strong><span>TOPIC PRACTICE</span></div><p>'+esc(q.model?.[0]||"Physics model")+' · A='+esc(q.a)+' · B='+esc(q.b)+'</p><p>Predict the computed result before checking the worked formula.</p><div class="context-answers">'+options+'</div><p role="status" class="context-status">'+esc(st.message||"Independent model check — first attempt is scored.")+'</p>'+(st.done?'<p class="context-explain">'+esc(q.formula)+' = '+v+' '+esc(unit)+'</p>':'')+'<button class="context-reset" onclick="EBDAA_CONTEXT_GAMES.restart('+attr(k)+')">↺ Try again</button></section>'
+}
+function ai(subject,lesson,n,topic,lessonTitle=''){
  if(n%10!==4)return "";
- const which=topic==="sql"?"sql":"python",k=subject+":"+lesson+":"+which+":"+n,s=record(k),data=missions[which][Math.floor(n/10)%4];
+ const inferred=/\\bsql\\b|database|query|relational|data retrieval/i.test(lessonTitle)?"sql":/python|script|program|algorithm|function|loop|debug/i.test(lessonTitle)?"python":topic;
+ const which=inferred==="sql"?"sql":"python",k=subject+":"+lesson+":"+which+":"+n,s=record(k),data=missions[which][(topicHash(lessonTitle||lesson)+Math.floor(n/10))%missions[which].length];
  const content=which==="python"?'<pre class="context-code">'+esc(data.code)+'</pre><p class="context-help">Choose the correct fix:</p><div class="context-answers">'+data.options.map((v,i)=>'<button class="context-tile" '+(s.done?"disabled":"")+' onclick="EBDAA_CONTEXT_GAMES.debug('+attr(k)+','+i+','+data.correct+')">'+esc(v)+'</button>').join("")+'</div>':
  '<pre class="context-code">'+esc(data.code)+'</pre><p class="context-help">Arrange the SQL clauses in executable order.</p><div class="context-built">'+(s.matches.length?s.matches.map(i=>esc(data.tokens[i])).join(" → "):"Build query here…")+'</div><div class="context-answers">'+[2,0,3,1].map(i=>'<button class="context-tile" '+(s.matches.includes(i)||s.done?"disabled":"")+' onclick="EBDAA_CONTEXT_GAMES.sqlPick('+attr(k)+','+i+')">'+esc(data.tokens[i])+'</button>').join("")+'</div>';
  return '<section class="context-game"><div class="context-head"><strong>'+(which==="sql"?"🗄 SQL Query Builder":"🐍 Python Bug Hunt")+'</strong><span>MINI GAME</span></div><h3>'+esc(data.title)+'</h3>'+content+'<p class="context-status" role="status">'+esc(s.message||(s.done?"Challenge complete":"Optional bonus — does not change your quiz grade."))+'</p>'+(s.done?'<p class="context-explain">'+esc(data.why)+'</p>':'')+'<button class="context-reset" onclick="EBDAA_CONTEXT_GAMES.restart('+attr(k)+')">↺ Restart mini game</button></section>';
@@ -63,5 +88,5 @@ function physics(lesson,n,topic){
  const parallelMode=Math.floor(n/10)%2===1,expected=parallelMode?1:0;
  return '<section class="context-game"><div class="context-head"><strong>⚡ Build the Circuit</strong><span>MINI GAME</span></div><p>Resistors: R₁ = '+r1+' Ω, R₂ = '+r2+' Ω. Battery: '+v+' V.</p><p>Choose the equivalent resistance for <b>'+(parallelMode?"parallel":"series")+'</b> wiring.</p><div class="context-circuit"><span>🔋 '+v+' V</span><span>R₁ '+r1+' Ω</span><span>R₂ '+r2+' Ω</span></div><div class="context-answers">'+choices.map((x,i)=>'<button class="context-tile" '+(s.done?"disabled":"")+' onclick="EBDAA_CONTEXT_GAMES.debug('+attr(k)+','+i+','+expected+')">'+Number(x.toFixed(2))+' Ω</button>').join("")+'</div><p role="status" class="context-status">'+esc(s.message||"Choose a circuit result; this bonus does not change your grade.")+'</p>'+(s.done?'<p class="context-explain">'+(parallelMode?"1/R = 1/R₁ + 1/R₂":"R = R₁ + R₂")+' · Equivalent resistance: '+Number((parallelMode?parallel:series).toFixed(2))+' Ω.</p>':'')+'<button class="context-reset" onclick="EBDAA_CONTEXT_GAMES.restart('+attr(k)+')">Play again</button></section>';
 }
-return {matching,ai,physics,pick,pair,restart,debug,sqlPick,reset,assess,report};
+return {matching,math,physicsModel,ai,physics,pick,pair,restart,debug,sqlPick,reset,assess,report};
 })();
