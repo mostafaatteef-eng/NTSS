@@ -1,0 +1,33 @@
+/* EBDA | completion and local print-ready certificate.
+   This is an unverified practice certificate, not a school-issued credential.
+   Student name lives in memory only; no network, localStorage or account data. */
+window.EBDA_COMPLETION=(function(){
+ const names=new Map(),shown=new Set(),subjects={math:"Mathematics",en:"Advanced English",ar:"اللغة العربية",de:"Deutsch",physics:"Physics STEM",be:"Business English",social:"الدراسات الاجتماعية",civics:"التربية الوطنية",economics:"الاقتصاد",ai:"AI & Data Analysis"};
+ const esc=x=>String(x??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+ const id=x=>String(x).replace(/[^a-z0-9:_-]/gi,"");
+ const key=({subject,grade,unit,index})=>[subject,grade,unit,index].join(":");
+ function getName(k){return names.get(k)||""}
+ function setName(k,v){names.set(k,String(v||"").replace(/[\u0000-\u001f]/g,"").trimStart().slice(0,80))}
+ function open(k){if(getName(k).trim().length<3)return;shown.add(k);window.EBDA_APP_RENDER?.()}
+ function edit(k){shown.delete(k);window.EBDA_APP_RENDER?.()}
+ function forget(k){names.delete(k);shown.delete(k)}
+ function print(){if(typeof window.print==="function")window.print()}
+ function logo(){const el=document.querySelector('img[alt*="National Technical"]');const source=el?.getAttribute("src")||"";return source.startsWith("data:image/")?'<img class="ebda-certificate-logo" alt="National Technical Science Schools" src="'+esc(source)+'">':'<span class="ebda-certificate-wordmark">EBDA <small>NATIONAL SCHOOLS</small></span>'}
+ function render({subject,grade,unit,index,lesson,correct,total=50,retry,back,arabic=false}){
+  const k=key({subject,grade,unit,index}),score=Math.round(100*correct/Math.max(1,total)),eligible=score>=70,excellent=score>=85,visible=shown.has(k),name=getName(k);
+  const locale=arabic?"ar":"en",gradeLabel=arabic?["","الأول","الثاني","الثالث"][grade]:["","First","Second","Third"][grade];
+  const date=new Intl.DateTimeFormat(arabic?"ar-EG":"en-GB",{year:"numeric",month:"long",day:"numeric"}).format(new Date());
+  const title=arabic?"اكتمل الدرس!":"Lesson Completed!";
+  const header='<div class="ebda-finish-header"><span class="ebda-brand-tag">EBDA <span>NTSS</span></span><span class="ebda-finish-eyebrow">LEARN · PRACTICE · ACHIEVE</span></div>';
+  const intro='<div class="ebda-finish-celebration" aria-hidden="true"><span class="ebda-finish-ring">✦</span></div><h1 class="ebda-finish-title">'+title+'</h1><p class="ebda-finish-lesson">'+esc(lesson)+'</p><div class="ebda-finish-data"><div><strong>'+correct+' / '+total+'</strong><span>'+(arabic?"إجابات صحيحة":"Correct answers")+'</span></div><div><strong>'+score+'%</strong><span>'+(arabic?"النتيجة":"Score")+'</span></div><div><strong>'+(eligible?"🏅":"↻")+'</strong><span>'+(arabic?(eligible?"مؤهل للشهادة":"راجع وتدرب"):(eligible?"Certificate ready":"Keep practicing"))+'</span></div></div>';
+  const msg=eligible?(arabic?"أحسنت! يمكنك كتابة اسمك لمعاينة شهادة إتمام الدرس وحفظها بصيغة PDF.":"Excellent work! Enter your name to preview and print your lesson certificate."):(arabic?"لقد أكملت الدرس. يلزم الحصول على 70% على الأقل لإصدار شهادة الإتمام. راجع أخطاءك وأعد المحاولة.":"You completed the lesson. A score of at least 70% is required for a completion certificate. Review and try again.");
+  const actions='<div class="ebda-finish-actions">'+(retry?'<button class="ebda-finish-btn ebda-finish-secondary" onclick="'+retry+'">'+(arabic?"↻ إعادة التدريب":"↻ Try again")+'</button>':'')+(back?'<button class="ebda-finish-btn ebda-finish-secondary" onclick="'+back+'">'+(arabic?"العودة للدروس":"Back to lessons")+'</button>':'')+'</div>';
+  let certificate="";
+  if(eligible&&visible&&name.trim().length>=3){
+   certificate='<article id="ebda-certificate-sheet" class="ebda-certificate" dir="'+(arabic?"rtl":"ltr")+'" lang="'+locale+'"><div class="ebda-certificate-edge"></div><div class="ebda-certificate-header">'+logo()+'<span class="ebda-certificate-series">NTSS · LEARNING PLATFORM</span></div><div class="ebda-certificate-icon">✦</div><div class="ebda-certificate-heading">'+(arabic?"شهادة إتمام درس":"CERTIFICATE OF COMPLETION")+'</div><p class="ebda-certificate-pretitle">'+(arabic?"تُمنح هذه الشهادة إلى":"This certificate is presented to")+'</p><div class="ebda-certificate-student">'+esc(name.trim())+'</div><p class="ebda-certificate-text">'+(arabic?"تقديرًا لإتمام التدريب التفاعلي على درس":"For successfully completing interactive practice in")+'</p><div class="ebda-certificate-lesson">'+esc(lesson)+'</div><div class="ebda-certificate-metadata"><div><b>'+esc(subjects[subject]||subject)+'</b><span>'+(arabic?"المادة":"Subject")+'</span></div><div><b>'+esc(gradeLabel)+'</b><span>'+(arabic?"الصف":"Grade")+'</span></div><div><b>'+score+'%</b><span>'+(arabic?"النتيجة":"Score")+'</span></div><div><b>'+esc(date)+'</b><span>'+(arabic?"التاريخ":"Date")+'</span></div></div><div class="ebda-certificate-footer"><span>EBDA NTSS</span><span>'+(excellent?(arabic?"إتمام بتميز":"Completed with distinction"):(arabic?"إتمام ناجح":"Successfully completed"))+'</span></div><p class="ebda-certificate-disclaimer">'+(arabic?"شهادة تدريبية صادرة محليًا من المنصة، غير موثقة أو معتمدة إداريًا.":"Locally generated practice record · not an officially verified school credential.")+'</p></article>';
+  }
+  const form=eligible?(visible?'<div class="ebda-finish-print-actions"><button class="ebda-finish-btn ebda-finish-primary" onclick="EBDA_COMPLETION.print()">⬇ '+(arabic?"حفظ PDF / طباعة":"Save as PDF / Print")+'</button><button class="ebda-finish-btn ebda-finish-secondary" onclick="EBDA_COMPLETION.edit('+JSON.stringify(k)+')">'+(arabic?"تعديل الاسم":"Edit name")+'</button></div>':'<div class="ebda-finish-form"><label for="ebda-student-name">'+(arabic?"اسم الطالب على الشهادة":"Student name on certificate")+'</label><div class="ebda-finish-input-wrap"><input id="ebda-student-name" dir="auto" type="text" maxlength="80" autocomplete="off" placeholder="'+(arabic?"اكتب الاسم كما تريد ظهوره":"Enter your full name")+'" value="'+esc(name)+'" oninput="EBDA_COMPLETION.setName('+JSON.stringify(k)+',this.value)"><button class="ebda-finish-btn ebda-finish-primary" onclick="EBDA_COMPLETION.open('+JSON.stringify(k)+')">'+(arabic?"معاينة الشهادة":"Preview certificate")+'</button></div><small>'+(arabic?"الاسم للاستخدام داخل متصفحك فقط، ولا يُحفظ على خادم.":"Your name is used in this browser session only.")+'</small></div>'):"";
+  return '<section class="ebda-lesson-completed" dir="'+(arabic?"rtl":"ltr")+'" lang="'+locale+'"><div class="ebda-finish-card">'+header+intro+'<p class="ebda-finish-message">'+msg+'</p>'+form+actions+'</div>'+certificate+'</section>';
+ }
+ return {render,setName,getName,open,edit,forget,print};
+})();
