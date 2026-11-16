@@ -109,3 +109,18 @@ body *{visibility:hidden!important}
 #ebda-certificate-sheet .ebda-certificate-result{font-size:13pt!important}
 #ebda-certificate-sheet .ebda-certificate-disclaimer{font-size:8pt!important}
 }
+
+/* Quiet expandable learning analysis; independent of printable certificate */
+.ebda-mastery-review{max-width:690px;margin:12px auto 20px;padding:0;border:1px solid #dcece5;border-radius:16px;background:#fbfdfb;color:#244c42;text-align:start}
+.ebda-mastery-review summary{list-style:none;cursor:pointer;padding:15px 19px;font-size:14px;font-weight:800}
+.ebda-mastery-review summary::-webkit-details-marker{display:none}
+.ebda-mastery-review summary:after{content:"⌄";float:right;color:#1CA29A}
+.ebda-mastery-review[open] summary{border-bottom:1px solid #e9f0eb}
+.ebda-mastery-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;padding:16px}
+.ebda-mastery-item{min-width:0;display:grid;gap:8px;text-align:center;font-size:11px}
+.ebda-mastery-item b{font-size:15px;font-variant-numeric:tabular-nums}
+.ebda-mastery-track{height:6px;border-radius:12px;background:#dfebe5;overflow:hidden}
+.ebda-mastery-track i{display:block;height:100%;background:#1CA29A;border-radius:12px}
+.ebda-mastery-review p{font-size:12px;line-height:1.5;padding:0 16px 14px;color:#587167;margin:0}
+@media(max-width:540px){.ebda-mastery-grid{gap:5px;padding:12px}.ebda-mastery-item{font-size:9px}.ebda-mastery-item b{font-size:12px}}
+@media print{.ebda-mastery-review{display:none!important}}
