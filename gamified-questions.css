@@ -17,3 +17,16 @@
 .game-tile:disabled{opacity:.4;cursor:default}
 .game-tiles{display:flex;gap:8px;flex-wrap:wrap}
 @media(max-width:560px){.game-entry{flex-direction:column;align-items:stretch}.game-input{width:100%;box-sizing:border-box}.game-entry .btn{width:100%}.game-binary{gap:8px}.game-token,.game-tile{font-size:14px;padding:10px}}
+
+/* Quest HUD and accessible achievement feedback */
+.game-hud{margin:0 0 18px;padding:15px 17px;background:#f5faf8;border:1px solid #d7eae3;border-radius:16px;display:grid;gap:12px}
+.game-hud-top,.game-quest{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:13px;color:#28574d;font-variant-numeric:tabular-nums}
+.game-hud-top span{font-weight:750}.game-hud-top span:first-child{color:#167a60}.game-quest{font-weight:700;font-size:12px}
+.game-hud-track{height:8px;background:#d9eae3;border-radius:30px;overflow:hidden}
+.game-hud-track>span{height:100%;display:block;background:#1e9880;border-radius:30px;transition:width .2s}
+.game-lifeline{border:1px dashed #9fcdb7;background:#f0faf5;color:#156c50;padding:10px 14px;border-radius:12px;margin:12px 0;cursor:pointer;font:inherit;font-size:13px;font-weight:750}
+.game-lifeline span{opacity:.7;margin-inline-start:8px}.game-lifeline:disabled{opacity:.4;cursor:default}
+.game-reward{padding:24px 14px;text-align:center;border-radius:18px;border:1px solid #d8e8e1;margin-bottom:14px}
+.game-reward-medal{font-size:46px}.game-reward h3{margin:6px 0;font-size:20px}.game-reward p{margin:7px 0;color:#38645b}
+@media(max-width:480px){.game-hud{padding:12px}.game-hud-top{font-size:12px;gap:8px}.game-quest{font-size:11px}}
+@media(prefers-reduced-motion:reduce){.game-hud-track>span{transition:none}}
