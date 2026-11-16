@@ -38,6 +38,11 @@ const ROOT=process.env.NTSS_TEST_URL||'http://127.0.0.1:8765/';
  assert.equal(certificate.printed,true);
  assert.equal(certificate.student,true);
  assert.equal(certificate.logo,true);
+ // Run a browser-native SQL worker rejection without loading the external SQLite runtime.
+ await page.evaluate(()=>{chooseGrade(3);openCodeLab('sql');window.EBDAA_CODE_LABS.edit('DROP TABLE students');window.EBDAA_CODE_LABS.run()});
+ await page.waitForFunction(()=>document.querySelector('#app')?.textContent?.includes('Only SELECT queries are allowed'),{timeout:10000});
+ assert.match(await page.locator('#app').innerText(),/Only SELECT queries are allowed/);
+ await page.evaluate(()=>closeCodeLab());
  // Verify page works at phone width without horizontal overflow.
  await page.setViewportSize({width:390,height:844});
  await page.evaluate(()=>chooseGrade(1));
