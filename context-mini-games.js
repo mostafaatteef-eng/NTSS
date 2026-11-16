@@ -3,12 +3,15 @@
  * No accounts, tracking, or stored student identity.
  */
 window.EBDAA_CONTEXT_GAMES=(function(){
-const state=new Map();
+const state=new Map(), skillResults=new Map(), missed=new Set();
 const esc=x=>String(x).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const attr=x=>esc(JSON.stringify(x));
 const norm=x=>String(x).normalize("NFKC").toLowerCase().replace(/[\u064B-\u065F\u0670\u0640]/g,"").replace(/\s+/g," ").trim();
 function record(k){if(!state.has(k))state.set(k,{first:null,matches:[],message:"",done:false,choice:null});return state.get(k)}
-function reset(subject,lesson){const pref=subject+":"+lesson+":";for(const k of state.keys())if(k.startsWith(pref))state.delete(k)}
+function reset(subject,lesson){const pref=subject+":"+lesson+":";for(const k of state.keys())if(k.startsWith(pref))state.delete(k);for(const k of skillResults.keys())if(k.startsWith(pref))skillResults.delete(k);for(const k of missed)if(k.startsWith(pref))missed.delete(k)}
+function mark(k,skill,success){if(skillResults.has(k))return;if(success){skillResults.set(k,{skill,success:!missed.has(k)});}else missed.add(k)}
+function assess(subject,lesson){const prefix=subject+":"+lesson+":";const entries=[...skillResults.entries()].filter(([k])=>k.startsWith(prefix)).map(([,v])=>v);const correct=entries.filter(x=>x.success).length;return {attempted:entries.length,correct,rate:entries.length?Math.round(correct/entries.length*100):0,skills:[...new Set(entries.map(x=>x.skill))]}}
+function report(subject,lesson,arabic=false){const a=assess(subject,lesson);return '<section class="context-report" aria-label="Independent practical skill assessment"><strong>🧪 '+(arabic?"تقييم المهارات العملية":"Practical skill assessment")+'</strong><div class="context-report-metrics"><span>🏅 '+a.correct+'/'+a.attempted+'</span><span>'+a.rate+'%</span><span>'+(arabic?"أنشطة مكتملة":"completed mini-games")+'</span></div><p>'+(arabic?"تُحتسب المحاولة الأولى فقط. يمكن إعادة الألعاب للتدرب، ولا تتغير درجة أسئلة الدرس.":"First-attempt performance only. Replay is for practice and does not change the 50-question grade.")+'</p></section>'}
 function draw(){window.EBDA_APP_RENDER?.()}
 function matching(subject,lesson,n,items,ar){
  if(n%10!==4)return "";
@@ -27,7 +30,7 @@ function matching(subject,lesson,n,items,ar){
  return '<section class="context-game" aria-label="Matching mini game"><div class="context-head"><strong>🧩 '+(ar?"لعبة التوصيل":"Match & Discover")+'</strong><span>🎯 '+completed+'/3</span></div><p class="context-help">'+(ar?"اختر السؤال ثم وصّله بالإجابة الصحيحة.":"Tap a prompt, then match it to the correct answer.")+'</p><div class="context-columns"><div>'+buttons+'</div><div>'+answers+'</div></div><p role="status" class="context-status">'+esc(st.done?(ar?"🏆 أكملت اللعبة!":"🏆 Perfect match!"):st.message|| (ar?"تحدٍ إضافي اختياري — لا يؤثر على درجة الدرس.":"Optional bonus — your lesson score is unchanged."))+'</p><button class="context-reset" onclick="EBDAA_CONTEXT_GAMES.restart('+attr(k)+')">'+(ar?"إعادة اللعبة":"Play again")+'</button></section>';
 }
 function pick(k,i){const s=record(k);if(s.done||s.matches.includes(i))return;s.first=i;s.message="✓ "+(i+1)+" selected — choose the matching answer";draw()}
-function pair(k,i){const s=record(k);if(s.first===null||s.done||s.matches.includes(i))return;if(i===s.first){s.matches.push(i);s.message="✓ Correct pair";s.done=s.matches.length===3}else s.message="Try another answer";s.first=null;draw()}
+function pair(k,i){const s=record(k);if(s.first===null||s.done||s.matches.includes(i))return;if(i===s.first){s.matches.push(i);s.message="✓ Correct pair";s.done=s.matches.length===3;if(s.done)mark(k,"matching",true)}else {s.message="Try another answer";mark(k,"matching",false)}s.first=null;draw()}
 function restart(k){state.delete(k);draw()}
 const missions={
  python:[
@@ -50,8 +53,8 @@ function ai(subject,lesson,n,topic){
  '<pre class="context-code">'+esc(data.code)+'</pre><p class="context-help">Arrange the SQL clauses in executable order.</p><div class="context-built">'+(s.matches.length?s.matches.map(i=>esc(data.tokens[i])).join(" → "):"Build query here…")+'</div><div class="context-answers">'+[2,0,3,1].map(i=>'<button class="context-tile" '+(s.matches.includes(i)||s.done?"disabled":"")+' onclick="EBDAA_CONTEXT_GAMES.sqlPick('+attr(k)+','+i+')">'+esc(data.tokens[i])+'</button>').join("")+'</div>';
  return '<section class="context-game"><div class="context-head"><strong>'+(which==="sql"?"🗄 SQL Query Builder":"🐍 Python Bug Hunt")+'</strong><span>MINI GAME</span></div><h3>'+esc(data.title)+'</h3>'+content+'<p class="context-status" role="status">'+esc(s.message||(s.done?"Challenge complete":"Optional bonus — does not change your quiz grade."))+'</p>'+(s.done?'<p class="context-explain">'+esc(data.why)+'</p>':'')+'<button class="context-reset" onclick="EBDAA_CONTEXT_GAMES.restart('+attr(k)+')">↺ Restart mini game</button></section>';
 }
-function debug(k,i,correct){let s=record(k);if(s.done)return;s.message=i===correct?"✓ Bug fixed!":"Not quite — inspect the highlighted logic again.";s.done=i===correct;draw()}
-function sqlPick(k,i){let s=record(k);if(s.done||s.matches.includes(i))return;if(i===s.matches.length){s.matches.push(i);s.done=s.matches.length===4;s.message=s.done?"✓ Query assembled in the correct order!":"✓ Correct next clause";}else s.message="That clause is not next — try another.";draw()}
+function debug(k,i,correct){let s=record(k);if(s.done)return;s.message=i===correct?"✓ Correct!":"Not quite — inspect the logic again.";s.done=i===correct;mark(k,k.includes("circuit")?"circuit":k.includes("math")?"math":"debugging",i===correct);draw()}
+function sqlPick(k,i){let s=record(k);if(s.done||s.matches.includes(i))return;if(i===s.matches.length){s.matches.push(i);s.done=s.matches.length===4;s.message=s.done?"✓ Query assembled in the correct order!":"✓ Correct next clause";if(s.done)mark(k,"sql-building",true)}else {s.message="That clause is not next — try another.";mark(k,"sql-building",false)}draw()}
 function physics(lesson,n,topic){
  if(n%10!==4||!["ohm","resistors","current"].includes(topic))return "";
  const k="physics:"+lesson+":circuit:"+n,s=record(k);
@@ -60,5 +63,5 @@ function physics(lesson,n,topic){
  const parallelMode=Math.floor(n/10)%2===1,expected=parallelMode?1:0;
  return '<section class="context-game"><div class="context-head"><strong>⚡ Build the Circuit</strong><span>MINI GAME</span></div><p>Resistors: R₁ = '+r1+' Ω, R₂ = '+r2+' Ω. Battery: '+v+' V.</p><p>Choose the equivalent resistance for <b>'+(parallelMode?"parallel":"series")+'</b> wiring.</p><div class="context-circuit"><span>🔋 '+v+' V</span><span>R₁ '+r1+' Ω</span><span>R₂ '+r2+' Ω</span></div><div class="context-answers">'+choices.map((x,i)=>'<button class="context-tile" '+(s.done?"disabled":"")+' onclick="EBDAA_CONTEXT_GAMES.debug('+attr(k)+','+i+','+expected+')">'+Number(x.toFixed(2))+' Ω</button>').join("")+'</div><p role="status" class="context-status">'+esc(s.message||"Choose a circuit result; this bonus does not change your grade.")+'</p>'+(s.done?'<p class="context-explain">'+(parallelMode?"1/R = 1/R₁ + 1/R₂":"R = R₁ + R₂")+' · Equivalent resistance: '+Number((parallelMode?parallel:series).toFixed(2))+' Ω.</p>':'')+'<button class="context-reset" onclick="EBDAA_CONTEXT_GAMES.restart('+attr(k)+')">Play again</button></section>';
 }
-return {matching,ai,physics,pick,pair,restart,debug,sqlPick,reset};
+return {matching,ai,physics,pick,pair,restart,debug,sqlPick,reset,assess,report};
 })();
