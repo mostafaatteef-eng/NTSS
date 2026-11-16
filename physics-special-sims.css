@@ -1,0 +1,17 @@
+/* Interactive Physics STEM simulations — clean responsive labs */
+.phy-sim{border:1px solid #dbe9e4;border-radius:22px;padding:clamp(16px,3vw,26px);background:#fff;margin:28px 0;box-shadow:0 6px 28px rgba(12,79,72,.04);color:#1a3936}
+.phy-top{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:17px}
+.phy-top h3{font-weight:800;font-size:clamp(19px,3vw,25px);letter-spacing:-.4px;margin:6px 0}
+.phy-chip{border-radius:99px;background:#edf9f4;padding:9px 12px;color:#166f65;font-size:12px;font-weight:700}
+.phy-image{overflow:hidden;border:1px solid #e2efea;border-radius:18px;background:#f3faf7;min-height:170px}
+.phy-svg{display:block;width:100%;height:auto;max-height:285px}
+.phy-controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,185px),1fr));gap:16px;margin:20px 0}
+.phy-control{display:flex;flex-direction:column;gap:10px;font-size:13px;font-weight:700;min-width:0;color:#285c54}
+.phy-control span{display:flex;justify-content:space-between;gap:6px}
+.phy-control output{font-variant-numeric:tabular-nums;color:#148777}
+.phy-control input{width:100%;accent-color:#148777;min-height:32px;cursor:pointer}
+.phy-control select{background:#fff;color:#204940;border:1px solid #bbd6cd;border-radius:10px;padding:11px;font-size:15px;width:100%}
+.phy-output{border-radius:13px;padding:16px;background:#eaf7f2;color:#11574c;font-size:14px;font-weight:750;line-height:1.55;margin-bottom:14px;font-variant-numeric:tabular-nums}
+@media(max-width:580px){.phy-controls{grid-template-columns:1fr 1fr;gap:12px}.phy-control{font-size:12px}.phy-sim{margin:18px 0}.phy-top h3{font-size:19px}.phy-chip{display:none}}
+@media(max-width:380px){.phy-controls{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){.phy-sim *{transition:none!important;animation:none!important}}
