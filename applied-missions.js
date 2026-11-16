@@ -2,8 +2,9 @@
    Show at questions 15 and 35, independent from grades and certificates.
    Examples are illustrative, not official textbook exam questions. */
 window.NTSS_APPLIED=(function(){
- const state=new Map(),first=new Map();
+ const state=new Map(),first=new Map(),expanded=new Set();
  const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+ const attr=v=>esc(JSON.stringify(v));
  const key=(subject,lesson,idx)=>subject+":"+lesson+":"+idx;
  const cases={
   ai:[
@@ -100,11 +101,11 @@ window.NTSS_APPLIED=(function(){
   const k=key(subject,lesson,n),st=state.get(k)||{selected:null,done:false},arabic=["economics","social","civics"].includes(subject);
   const [scenario,opts,correct,why]=mission;
   const rotations=[[1,2,0],[0,1,2],[2,0,1]];const seed=String(lesson).split("").reduce((v,c)=>(v*31+c.charCodeAt(0))>>>0,n);const order=rotations[seed%3];
-  return '<section class="ntss-applied" dir="'+(arabic?"rtl":"ltr")+'" aria-label="'+(arabic?"تحدي اتخاذ قرار":"Applied decision mission")+'">'+
+  return '<details class="ntss-applied" '+(expanded.has(k)?"open":"")+' dir="'+(arabic?"rtl":"ltr")+'" ontoggle="NTSS_APPLIED.expand('+attr(k)+',this.open)" aria-label="'+(arabic?"تحدي اتخاذ قرار":"Applied decision mission")+'"><summary class="ntss-applied-trigger"><span>◈ '+(arabic?"مهمة اتخاذ قرار واقعية":"Real-world decision challenge")+'</span><small>'+(arabic?"اختياري · اضغط للفتح":"Optional · tap to open")+'</small></summary><div class="ntss-applied-inner">'+
   '<header class="ntss-applied-head"><span class="ntss-applied-symbol">◈</span><div><small>'+(arabic?"مهمة تطبيقية · اختيارية":"APPLIED MISSION · OPTIONAL")+'</small><strong>'+(arabic?"تصرّف في الموقف":"Make the decision")+'</strong></div><span class="ntss-applied-status">'+(st.done?"✓":n===14?"1 / 2":"2 / 2")+'</span></header>'+
-  '<p class="ntss-applied-scenario">'+esc(scenario)+'</p><div class="ntss-applied-choices">'+order.map(i=>'<button class="ntss-applied-option '+(st.done&&i===correct?"is-right":"")+'" '+(st.done?"disabled":"")+' onclick="NTSS_APPLIED.choose('+JSON.stringify(k)+','+i+','+correct+')">'+esc(opts[i])+'</button>').join("")+'</div>'+
+  '<p class="ntss-applied-scenario">'+esc(scenario)+'</p><div class="ntss-applied-choices">'+order.map(i=>'<button class="ntss-applied-option '+(st.done&&i===correct?"is-right":"")+'" '+(st.done?"disabled":"")+' onclick="NTSS_APPLIED.choose('+attr(k)+','+i+','+correct+')">'+esc(opts[i])+'</button>').join("")+'</div>'+
   '<p class="ntss-applied-feedback" role="status">'+(st.done?esc(why):st.selected!==null?(arabic?"ليست الإجابة الأنسب. فكّر في أثر القرار ثم حاول مرة أخرى.":"Not the best decision. Reconsider the impact and try again."):arabic?"تطبيق إضافي مستقل لا يغيّر درجة الدرس.":"A separate transfer-of-learning challenge; does not change the lesson score.")+'</p>'+
-  '<footer class="ntss-applied-foot"><span>'+(arabic?"المحاولة الأولى: ":"First attempt: ")+(first.has(k)?(first.get(k)?(arabic?"صحيحة":"Correct"):(arabic?"للمراجعة":"Review")):(arabic?"لم تُحسم":"Not submitted"))+'</span><button onclick="NTSS_APPLIED.retry('+JSON.stringify(k)+')">'+(arabic?"إعادة التدريب":"Try again")+'</button></footer></section>';
+  '<footer class="ntss-applied-foot"><span>'+(arabic?"المحاولة الأولى: ":"First attempt: ")+(first.has(k)?(first.get(k)?(arabic?"صحيحة":"Correct"):(arabic?"للمراجعة":"Review")):(arabic?"لم تُحسم":"Not submitted"))+'</span><button onclick="NTSS_APPLIED.retry('+attr(k)+')">'+(arabic?"إعادة التدريب":"Try again")+'</button></footer></div></details>';
  }
  function choose(k,i,correct){
   const st=state.get(k)||{selected:null,done:false};
@@ -113,7 +114,8 @@ window.NTSS_APPLIED=(function(){
   st.selected=i;st.done=i===correct;state.set(k,st);window.EBDA_APP_RENDER?.();
  }
  function retry(k){state.delete(k);window.EBDA_APP_RENDER?.()}
- function reset(subject,lesson){const prefix=subject+":"+lesson+":";for(const map of [state,first])for(const k of [...map.keys()])if(k.startsWith(prefix))map.delete(k)}
+ function expand(k,on){if(on)expanded.add(k);else expanded.delete(k)}
+ function reset(subject,lesson){const prefix=subject+":"+lesson+":";for(const k of [...expanded])if(k.startsWith(prefix))expanded.delete(k);for(const map of [state,first])for(const k of [...map.keys()])if(k.startsWith(prefix))map.delete(k)}
  function progress(subject,lesson){const prefix=subject+":"+lesson+":";const a=[...first].filter(([k])=>k.startsWith(prefix));return {attempted:a.length,correct:a.filter(([,v])=>v).length}}
- return {render,choose,retry,reset,progress,select};
+ return {render,choose,retry,expand,reset,progress,select};
 })();
