@@ -13,10 +13,9 @@ window.EBDA_COMPLETION=(function(){
  function forget(k){names.delete(k);shown.delete(k)}
  function print(){if(typeof window.print==="function")window.print()}
  function logo(){
-  // Reuse the original NTSS image already embedded in the site header: never redraw it.
-  const original=document.querySelector('.logo img[alt*="National Technical"]')||document.querySelector('img[alt*="National Technical"]');
-  const source=original?.getAttribute("src")||"";
-  return source.startsWith("data:image/")?'<img class="ebda-certificate-logo" alt="Original NTSS school logo" src="'+esc(source)+'">':'<span class="ebda-certificate-logo-unavailable">NTSS school logo unavailable — reload the page</span>';
+  // Use the actual uploaded NTSS school artwork, included as a local image asset.
+  const src=window.NTSS_ORIGINAL_LOGO||"";
+  return src.startsWith("data:image/webp;base64,")?'<img class="ebda-certificate-logo" alt="NTSS – National Technical Science Schools" src="'+src+'">':'<span class="ebda-certificate-logo-unavailable">NTSS logo could not be loaded</span>';
  }
  function render({subject,grade,unit,index,lesson,correct,total=50,retry,back,arabic=false}){
   const k=key({subject,grade,unit,index}),score=Math.round(100*correct/Math.max(1,total)),eligible=score>=70,excellent=score>=85,visible=shown.has(k),name=getName(k);
