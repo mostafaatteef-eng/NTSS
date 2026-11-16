@@ -99,7 +99,7 @@ window.NTSS_APPLIED=(function(){
   const mission=select(subject,String(lessonTitle||""),n);if(!mission)return "";
   const k=key(subject,lesson,n),st=state.get(k)||{selected:null,done:false},arabic=["economics","social","civics"].includes(subject);
   const [scenario,opts,correct,why]=mission;
-  const order=[1,2,0];
+  const rotations=[[1,2,0],[0,1,2],[2,0,1]];const seed=String(lesson).split("").reduce((v,c)=>(v*31+c.charCodeAt(0))>>>0,n);const order=rotations[seed%3];
   return '<section class="ntss-applied" dir="'+(arabic?"rtl":"ltr")+'" aria-label="'+(arabic?"تحدي اتخاذ قرار":"Applied decision mission")+'">'+
   '<header class="ntss-applied-head"><span class="ntss-applied-symbol">◈</span><div><small>'+(arabic?"مهمة تطبيقية · اختيارية":"APPLIED MISSION · OPTIONAL")+'</small><strong>'+(arabic?"تصرّف في الموقف":"Make the decision")+'</strong></div><span class="ntss-applied-status">'+(st.done?"✓":n===14?"1 / 2":"2 / 2")+'</span></header>'+
   '<p class="ntss-applied-scenario">'+esc(scenario)+'</p><div class="ntss-applied-choices">'+order.map(i=>'<button class="ntss-applied-option '+(st.done&&i===correct?"is-right":"")+'" '+(st.done?"disabled":"")+' onclick="NTSS_APPLIED.choose('+JSON.stringify(k)+','+i+','+correct+')">'+esc(opts[i])+'</button>').join("")+'</div>'+
