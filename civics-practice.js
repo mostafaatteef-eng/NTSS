@@ -40,7 +40,7 @@ window.EBDAA_CIVICS_PRACTICE=(function(){
  }
  function restart(){start(s.g,s.u,s.i)}
  function render(){
- if(s.done)return window.EBDA_COMPLETION.render({subject:"civics",grade:s.g,unit:s.u,index:s.i,lesson:window.EBDAA_CIVICS_UNITS[s.g][s.u].sessions[s.i].title,correct:Object.values(s.answers).filter(v=>v.checked&&v.correct).length,retry:"EBDAA_CIVICS_PRACTICE.restart()",back:"civicsBackToUnit()",arabic:true});
+ if(s.done)return window.EBDA_COMPLETION.render({subject:"civics",grade:s.g,unit:s.u,index:s.i,lesson:window.EBDAA_CIVICS_UNITS[s.g][s.u].sessions[s.i].title,correct:Object.values(s.answers).filter(v=>v.checked&&v.correct).length,answers:s.answers,retry:"EBDAA_CIVICS_PRACTICE.restart()",back:"civicsBackToUnit()",arabic:true});
 
   const q=s.items[s.cursor],a=s.answers[s.cursor],answered=Object.values(s.answers).filter(x=>x.checked).length,correct=Object.values(s.answers).filter(x=>x.checked&&x.correct).length;
   const head='<header class="practice-focus__header" dir="rtl"><div class="practice-focus__header-row"><button class="practice-focus__exit" onclick="civicsBackToUnit()">← العودة إلى الدروس</button><span class="practice-focus__year">الصف '+("الأول")+' · التربية الوطنية</span></div><div class="practice-focus__info"><h1 class="practice-focus__lesson">'+esc(lesson().title)+'</h1><span class="practice-focus__counter">'+(s.done?"إنجاز المهمة":"السؤال "+(s.cursor+1)+" من 50")+'</span></div><div class="practice-focus__track"><i style="width:'+(answered*2)+'%"></i></div></header>';
