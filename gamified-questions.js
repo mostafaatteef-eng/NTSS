@@ -1,32 +1,61 @@
+/* NTSS unified question game system, v2.
+   Formative rewards are ephemeral, per-session; no personal information is stored. */
 window.EBDAA_GAME=(function(){
- const typed=new Map(),arranged=new Map();
+ const typed=new Map(),arranged=new Map(),removed=new Set(),usedHelp=new Map();
  const esc=x=>String(x).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
- const arg=x=>esc(JSON.stringify(x));
- const norm=x=>String(x).normalize("NFKC").toLowerCase().replace(/[\u064B-\u065F\u0670]/g,"").replace(/[.,!?؟،؛:«»"'()[\]]/g,"").replace(/\s+/g," ").trim();
+ const js=x=>esc(JSON.stringify(x));
+ const norm=x=>String(x).normalize("NFKC").toLocaleLowerCase().replace(/[\u064B-\u065F\u0670\u0640]/g,"").replace(/[.,!?؟،؛:«»"'()[\]]/g,"").replace(/\s+/g," ").trim();
  const key=(subject,lesson,idx)=>subject+":"+lesson+":"+idx;
- function mode(q,n){if(!q.options||q.options.length!==4)return "choice";if(q.type==="Listening"||q.type==="Hören")return "choice";const m=["choice","type","build","truefalse","choice"][n%5],v=String(q.options[q.answer]);return m==="build"&&v.trim().split(/\s+/).length<2?"type":m}
+ const choices=q=>q.options.map(v=>typeof v==="object"&&v!==null?String(v.label??v.value??""):String(v));
+ const answerIndex=q=>Number.isInteger(q.answer)?q.answer:q.options.findIndex(v=>v?.correct===true);
+ function mode(q,n){
+  if(!Array.isArray(q.options)||q.options.length!==4)return "choice";
+  if(q.type==="Listening"||q.type==="Hören"||q.type==="Writing"||q.type==="Speaking"||q.type==="Sprechen"||q.type==="Dialog")return "choice";
+  if(q.mode==="number")return "choice";
+  const m=["choice","type","build","truefalse","choice"][n%5],v=choices(q)[answerIndex(q)]||"";
+  if(m==="build"&&(v.trim().split(/\s+/).length<2||v.length>100))return "type";
+  if(m==="type"&&v.length>100)return "choice";
+  return m;
+ }
  function call(name,v){const fn=name.split(".").reduce((a,b)=>a&&a[b],window);if(typeof fn==="function")fn(v)}
- function input(k,v){typed.set(k,v)}
+ function input(k,v){typed.set(k,String(v).slice(0,250))}
  function submit(k,answer,j,name){const v=typed.get(k)||"";if(!norm(v))return;call(name,norm(v)===norm(answer)?j:(j+1)%4)}
  function tile(k,j){const list=arranged.get(k)||[];if(!list.includes(j)){arranged.set(k,list.concat(j));window.EBDA_APP_RENDER?.()}}
  function clear(k){arranged.delete(k);window.EBDA_APP_RENDER?.()}
  function submitTiles(k,words,j,name){const list=arranged.get(k)||[];if(list.length!==words.length)return;call(name,list.map(i=>words[i]).join(" ")===words.join(" ")?j:(j+1)%4)}
+ function help(k,correct){const prefix=k.split(":").slice(0,2).join(":");const used=usedHelp.get(prefix)||new Set();if(used.size>=3||used.has(k))return;used.add(k);usedHelp.set(prefix,used);removed.add(k);window.EBDA_APP_RENDER?.()}
+ function resetLesson(subject,lesson){const prefix=subject+":"+lesson+":";for(const m of [typed,arranged])for(const k of m.keys())if(k.startsWith(prefix))m.delete(k);for(const k of [...removed])if(k.startsWith(prefix))removed.delete(k);usedHelp.delete(subject+":"+lesson)}
  function render(q,n,selected,checked,subject,lesson,name){
-  const m=mode(q,n),k=key(subject,lesson,n),correct=q.answer,answer=String(q.options[correct]),dis=checked?"disabled":"";
-  const label={choice:"🎯 Choose",type:"⌨️ Type the answer",build:"🧩 Build the phrase",truefalse:"⚡ True or false"}[m];
-  const tag='<div class="game-label">'+label+'</div>';
-  if(m==="choice")return tag+'<div class="choices">'+q.options.map((v,j)=>'<button class="choice '+(selected===j?'chosen ':'')+(checked&&j===correct?'correct':'')+'" '+dis+' onclick="'+name+'('+j+')">'+esc(v)+'</button>').join("")+'</div>';
-  if(m==="truefalse"){
-   const probe=n%2?((correct+1)%4):correct,statement=q.options[probe],yes=probe===correct;
-   return tag+'<div class="game-statement">'+esc(statement)+'</div><div class="game-binary"><button class="choice" '+dis+' onclick="'+name+'('+(yes?correct:(correct+1)%4)+')">✓ '+(subject==="ar"?"صح":"True")+'</button><button class="choice" '+dis+' onclick="'+name+'('+(yes?(correct+1)%4:correct)+')">✕ '+(subject==="ar"?"خطأ":"False")+'</button></div>';
+  const opts=choices(q),correct=answerIndex(q),m=mode(q,n),k=key(subject,lesson,n),answer=opts[correct]||"",dis=checked?"disabled":"";
+  const ar=subject==="ar", labels=ar?{choice:"🎯 اختر الإجابة",type:"⌨️ اكتب الإجابة",build:"🧩 ركّب العبارة",truefalse:"⚡ صح أم خطأ"}:{choice:"🎯 Quick decision",type:"⌨️ Recall challenge",build:"🧩 Phrase builder",truefalse:"⚡ Fact check"};
+  const top='<div class="game-label">'+labels[m]+'</div>';
+  if(correct<0||correct>3)return '<p class="feedback error">This question needs an answer-key review.</p>';
+  if(m==="choice"){
+   const used=usedHelp.get(subject+":"+lesson)||new Set(),remaining=3-used.size,hidden=removed.has(k)?[0,1,2,3].filter(j=>j!==correct).slice(0,2):[];
+   return top+'<div class="choices">'+opts.map((v,j)=>'<button class="choice '+(selected===j?'chosen ':'')+(checked&&j===correct?'correct':'')+'" '+(hidden.includes(j)?'disabled aria-hidden="true" style="opacity:.18"':dis)+' onclick="'+name+'('+j+')">'+(hidden.includes(j)?"—":esc(v))+'</button>').join("")+'</div>'+(checked?"":'<button class="game-lifeline" '+(remaining<=0||removed.has(k)?"disabled":"")+' onclick="EBDAA_GAME.help('+js(k)+','+correct+')">💡 50:50 <span>'+remaining+' left</span></button>');
   }
-  if(m==="type")return tag+'<p class="game-instruction">'+(subject==="ar"?"اكتب إجابتك ثم اعتمدها":"Enter your answer without options")+'</p><div class="game-entry"><input class="game-input" autocomplete="off" spellcheck="false" value="'+esc(typed.get(k)||"")+'" '+dis+' oninput="EBDAA_GAME.input('+arg(k)+',this.value)"><button class="btn teal" '+dis+' onclick="EBDAA_GAME.submit('+arg(k)+','+arg(answer)+','+correct+','+arg(name)+')">Submit</button></div>';
-  const words=answer.trim().split(/\s+/),picked=arranged.get(k)||[],order=words.map((word,id)=>({word,id})).sort((a,b)=>((a.id*7+n*3)%words.length)-((b.id*7+n*3)%words.length));
-  return tag+'<p class="game-instruction">Tap the tiles to arrange the answer</p><div class="game-built">'+(picked.length?picked.map(j=>'<span class="game-token">'+esc(words[j])+'</span>').join(" "):'<span class="game-placeholder">Your phrase…</span>')+'</div><div class="game-tiles">'+order.map(({word,id})=>'<button class="game-tile" '+(checked||picked.includes(id)?"disabled":"")+' onclick="EBDAA_GAME.tile('+arg(k)+','+id+')">'+esc(word)+'</button>').join("")+'</div><div class="game-entry"><button class="btn light" '+dis+' onclick="EBDAA_GAME.clear('+arg(k)+')">Reset</button><button class="btn teal" '+dis+' onclick="EBDAA_GAME.submitTiles('+arg(k)+','+arg(words)+','+correct+','+arg(name)+')">Submit phrase</button></div>';
+  if(m==="truefalse"){
+   const probe=n%2?(correct+1)%4:correct,yes=probe===correct;
+   return top+'<p class="game-instruction">'+(ar?"هل العبارة صحيحة؟":"Is this statement correct?")+'</p><div class="game-statement">'+esc(opts[probe])+'</div><div class="game-binary"><button class="choice" '+dis+' onclick="'+name+'('+(yes?correct:(correct+1)%4)+')">✓ '+(ar?"صح":"True")+'</button><button class="choice" '+dis+' onclick="'+name+'('+(yes?(correct+1)%4:correct)+')">✕ '+(ar?"خطأ":"False")+'</button></div>';
+  }
+  if(m==="type")return top+'<p class="game-instruction">'+(ar?"استرجع الإجابة بدون اختيارات.":"Recall the answer without seeing options.")+'</p><div class="game-entry"><input class="game-input" aria-label="'+(ar?"اكتب الإجابة":"Type your answer")+'" autocomplete="off" spellcheck="false" value="'+esc(typed.get(k)||"")+'" '+dis+' oninput="EBDAA_GAME.input('+js(k)+',this.value)"><button class="btn teal" '+dis+' onclick="EBDAA_GAME.submit('+js(k)+','+js(answer)+','+correct+','+js(name)+')">'+(ar?"تحقق":"Submit")+'</button></div>';
+  const words=answer.trim().split(/\s+/),picked=arranged.get(k)||[];
+  const order=words.map((word,id)=>({word,id})).sort((a,b)=>((a.id*17+7*n)% (words.length+1))-((b.id*17+7*n)%(words.length+1))||b.id-a.id);
+  return top+'<p class="game-instruction">'+(ar?"رتّب البطاقات لتكوين الإجابة.":"Tap the tiles in the right order.")+'</p><div class="game-built" aria-live="polite">'+(picked.length?picked.map(j=>'<span class="game-token">'+esc(words[j])+'</span>').join(" "):'<span class="game-placeholder">'+(ar?"كوّن العبارة هنا":"Build your phrase…")+'</span>')+'</div><div class="game-tiles">'+order.map(({word,id})=>'<button class="game-tile" '+(checked||picked.includes(id)?"disabled":"")+' onclick="EBDAA_GAME.tile('+js(k)+','+id+')">'+esc(word)+'</button>').join("")+'</div><div class="game-entry"><button class="btn light" '+dis+' onclick="EBDAA_GAME.clear('+js(k)+')">'+(ar?"إعادة":"Reset")+'</button><button class="btn teal" '+dis+' onclick="EBDAA_GAME.submitTiles('+js(k)+','+js(words)+','+correct+','+js(name)+')">'+(ar?"تحقق":"Submit")+'</button></div>';
+ }
+ function score(answers,total,ar=false){
+  const keys=Object.keys(answers).map(Number).sort((a,b)=>a-b),complete=keys.filter(k=>answers[k]?.checked),correct=complete.filter(k=>answers[k].correct).length,answered=complete.length;
+  let streak=0;for(let k=answered-1;k>=0;k--){const x=answers[complete[k]];if(x.correct)streak++;else break}
+  const xp=correct*10+Math.min(streak,5)*5,level=xp>=400?4:xp>=200?3:xp>=80?2:1,checkpoints=Math.min(5,Math.floor(answered/10));
+  return {xp,streak,correct,answered,level,checkpoints,total};
  }
  function stats(answers,total,ar){
-  const keys=Object.keys(answers).map(Number).sort((a,b)=>a-b),correct=keys.filter(k=>answers[k].checked&&answers[k].correct).length,answered=keys.filter(k=>answers[k].checked).length;let streak=0;for(let i=keys.length-1;i>=0;i--){const a=answers[keys[i]];if(a.checked&&a.correct)streak++;else break}
-  return '<div class="game-stats"><span>⭐ '+(correct*10+Math.min(streak,5)*5)+' XP</span><span>🔥 '+streak+' '+(ar?"متتالية":"streak")+'</span><span>🏁 '+answered+'/'+total+'</span></div>';
+  const s=score(answers,total,ar),pct=Math.round(s.answered/Math.max(1,total)*100),mission=Math.min(5,Math.floor(s.answered/10)+1),checkpoint=s.answered>0&&s.answered%10===0;
+  return '<section class="game-hud" aria-label="Game progress"><div class="game-hud-top"><span>⭐ <b>'+s.xp+' XP</b></span><span>🔥 '+s.streak+' '+(ar?"متتالية":"streak")+'</span><span>🏅 '+(ar?"المستوى":"Level")+' '+s.level+'</span></div><div class="game-quest"><span>'+(ar?"المهمة":"Quest")+' '+mission+' / 5'+(checkpoint?" · "+(ar?"نقطة إنجاز!":"Checkpoint reached!"):"")+'</span><span>'+s.answered+' / '+total+'</span></div><div class="game-hud-track" role="progressbar" aria-label="Mission progress" aria-valuemin="0" aria-valuemax="'+total+'" aria-valuenow="'+s.answered+'"><span style="width:'+pct+'%"></span></div></section>';
  }
- return {render,stats,input,submit,tile,clear,submitTiles,mode};
+ function results(answers,total,ar){
+  const s=score(answers,total,ar),medal=s.correct/Math.max(1,total)>=.9?"🥇":s.correct/Math.max(1,total)>=.7?"🥈":"🥉";
+  return '<div class="game-reward" role="status"><div class="game-reward-medal">'+medal+'</div><h3>'+(ar?"نتيجة المهمة":"Quest rewards")+'</h3><p>⭐ '+s.xp+' XP · '+s.correct+'/'+total+' '+(ar?"إجابة صحيحة":"correct")+'</p><p>'+(s.correct/Math.max(1,total)>=.8?(ar?"إنجاز ممتاز!":"Great mastery!"):ar?"راجع الإجابات وحاول مرة أخرى":"Review missed questions and try again")+'</p></div>';
+ }
+ return {render,stats,results,score,mode,help,resetLesson,input,submit,tile,clear,submitTiles};
 })();
