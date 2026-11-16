@@ -94,6 +94,8 @@ function move(delta){if(delta>0&&!record()?.checked)return;const next=state.curs
 function restart(){start(state.g,state.u,state.i)}
 function escapeAttr(s){return escape(s)}
 function render(){
+ if(state.done)return window.EBDA_COMPLETION.render({subject:"math",grade:state.g,unit:state.u,index:state.i,lesson:lesson().title,correct:Object.values(state.answers).filter(v=>v.checked&&v.correct).length,retry:"EBDAA_MATH_PRACTICE.restart()",back:"mathBackToUnit()"});
+
  const {unit,title}=lesson(),q=current(),a=record(),answered=Object.values(state.answers).filter(v=>v.checked).length,correct=Object.values(state.answers).filter(v=>v.checked&&v.correct).length;
  const percentage=Math.round(answered/50*100),s=state;
  const choices=q.mode==="number"?'<label for="math-answer">Your calculated answer</label><input id="math-answer" type="number" step="any" inputmode="decimal" value="'+(a?escapeAttr(a.value):'')+'" '+(a?.checked?'disabled':'')+' oninput="EBDAA_MATH_PRACTICE.respond(this.value)" style="display:block;width:100%;max-width:280px;margin:12px 0;padding:14px;border:1px solid #d6d7d8;border-radius:12px">':window.EBDAA_GAME.render(q,s.cursor,a?.value,a?.checked,"math",[s.g,s.u,s.i].join("-"),"EBDAA_MATH_PRACTICE.respond");
