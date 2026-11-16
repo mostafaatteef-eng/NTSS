@@ -72,7 +72,7 @@ function physicsModel(lesson,n,q){if(n%10!==4||!q||!Number.isFinite(q.value))ret
 }
 function ai(subject,lesson,n,topic,lessonTitle=''){
  if(n%10!==4)return "";
- const inferred=/\\bsql\\b|database|query|relational|data retrieval/i.test(lessonTitle)?"sql":/python|script|program|algorithm|function|loop|debug/i.test(lessonTitle)?"python":topic;
+ const inferred=/\bsql\b|database|query|relational|data retrieval/i.test(lessonTitle)?"sql":/python|script|program|algorithm|function|loop|debug/i.test(lessonTitle)?"python":topic;
  const which=inferred==="sql"?"sql":"python",k=subject+":"+lesson+":"+which+":"+n,s=record(k),data=missions[which][(topicHash(lessonTitle||lesson)+Math.floor(n/10))%missions[which].length];
  const content=which==="python"?'<pre class="context-code">'+esc(data.code)+'</pre><p class="context-help">Choose the correct fix:</p><div class="context-answers">'+data.options.map((v,i)=>'<button class="context-tile" '+(s.done?"disabled":"")+' onclick="EBDAA_CONTEXT_GAMES.debug('+attr(k)+','+i+','+data.correct+')">'+esc(v)+'</button>').join("")+'</div>':
  '<pre class="context-code">'+esc(data.code)+'</pre><p class="context-help">Arrange the SQL clauses in executable order.</p><div class="context-built">'+(s.matches.length?s.matches.map(i=>esc(data.tokens[i])).join(" → "):"Build query here…")+'</div><div class="context-answers">'+[2,0,3,1].map(i=>'<button class="context-tile" '+(s.matches.includes(i)||s.done?"disabled":"")+' onclick="EBDAA_CONTEXT_GAMES.sqlPick('+attr(k)+','+i+')">'+esc(data.tokens[i])+'</button>').join("")+'</div>';
