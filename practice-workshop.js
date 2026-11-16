@@ -35,7 +35,7 @@ function panel(g,u,i){
  ensure(g,u,i);
  return '<div class="guided-question" aria-label="Lesson questions"><div class="eyebrow">GUIDED PRACTICE · 50 QUESTIONS</div><div id="ebdaa-practice-stage" aria-live="polite">'+cachedStage+'</div></div>';
 }
-function begin(g,u,i){if(window.EBDA_MISTAKES)window.EBDA_MISTAKES.clear();const key=[g,u,i].join("-");items=shuffleQuestions(window.EBDAA_QUESTION_FACTORY.all(g,u,i),key);cursor=0;chosen=null;graded=false;correct=0;reviewed={};responses={};hintFlags={};session=key;grade=g;unit=u;lesson=i;window.EBDA_MASTERY.begin(g,u,i);hintShown=false;checkpoint=false;finished=false;draw()}
+function begin(g,u,i){window.EBDAA_GAME.resetLesson("ai",[g,u,i].join("-"));if(window.EBDA_MISTAKES)window.EBDA_MISTAKES.clear();const key=[g,u,i].join("-");items=shuffleQuestions(window.EBDAA_QUESTION_FACTORY.all(g,u,i),key);cursor=0;chosen=null;graded=false;correct=0;reviewed={};responses={};hintFlags={};session=key;grade=g;unit=u;lesson=i;window.EBDA_MASTERY.begin(g,u,i);hintShown=false;checkpoint=false;finished=false;draw()}
 function answer(v){if(graded)return;chosen=v;responses[cursor]=Array.isArray(v)?v.slice():v;if(items[cursor]?.mode==="number"){const b=document.getElementById("ebdaa-check");if(b)b.disabled=String(v).trim()==="";return}draw()}
 function chooseOrder(v){if(graded)return;if(!Array.isArray(chosen))chosen=[];if(!chosen.includes(v))chosen.push(v);responses[cursor]=chosen.slice();draw()}
 function clearOrder(){if(graded)return;chosen=[];responses[cursor]=[];draw()}
