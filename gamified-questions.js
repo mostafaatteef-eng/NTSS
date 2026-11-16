@@ -4,7 +4,7 @@ window.EBDAA_GAME=(function(){
  const typed=new Map(),arranged=new Map(),removed=new Set(),usedHelp=new Map();
  const esc=x=>String(x).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
  const js=x=>esc(JSON.stringify(x));
- const norm=x=>String(x).normalize("NFKC").toLocaleLowerCase().replace(/[\u064B-\u065F\u0670\u0640]/g,"").replace(/[.,!?؟،؛:«»"'()[\]]/g,"").replace(/\s+/g," ").trim();
+ const norm=x=>String(x).normalize("NFKC").toLocaleLowerCase().replace(/[أإآٱ]/g,"ا").replace(/ة/g,"ه").replace(/ى/g,"ي").replace(/[\u064B-\u065F\u0670\u0640]/g,"").replace(/[.,!?؟،؛:«»"'()[\]]/g,"").replace(/\s+/g," ").trim();
  const key=(subject,lesson,idx)=>subject+":"+lesson+":"+idx;
  const choices=q=>q.options.map(v=>typeof v==="object"&&v!==null?String(v.label??v.value??""):String(v));
  const answerIndex=q=>Number.isInteger(q.answer)?q.answer:q.options.findIndex(v=>v?.correct===true);
@@ -12,7 +12,8 @@ window.EBDAA_GAME=(function(){
   if(!Array.isArray(q.options)||q.options.length!==4)return "choice";
   if(q.type==="Listening"||q.type==="Hören"||q.type==="Writing"||q.type==="Speaking"||q.type==="Sprechen"||q.type==="Dialog")return "choice";
   if(q.mode==="number")return "choice";
-  const m=["choice","type","build","truefalse","choice"][n%5],v=choices(q)[answerIndex(q)]||"";
+  // Avoid turning a distractor into a misleading true/false fact.
+  const m=["choice","type","build","choice","choice"][n%5],v=choices(q)[answerIndex(q)]||"";
   if(m==="build"&&(v.trim().split(/\s+/).length<2||v.length>100))return "type";
   if(m==="type"&&v.length>100)return "choice";
   return m;
