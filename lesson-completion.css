@@ -40,3 +40,72 @@
 @media(max-width:600px){.ebda-finish-input-wrap{flex-direction:column}.ebda-finish-input-wrap input{min-height:51px}.ebda-finish-data strong{font-size:19px}.ebda-finish-data span{font-size:10px}.ebda-certificate{padding:20px 18px;min-height:330px}.ebda-certificate-icon{display:none}.ebda-certificate-header{gap:8px}.ebda-certificate-series{font-size:7px;letter-spacing:1px}.ebda-certificate-logo{height:30px;max-width:110px}.ebda-certificate-metadata{gap:6px;padding:9px 0}.ebda-certificate-metadata span{font-size:8px}.ebda-certificate-disclaimer{font-size:7px}}
 @page{size:A4 landscape;margin:0}
 @media print{body *{visibility:hidden!important}#ebda-certificate-sheet,#ebda-certificate-sheet *{visibility:visible!important}#ebda-certificate-sheet{position:fixed;top:0;left:0;width:297mm;height:210mm;max-width:none;min-height:0;aspect-ratio:auto;margin:0!important;border:11mm solid #f0f0e9!important;outline:1.2mm solid #d3b56a!important;outline-offset:-14mm;box-shadow:none!important;padding:14mm!important;overflow:hidden!important;page-break-inside:avoid!important;break-inside:avoid!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}html,body{width:297mm;height:210mm!important;margin:0!important;padding:0!important;overflow:hidden!important}@page{size:297mm 210mm;margin:0}}
+
+
+/* NTSS certificate: approved English-first, clean minimalist A4 landscape version.
+   Brand reference: #1CA29A, #FFD700, #FFEAAB, #CBC0A3. */
+.ebda-certificate{
+  isolation:isolate;position:relative;box-sizing:border-box;
+  aspect-ratio:297/210;min-height:0;width:100%;overflow:hidden;
+  background:#fff;border:1.5px solid #1CA29A;outline:0;
+  border-radius:clamp(12px,3vw,25px);padding:clamp(22px,4.1vw,48px) clamp(24px,5vw,70px);
+  text-align:center;display:flex;align-items:center;justify-content:space-between;flex-direction:column;gap:clamp(5px,.8vw,12px);
+  color:#242624;box-shadow:0 12px 36px #1c424014;
+  font-family:Inter,"Segoe UI",Arial,sans-serif;
+}
+.ebda-certificate:before,.ebda-certificate:after{display:none}
+.ebda-certificate-corner{position:absolute;pointer-events:none;z-index:-1;width:23%;height:30%}
+.ebda-certificate-corner--top{left:0;top:0;clip-path:polygon(0 0,100% 0,0 100%);background:linear-gradient(132deg,#1CA29A 0%,#1CA29A 65%,#FFD700 65%,#FFD700 78%,#FFEAAB 78%)}
+.ebda-certificate-corner--bottom{right:0;bottom:0;clip-path:polygon(100% 0,100% 100%,0 100%);background:linear-gradient(145deg,#FFEAAB 0%,#FFD700 27%,#1CA29A 28%)}
+.ebda-certificate-header{width:100%;display:flex;justify-content:center;align-items:center;min-height:65px;position:relative;z-index:1}
+.ebda-certificate-logo{display:block;height:clamp(45px,7.3vw,85px);width:auto;max-width:48%;object-fit:contain}
+.ebda-certificate-logo-unavailable{font-size:12px;color:#8f2b2b}
+.ebda-certificate-heading{font-size:clamp(22px,4.35vw,48px);font-weight:850;letter-spacing:-1.4px;color:#22272a;line-height:1.12;margin:3px 0}
+.ebda-certificate-highlight{background:#FFD700;width:48px;height:6px;border-radius:99px;margin:1px 0 6px}
+.ebda-certificate-pretitle,.ebda-certificate-text,.ebda-certificate-platform{font-size:clamp(11px,1.75vw,19px);color:#626966;margin:4px 0}
+.ebda-certificate-student{font-size:clamp(21px,3.65vw,41px);font-weight:850;letter-spacing:-.6px;color:#1A8880;max-width:94%;overflow-wrap:anywhere;padding:0;border:0;background:none}
+.ebda-certificate-lesson{font-size:clamp(18px,2.9vw,32px);font-weight:850;line-height:1.2;max-width:92%;color:#117E75;background:#e2f5f1;border-radius:99px;padding:9px 36px;overflow-wrap:anywhere}
+.ebda-certificate-metadata{width:90%;border:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));padding:10px 0;margin:4px auto;gap:0}
+.ebda-certificate-metadata>div{min-width:0;display:flex;align-items:center;flex-direction:column;justify-content:center;gap:7px;padding:0 8px;border-inline-end:1px solid #CBC0A3}
+.ebda-certificate-metadata>div:last-child{border:0}
+.ebda-certificate-detail-label{font-size:clamp(9px,1.3vw,14px);font-weight:700;color:#7a7c7c}
+.ebda-certificate-metadata b{font-size:clamp(11px,1.85vw,18px);font-weight:800;color:#22272a;overflow-wrap:anywhere}
+.ebda-certificate-result{font-size:clamp(12px,1.75vw,19px);font-weight:850;color:#106b64;background:#FFEAAB;padding:10px 30px;border-radius:99px;max-width:95%;overflow-wrap:anywhere}
+.ebda-certificate-disclaimer{font-size:clamp(7px,.75vw,10px);line-height:1.2;color:#7b7f7d;margin:0}
+@media(max-width:600px){
+.ebda-certificate{padding:16px 16px 12px;gap:5px;border-radius:13px;min-height:0}
+.ebda-certificate-logo{height:38px;max-width:48%}
+.ebda-certificate-header{min-height:35px}
+.ebda-certificate-heading{font-size:clamp(15px,4.3vw,24px)}
+.ebda-certificate-student{font-size:clamp(16px,4.4vw,24px)}
+.ebda-certificate-pretitle,.ebda-certificate-text,.ebda-certificate-platform{font-size:clamp(8px,2.4vw,12px);margin:0}
+.ebda-certificate-lesson{font-size:clamp(12px,3.4vw,18px);padding:5px 12px}
+.ebda-certificate-metadata{width:100%;margin:0;padding:0}
+.ebda-certificate-metadata>div{padding:0 4px;gap:3px}
+.ebda-certificate-metadata b{font-size:clamp(8px,2.2vw,13px)}
+.ebda-certificate-result{padding:6px 14px;font-size:clamp(9px,2.5vw,14px)}
+.ebda-certificate-disclaimer{font-size:7px}
+}
+@media print{
+@page{size:A4 landscape;margin:0}
+body *{visibility:hidden!important}
+#ebda-certificate-sheet,#ebda-certificate-sheet *{visibility:visible!important}
+#ebda-certificate-sheet{
+ position:fixed!important;inset:0 auto auto 0!important;width:297mm!important;height:210mm!important;
+ border:0.4mm solid #1CA29A!important;border-radius:0!important;outline:0!important;
+ padding:12mm 19mm!important;gap:3mm!important;box-shadow:none!important;margin:0!important;
+ box-sizing:border-box!important;background:#fff!important;aspect-ratio:auto!important;
+ break-inside:avoid!important;page-break-inside:avoid!important;
+ -webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;
+}
+#ebda-certificate-sheet .ebda-certificate-logo{height:24mm!important;max-width:75mm!important}
+#ebda-certificate-sheet .ebda-certificate-header{min-height:25mm!important}
+#ebda-certificate-sheet .ebda-certificate-heading{font-size:33pt!important}
+#ebda-certificate-sheet .ebda-certificate-student{font-size:29pt!important}
+#ebda-certificate-sheet .ebda-certificate-lesson{font-size:21pt!important}
+#ebda-certificate-sheet .ebda-certificate-pretitle,#ebda-certificate-sheet .ebda-certificate-text,#ebda-certificate-sheet .ebda-certificate-platform{font-size:13pt!important}
+#ebda-certificate-sheet .ebda-certificate-metadata b{font-size:12pt!important}
+#ebda-certificate-sheet .ebda-certificate-detail-label{font-size:10pt!important}
+#ebda-certificate-sheet .ebda-certificate-result{font-size:13pt!important}
+#ebda-certificate-sheet .ebda-certificate-disclaimer{font-size:8pt!important}
+}
