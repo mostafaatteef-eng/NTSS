@@ -20,3 +20,11 @@
 .context-circuit span{padding:9px 13px;background:#e5f3ee;border:1px solid #bad8cd;border-radius:10px}
 @media(max-width:520px){.context-game{padding:13px}.context-columns{gap:7px}.context-tile{padding:10px;font-size:12px}.context-head strong{font-size:14px}}
 @media(prefers-reduced-motion:reduce){.context-game *{transition:none!important}}
+
+.context-report{margin:10px 0 16px;border:1px solid #d4e9de;border-radius:13px;background:#f7fbf8;color:#235247;font-size:13px}
+.context-report summary{cursor:pointer;font-weight:750;padding:12px 14px;list-style-position:inside}
+.context-report summary:focus-visible{outline:3px solid #9bd1ba;outline-offset:2px}
+.context-report-body{padding:4px 14px 14px;color:#3d6158}
+.context-report-metrics{display:flex;gap:8px;flex-wrap:wrap;margin:9px 0}
+.context-report-metrics span{background:#e4f3ea;border:1px solid #cce5d7;border-radius:20px;padding:6px 10px;font-variant-numeric:tabular-nums}
+.context-report-body p{font-size:12px;line-height:1.5;margin:9px 0 0}
