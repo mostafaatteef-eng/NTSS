@@ -1,0 +1,19 @@
+/* Lightweight gamification, one focused task per screen. */
+.game-stats{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px}
+.game-stats span{border:1px solid #e0e6e4;border-radius:999px;background:#f7faf9;padding:8px 13px;font-size:13px;font-weight:700;color:#29453e}
+.game-label{font-size:12px;letter-spacing:.035em;font-weight:800;color:#146b65;margin:16px 0 10px}
+.game-statement{padding:20px;border-radius:16px;border:1px solid #cadbd4;background:#f7fbf9;font-size:clamp(18px,2.5vw,24px);font-weight:700;line-height:1.5;margin-bottom:16px}
+.game-binary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.game-binary .choice{min-height:65px;text-align:center}
+.game-instruction{color:#5b6b68;font-size:14px;margin-bottom:12px}
+.game-entry{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px}
+.game-input{flex:1;min-width:190px;max-width:100%;border:2px solid #cbdad4;background:white;color:#1e322d;border-radius:12px;padding:15px;font-size:17px}
+.game-input:focus,.game-tile:focus-visible{outline:3px solid #83d4c1;outline-offset:2px}
+.game-built{min-height:70px;padding:14px;border:2px dashed #c5d9d0;border-radius:14px;display:flex;align-items:center;flex-wrap:wrap;gap:7px;margin-bottom:12px}
+.game-placeholder{font-size:14px;color:#687b75}
+.game-token,.game-tile{display:inline-flex;border-radius:9px;padding:10px 13px;border:1px solid #c9d8d3;background:#f1f9f5;color:#174c42;font-size:15px;font-weight:650;max-width:100%;white-space:normal;overflow-wrap:anywhere}
+.game-tile{cursor:pointer;background:white;min-height:45px}
+.game-tile:hover:not(:disabled){background:#e0f6ec;border-color:#70bda6}
+.game-tile:disabled{opacity:.4;cursor:default}
+.game-tiles{display:flex;gap:8px;flex-wrap:wrap}
+@media(max-width:560px){.game-entry{flex-direction:column;align-items:stretch}.game-input{width:100%;box-sizing:border-box}.game-entry .btn{width:100%}.game-binary{gap:8px}.game-token,.game-tile{font-size:14px;padding:10px}}
