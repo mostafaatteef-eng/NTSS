@@ -1,0 +1,42 @@
+/* EBDA NTSS lesson completion — single purpose, calm, focused */
+.ebda-lesson-completed{max-width:1040px;margin:20px auto 48px;display:grid;gap:22px;font-family:Inter,"Segoe UI",Tahoma,Arial,sans-serif}
+.ebda-finish-card{background:#fff;border:1px solid #dfebe5;box-shadow:0 18px 60px #063b3210;border-radius:28px;padding:clamp(22px,5vw,44px);text-align:center}
+.ebda-finish-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.ebda-brand-tag{font-weight:950;letter-spacing:-1px;font-size:23px;color:#115e58}.ebda-brand-tag span{color:#c8a75b;font-size:12px;letter-spacing:2px}
+.ebda-finish-eyebrow{font-size:10px;letter-spacing:2px;font-weight:750;color:#8a958f}
+.ebda-finish-celebration{width:100px;height:100px;border-radius:50%;background:linear-gradient(155deg,#e6f5ed,#fbf5de);margin:18px auto;display:grid;place-items:center}
+.ebda-finish-ring{color:#b9964b;font-size:68px;line-height:1;filter:drop-shadow(0 6px 12px #b99b4455)}
+.ebda-finish-title{margin:8px auto 6px;font-size:clamp(30px,5vw,48px);letter-spacing:-1.4px;line-height:1.2;color:#123b34}
+.ebda-finish-lesson{font-size:clamp(16px,2vw,20px);color:#59746a;font-weight:700;margin:5px 0 25px}
+.ebda-finish-data{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;max-width:660px;margin:0 auto 22px}
+.ebda-finish-data>div{display:grid;gap:6px;background:#f5faf6;border:1px solid #e3eee7;border-radius:14px;padding:16px 10px}
+.ebda-finish-data strong{font-size:23px;color:#125e50;font-variant-numeric:tabular-nums}
+.ebda-finish-data span{font-size:12px;color:#647b72}
+.ebda-finish-message{max-width:600px;color:#5c7168;margin:15px auto 25px;font-size:15px}
+.ebda-finish-form{max-width:640px;text-align:start;margin:25px auto 0}.ebda-finish-form label{display:block;font-weight:800;color:#254f43;margin:0 0 9px;font-size:14px}
+.ebda-finish-input-wrap{display:flex;gap:10px}.ebda-finish-input-wrap input{flex:1;min-width:0;background:#fff;border:1.5px solid #b9d7c9;color:#123f34;border-radius:12px;padding:14px 16px;font-size:16px}
+.ebda-finish-form small{display:block;color:#84948d;font-size:11px;margin-top:9px}
+.ebda-finish-btn{min-height:48px;padding:12px 18px;border-radius:12px;font:inherit;font-size:14px;font-weight:800;cursor:pointer}
+.ebda-finish-primary{background:#156f5d;color:#fff;border:1px solid #156f5d}
+.ebda-finish-secondary{color:#245d4d;border:1px solid #d1e2d8;background:white}
+.ebda-finish-btn:hover{filter:brightness(.96)}.ebda-finish-btn:focus-visible{outline:3px solid #c7a858;outline-offset:2px}
+.ebda-finish-actions,.ebda-finish-print-actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:24px 0 0}
+.ebda-certificate{position:relative;width:100%;aspect-ratio:297 / 210;background:#fffdfa;border:12px solid #f0f0e9;outline:2px solid #d3b56a;outline-offset:-18px;padding:clamp(20px,5vw,52px);text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:space-between;gap:8px;overflow:hidden;color:#163e35;box-shadow:0 10px 35px #11281c14}
+.ebda-certificate:before{content:"";position:absolute;width:200px;height:200px;border:22px solid #e1f0e7;top:-105px;right:-90px;border-radius:50%}
+.ebda-certificate:after{content:"";position:absolute;width:150px;height:150px;border:16px solid #f3e7c8;bottom:-85px;left:-75px;border-radius:50%}
+.ebda-certificate-header{display:flex;justify-content:space-between;align-items:center;width:100%;position:relative;z-index:1}
+.ebda-certificate-logo{height:55px;max-width:180px;object-fit:contain}
+.ebda-certificate-wordmark{font-size:26px;font-weight:950}.ebda-certificate-wordmark small{display:block;font-size:9px;letter-spacing:2px}
+.ebda-certificate-series{font-size:10px;letter-spacing:2px;color:#729083;font-weight:800}
+.ebda-certificate-icon{font-size:32px;color:#c6a459;margin:4px 0}
+.ebda-certificate-heading{font-size:clamp(21px,3vw,32px);font-weight:900;letter-spacing:-.6px;color:#144f42}
+.ebda-certificate-pretitle,.ebda-certificate-text{font-size:clamp(11px,1.5vw,16px);color:#70847a;margin:3px}
+.ebda-certificate-student{font-size:clamp(23px,4vw,41px);font-weight:900;color:#155f4b;line-height:1.4;overflow-wrap:anywhere;border-bottom:2px solid #cbb069;padding:0 20px 4px;max-width:95%}
+.ebda-certificate-lesson{font-size:clamp(16px,2.5vw,27px);font-weight:800;line-height:1.3;max-width:90%}
+.ebda-certificate-metadata{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:15px;border-top:1px solid #e0e5dc;border-bottom:1px solid #e0e5dc;padding:13px 0;width:100%}
+.ebda-certificate-metadata>div{display:grid;gap:4px;min-width:0}.ebda-certificate-metadata b{font-size:clamp(10px,1.4vw,15px);overflow-wrap:anywhere}.ebda-certificate-metadata span{font-size:10px;color:#7a9184}
+.ebda-certificate-footer{display:flex;justify-content:space-between;width:100%;font-size:13px;font-weight:800;color:#7b915e}
+.ebda-certificate-disclaimer{font-size:9px;color:#8f968c;line-height:1.3;margin:0}
+@media(max-width:600px){.ebda-finish-input-wrap{flex-direction:column}.ebda-finish-input-wrap input{min-height:51px}.ebda-finish-data strong{font-size:19px}.ebda-finish-data span{font-size:10px}.ebda-certificate{padding:20px 18px;min-height:330px}.ebda-certificate-icon{display:none}.ebda-certificate-header{gap:8px}.ebda-certificate-series{font-size:7px;letter-spacing:1px}.ebda-certificate-logo{height:30px;max-width:110px}.ebda-certificate-metadata{gap:6px;padding:9px 0}.ebda-certificate-metadata span{font-size:8px}.ebda-certificate-disclaimer{font-size:7px}}
+@page{size:A4 landscape;margin:0}
+@media print{body *{visibility:hidden!important}#ebda-certificate-sheet,#ebda-certificate-sheet *{visibility:visible!important}#ebda-certificate-sheet{position:fixed;top:0;left:0;width:297mm;height:210mm;max-width:none;min-height:0;aspect-ratio:auto;margin:0!important;border:11mm solid #f0f0e9!important;outline:1.2mm solid #d3b56a!important;outline-offset:-14mm;box-shadow:none!important;padding:14mm!important;overflow:hidden!important;page-break-inside:avoid!important;break-inside:avoid!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}html,body{width:297mm;height:210mm!important;margin:0!important;padding:0!important;overflow:hidden!important}@page{size:297mm 210mm;margin:0}}
