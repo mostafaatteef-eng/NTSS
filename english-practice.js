@@ -100,6 +100,8 @@ function playAudio(){
 function showTranscript(){transcriptOpen=!transcriptOpen;draw()}
 function draft(value){drafts[state.cursor]=String(value)}
 function render(){
+ if(state.done)return window.EBDA_COMPLETION.render({subject:"en",grade:state.g,unit:state.u,index:state.i,lesson:window.EBDAA_ENGLISH_UNITS[state.g][state.u].sessions[state.i],correct:Object.values(state.answers).filter(v=>v.checked&&v.correct).length,retry:"EBDAA_ENGLISH_PRACTICE.restart()",back:"englishBackToUnit()"});
+
  const s=state,unit=window.EBDAA_ENGLISH_UNITS[s.g][s.u],q=s.items[s.cursor],a=s.answers[s.cursor],answered=Object.values(s.answers).filter(x=>x.checked).length,correct=Object.values(s.answers).filter(x=>x.correct).length;
  const isAudio=q.type==="Listening";
  const reading=q.type==="Reading"?'<div class="hint"><strong>Read the passage</strong><p>'+esc(q.passage)+'</p></div>':'';
