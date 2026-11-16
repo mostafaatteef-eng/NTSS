@@ -1,0 +1,22 @@
+
+/* Subject mini-games are optional, visually compact, and not part of assessment scoring */
+.context-game{margin:20px 0;padding:18px;border:1px solid #cfe4da;border-radius:18px;background:#f7fcf9;color:#22483e;display:grid;gap:12px}
+.context-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.context-head strong{font-size:16px}.context-head span{font-size:12px;color:#407568}
+.context-help{font-size:13px;color:#52756c;margin:0}
+.context-columns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.context-columns>div,.context-answers{display:grid;gap:9px}
+.context-tile{border:1px solid #bcd9cd;background:#fff;color:#204e44;border-radius:12px;padding:12px;font:inherit;font-size:13px;line-height:1.5;text-align:start;min-width:0;overflow-wrap:anywhere;cursor:pointer}
+.context-tile:hover:not(:disabled){border-color:#278d76;background:#ecf9f2}
+.context-tile:focus-visible{outline:3px solid #91d6b9;outline-offset:2px}
+.context-tile:disabled{opacity:.55;cursor:default}
+.context-tile.context-matched{border-color:#3ba982;background:#d9f3e5;color:#285e4a;opacity:.78}
+.context-status{min-height:18px;margin:0;font-size:13px;font-weight:650;color:#337e62}
+.context-reset{justify-self:start;border:0;padding:6px 0;background:transparent;color:#196c5a;text-decoration:underline;font-size:13px;cursor:pointer}
+.context-code{padding:16px;border-radius:12px;background:#142931;color:#f0fbf6;overflow:auto;white-space:pre-wrap;font:13px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;direction:ltr;text-align:left}
+.context-built{padding:12px;border:1px dashed #a9ccba;border-radius:12px;min-height:48px;background:#fff;overflow-wrap:anywhere}
+.context-explain{margin:0;background:#e8f6ee;padding:11px;border-radius:12px;font-size:13px}
+.context-circuit{display:flex;gap:10px;flex-wrap:wrap}
+.context-circuit span{padding:9px 13px;background:#e5f3ee;border:1px solid #bad8cd;border-radius:10px}
+@media(max-width:520px){.context-game{padding:13px}.context-columns{gap:7px}.context-tile{padding:10px;font-size:12px}.context-head strong{font-size:14px}}
+@media(prefers-reduced-motion:reduce){.context-game *{transition:none!important}}
