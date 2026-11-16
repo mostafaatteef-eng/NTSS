@@ -65,7 +65,13 @@ function topicHash(t){let h=0;for(const c of String(t))h=(h*31+c.charCodeAt(0))>
 function math(lesson,n,items){
  if(n%10!==4)return "";
  const candidate=items.slice(Math.max(0,n-4),n+1).find(x=>x.mode==="number"&&Number.isFinite(Number(x.answer)));
- if(!candidate){const panel=matching("math",lesson,n,items,false);return panel.replace("Match & Discover","🧮 Solve & Match")}
+ if(!candidate){
+ const q=items.slice(Math.max(0,n-4),n+1).find(x=>x.mode==="choice"&&x.options?.length>=2&&Number.isInteger(x.answer));
+ if(!q)return "";
+ const k="math:"+lesson+":concept:"+n,st=record(k);
+ const tiles=q.options.map((v,i)=>'<button class="context-tile" '+(st.done?"disabled":"")+' onclick="EBDAA_CONTEXT_GAMES.debug('+attr(k)+','+i+','+q.answer+')">'+esc(typeof v==="object"?v.label:v)+'</button>').join("");
+ return '<section class="context-game"><div class="context-head"><strong>🧮 Concept Detective</strong><span>REASONING SKILL</span></div><p>'+esc(q.question)+'</p><p class="context-help">Choose the mathematically valid statement.</p><div class="context-answers">'+tiles+'</div><p class="context-status" role="status">'+esc(st.message||"Concept practice: first attempt counts toward practical skills.")+'</p>'+(st.done?'<p class="context-explain">'+esc(q.explanation||"Review the lesson rule.")+'</p>':'')+'<button class="context-reset" onclick="EBDAA_CONTEXT_GAMES.restart('+attr(k)+')">↺ Try again</button></section>';
+}
  const k="math:"+lesson+":numeric:"+n,st=record(k);
  const controls='<label class="context-help" for="context-math-answer">Calculate and type the numerical result.</label><div class="game-entry"><input id="context-math-answer" class="game-input" type="number" step="any" inputmode="decimal" value="'+esc(mathDrafts.get(k)||"")+'" '+(st.done?"disabled":"")+' oninput="EBDAA_CONTEXT_GAMES.mathInput('+attr(k)+',this.value)"><button class="btn teal" '+(st.done?"disabled":"")+' onclick="EBDAA_CONTEXT_GAMES.mathSubmit('+attr(k)+','+Number(candidate.answer)+')">Check</button></div>';
  return '<section class="context-game"><div class="context-head"><strong>🧮 Solve It Yourself</strong><span>NUMERICAL SKILL</span></div><p>'+esc(candidate.question)+'</p>'+controls+'<p role="status" class="context-status">'+esc(st.message||"An independent practice challenge. First attempt counts toward your practical-skill record.")+'</p>'+(st.done?'<p class="context-explain">Model answer: '+esc(candidate.answer)+'</p>':'')+'<button class="context-reset" onclick="EBDAA_CONTEXT_GAMES.restart('+attr(k)+')">↺ Try again</button></section>';
@@ -88,7 +94,7 @@ function ai(subject,lesson,n,topic,lessonTitle=''){
  '<pre class="context-code">'+esc(data.code)+'</pre><p class="context-help">Arrange the SQL clauses in executable order.</p><div class="context-built">'+(s.matches.length?s.matches.map(i=>esc(data.tokens[i])).join(" → "):"Build query here…")+'</div><div class="context-answers">'+[2,0,3,1].map(i=>'<button class="context-tile" '+(s.matches.includes(i)||s.done?"disabled":"")+' onclick="EBDAA_CONTEXT_GAMES.sqlPick('+attr(k)+','+i+')">'+esc(data.tokens[i])+'</button>').join("")+'</div>';
  return '<section class="context-game"><div class="context-head"><strong>'+(which==="sql"?"🗄 SQL Query Builder":"🐍 Python Bug Hunt")+'</strong><span>MINI GAME</span></div><h3>'+esc(data.title)+'</h3>'+content+'<p class="context-status" role="status">'+esc(s.message||(s.done?"Challenge complete":"Optional bonus — does not change your quiz grade."))+'</p>'+(s.done?'<p class="context-explain">'+esc(data.why)+'</p>':'')+'<button class="context-reset" onclick="EBDAA_CONTEXT_GAMES.restart('+attr(k)+')">↺ Restart mini game</button></section>';
 }
-function debug(k,i,correct){let s=record(k);if(s.done)return;s.message=i===correct?"✓ Correct!":"Not quite — inspect the logic again.";s.done=i===correct;mark(k,k.includes("circuit")?"circuit":k.includes(":model:")?"physics-model":k.includes("math")?"math":"debugging",i===correct);draw()}
+function debug(k,i,correct){let s=record(k);if(s.done)return;s.message=i===correct?"✓ Correct!":"Not quite — inspect the logic again.";s.done=i===correct;mark(k,k.includes("circuit")?"circuit":k.includes(":model:")?"physics-model":k.includes("math")?"mathematical-reasoning":"debugging",i===correct);draw()}
 function sqlPick(k,i){let s=record(k);if(s.done||s.matches.includes(i))return;if(i===s.matches.length){s.matches.push(i);s.done=s.matches.length===4;s.message=s.done?"✓ Query assembled in the correct order!":"✓ Correct next clause";if(s.done)mark(k,"sql-building",true)}else {s.message="That clause is not next — try another.";mark(k,"sql-building",false)}draw()}
 function physics(lesson,n,topic){
  if(n%10!==4||!["ohm","resistors","current"].includes(topic))return "";
