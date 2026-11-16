@@ -3,7 +3,7 @@
  * No accounts, tracking, or stored student identity.
  */
 window.EBDAA_CONTEXT_GAMES=(function(){
-const state=new Map(), skillResults=new Map(), missed=new Set();
+const state=new Map(), skillResults=new Map(), missed=new Set(), mathDrafts=new Map();
 const esc=x=>String(x).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const attr=x=>esc(JSON.stringify(x));
 const norm=x=>String(x).normalize("NFKC").toLowerCase().replace(/[\u064B-\u065F\u0670\u0640]/g,"").replace(/\s+/g," ").trim();
@@ -62,7 +62,17 @@ missions.sql.push(
  {title:"Select matching project",code:"Find students working on AI",tokens:["SELECT s.name","FROM students s","JOIN projects p ON p.student_id = s.id","WHERE p.topic = 'AI';"],why:"JOIN connects tables, and WHERE filters the topic."}
 );
 function topicHash(t){let h=0;for(const c of String(t))h=(h*31+c.charCodeAt(0))>>>0;return h}
-function math(lesson,n,items){if(n%10!==4)return "";const panel=matching("math",lesson,n,items,false);return panel.replace("Match & Discover","🧮 Solve & Match").replace("Match & Discover","Solve & Match")}
+function math(lesson,n,items){
+ if(n%10!==4)return "";
+ const candidate=items.slice(Math.max(0,n-4),n+1).find(x=>x.mode==="number"&&Number.isFinite(Number(x.answer)));
+ if(!candidate){const panel=matching("math",lesson,n,items,false);return panel.replace("Match & Discover","🧮 Solve & Match")}
+ const k="math:"+lesson+":numeric:"+n,st=record(k);
+ const controls='<label class="context-help" for="context-math-answer">Calculate and type the numerical result.</label><div class="game-entry"><input id="context-math-answer" class="game-input" type="number" step="any" inputmode="decimal" value="'+esc(mathDrafts.get(k)||"")+'" '+(st.done?"disabled":"")+' oninput="EBDAA_CONTEXT_GAMES.mathInput('+attr(k)+',this.value)"><button class="btn teal" '+(st.done?"disabled":"")+' onclick="EBDAA_CONTEXT_GAMES.mathSubmit('+attr(k)+','+Number(candidate.answer)+')">Check</button></div>';
+ return '<section class="context-game"><div class="context-head"><strong>🧮 Solve It Yourself</strong><span>NUMERICAL SKILL</span></div><p>'+esc(candidate.question)+'</p>'+controls+'<p role="status" class="context-status">'+esc(st.message||"An independent practice challenge. First attempt counts toward your practical-skill record.")+'</p>'+(st.done?'<p class="context-explain">Model answer: '+esc(candidate.answer)+'</p>':'')+'<button class="context-reset" onclick="EBDAA_CONTEXT_GAMES.restart('+attr(k)+')">↺ Try again</button></section>';
+}
+function mathInput(k,v){mathDrafts.set(k,String(v).slice(0,50))}
+function mathSubmit(k,expected){const s=record(k);if(s.done)return;const raw=mathDrafts.get(k)||"",v=Number(raw);if(!raw.trim()||!Number.isFinite(v))return;const ok=Math.abs(v-expected)<=Math.max(.005,Math.abs(expected)*.0001);s.message=ok?"✓ Correct numerical result!":"Not quite — review your calculation and retry.";s.done=ok;mark(k,"mathematical-calculation",ok);draw()}
+
 function physicsModel(lesson,n,q){if(n%10!==4||!q||!Number.isFinite(q.value))return "";
  const k="physics:"+lesson+":model:"+n,st=record(k),v=q.value,unit=q.model?.[1]||"units";
  const wrong=[v+Math.max(1,Math.abs(v)*.5),v-Math.max(1,Math.abs(v)*.3),v+Math.max(2,Math.abs(v))].map(x=>Number(x.toFixed(3)));
@@ -88,5 +98,5 @@ function physics(lesson,n,topic){
  const parallelMode=Math.floor(n/10)%2===1,expected=parallelMode?1:0;
  return '<section class="context-game"><div class="context-head"><strong>⚡ Build the Circuit</strong><span>MINI GAME</span></div><p>Resistors: R₁ = '+r1+' Ω, R₂ = '+r2+' Ω. Battery: '+v+' V.</p><p>Choose the equivalent resistance for <b>'+(parallelMode?"parallel":"series")+'</b> wiring.</p><div class="context-circuit"><span>🔋 '+v+' V</span><span>R₁ '+r1+' Ω</span><span>R₂ '+r2+' Ω</span></div><div class="context-answers">'+choices.map((x,i)=>'<button class="context-tile" '+(s.done?"disabled":"")+' onclick="EBDAA_CONTEXT_GAMES.debug('+attr(k)+','+i+','+expected+')">'+Number(x.toFixed(2))+' Ω</button>').join("")+'</div><p role="status" class="context-status">'+esc(s.message||"Choose a circuit result; this bonus does not change your grade.")+'</p>'+(s.done?'<p class="context-explain">'+(parallelMode?"1/R = 1/R₁ + 1/R₂":"R = R₁ + R₂")+' · Equivalent resistance: '+Number((parallelMode?parallel:series).toFixed(2))+' Ω.</p>':'')+'<button class="context-reset" onclick="EBDAA_CONTEXT_GAMES.restart('+attr(k)+')">Play again</button></section>';
 }
-return {matching,math,physicsModel,ai,physics,pick,pair,restart,debug,sqlPick,reset,assess,report};
+return {matching,math,mathInput,mathSubmit,physicsModel,ai,physics,pick,pair,restart,debug,sqlPick,reset,assess,report};
 })();
