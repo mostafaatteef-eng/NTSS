@@ -7,6 +7,14 @@
 - Page: compatible CSP meta policy blocks object/frame content, form submissions and unapproved external page scripts, and limits workers to same-origin. Referrer policy is no-referrer.
 - Regression tests: dependency-free Node test file and GitHub Actions workflow on pushes and pull requests.
 
+## Second hardening stage — 2026-11-16
+
+- Moved the entire 43 KB main application script out of index.html to app-main.js, served from the same site. This reduces inline script exposure and is a prerequisite to strict CSP; **inline onclick/oninput handlers still require CSP unsafe-inline**.
+- Added browser-security-smoke.cjs and a GitHub Actions workflow .github/workflows/browser-security.yml using Chromium. The suite checks startup, three grade menus, economics lesson navigation, the certificate name/eligibility logic, the browser SQL worker refusing DROP TABLE, mobile width, browser errors and CSP violations.
+- Updated security-tests.cjs to parse the extracted app-main.js and assert that there is no inline script block.
+- **Status:** the Chromium suite is committed, but successful execution on GitHub Actions or a full real-device browser session was not yet confirmed. Do not report the browser checks as passed until a workflow run succeeds.
+- The core grade navigation and assessment modules remain deployed as before, with a versioned app-main.js reference to refresh caches.
+
 ## Remaining security limitations
 1. The page uses inline scripts and event handlers, requiring CSP 'unsafe-inline' today. This significantly weakens DOM XSS defense. Externalizing handlers, scripts and CSS is needed for a strict CSP.
 2. CSP meta tags cannot enforce frame-ancestors or generate CSP reports. These require HTTP headers, which are not configured here.
