@@ -7,14 +7,13 @@ const fs=require('node:fs');
 const vm=require('node:vm');
 const read=path=>fs.readFileSync(path,'utf8');
 
-test('JavaScript modules and inline app parse',()=>{
-  for(const path of ['coding-labs.js','python-lab-worker.js','sql-lab-worker.js','lesson-completion.js','gamified-questions.js','context-mini-games.js']){
+test('JavaScript modules and extracted application entrypoint parse',()=>{
+  for(const path of ['coding-labs.js','python-lab-worker.js','sql-lab-worker.js','lesson-completion.js','gamified-questions.js','context-mini-games.js','app-main.js']){
     assert.doesNotThrow(()=>new vm.Script(read(path),{filename:path}),path);
   }
   const page=read('index.html');
-  const script=[...page.matchAll(/<script>([\s\S]*?)<\/script>/g)].at(-1);
-  assert.ok(script,'Expected inline NTSS app module');
-  assert.doesNotThrow(()=>new vm.Script(script[1]));
+  assert.match(page,/src="app-main\.js\?v=/);
+  assert.doesNotMatch(page,/<script>([\s\S]*?)<\/script>/,'No inline application script expected');
 });
 
 test('CSP restricts plugins, framing and forms without breaking current inline UI',()=>{
