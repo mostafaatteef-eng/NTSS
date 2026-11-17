@@ -1,0 +1,29 @@
+
+/* NTSS Learning UX — quiet focus, opt-in scaffolding and accessible experiments */
+.practice-focus .game-stats,.practice-focus .topmeta{display:none!important}
+.practice-focus .guided-question>.game-hud{display:none!important}
+.practice-focus .ntss-optional-game,.practice-focus .ntss-support,.practice-focus .ntss-concept{background:#fff;border:1px solid #dcebe5;border-radius:14px;margin:14px 0;overflow:hidden;color:#23483f}
+.ntss-optional-game>summary,.ntss-support>summary,.ntss-concept>summary{cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;list-style:none;padding:14px 17px;font-size:13px;font-weight:800;color:#156d60}
+.ntss-optional-game>summary::-webkit-details-marker,.ntss-support>summary::-webkit-details-marker,.ntss-concept>summary::-webkit-details-marker{display:none}
+.ntss-optional-game>summary:focus-visible,.ntss-support>summary:focus-visible,.ntss-concept>summary:focus-visible{outline:3px solid #8bcab7;outline-offset:-3px}
+.ntss-optional-game[open]>summary,.ntss-support[open]>summary,.ntss-concept[open]>summary{border-bottom:1px solid #e6f1eb}
+.ntss-optional-game>.context-game{margin:12px!important;max-width:100%}
+.ntss-support summary small,.ntss-concept summary small{color:#71877d;font-size:10px;font-weight:550}
+.ntss-support-inner{padding:15px 18px;display:grid;gap:6px;font-size:13px;line-height:1.65}
+.ntss-support-inner>b{color:#147a6d;margin-top:8px}.ntss-support-inner>p{margin:0 0 4px}
+.ntss-concept-inner{padding:16px 18px;display:grid;gap:12px}
+.ntss-viz-prompt{margin:0;font-size:14px;line-height:1.6;color:#456c60}
+.ntss-viz-bars{min-height:165px;display:flex;gap:12px;align-items:flex-end;justify-content:center;border-bottom:1px solid #bbd5ca;padding:14px 10px 0}
+.ntss-viz-bar{display:flex;min-width:35px;max-width:85px;flex:1;flex-direction:column;align-items:center;gap:5px;font-size:11px;font-variant-numeric:tabular-nums}
+.ntss-viz-column{width:min(72%,50px);min-height:6px;border-radius:6px 6px 0 0;transition:height .12s}
+.ntss-viz-value{font-weight:750;color:#245c50}.ntss-viz-bar small{padding-bottom:4px}
+.ntss-viz-svg{display:block;margin:0 auto;max-width:430px;width:100%;height:auto;background:#f8fdf9;border:1px solid #e8f1eb;border-radius:12px}
+.ntss-viz-result{margin:0;background:#f3faf6;padding:12px 14px;border-radius:10px;font-size:13px;line-height:1.55;font-weight:650}
+.ntss-viz-slider{display:grid;gap:8px;font-size:12px;color:#426f62}
+.ntss-viz-slider input{accent-color:#1CA29A;width:100%;min-height:28px}
+.ntss-concept-inner>small{color:#70877e;font-size:10px;line-height:1.45}
+.ntss-viz-sentence{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
+.ntss-viz-sentence span{padding:15px 18px;background:#e8f7f0;border:1px solid #c4e4d5;border-radius:12px;font-size:13px;font-weight:800}
+@media(max-width:600px){.ntss-support summary small,.ntss-concept summary small{display:none}.ntss-concept-inner{padding:12px}.ntss-viz-bars{gap:5px}.ntss-viz-bar{min-width:25px;font-size:10px}.practice-focus .ntss-optional-game,.practice-focus .ntss-support,.practice-focus .ntss-concept{margin:12px 0}}
+@media(prefers-reduced-motion:reduce){.ntss-viz-column{transition:none}}
+@media print{.ntss-optional-game,.ntss-support,.ntss-concept{display:none!important}}
