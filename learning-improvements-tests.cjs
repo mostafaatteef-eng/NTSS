@@ -76,7 +76,7 @@ test('Adaptive AI sprint reprioritizes only the next ten unanswered items',()=>{
  assert.equal(ordered,1,'Exactly one adaptive reorder at a ten-question boundary');
  assert.equal(JSON.stringify(after.slice(0,10)),JSON.stringify(before.slice(0,10)));
  assert.equal(JSON.stringify(after.slice(20)),JSON.stringify(before.slice(20)));
- assert.deepEqual(after.slice(10,20).map(id=>Number(id.slice(1))%10),[9,8,7,6,5,4,3,2,1,0]);
+ assert.equal(JSON.stringify(after.slice(10,20).map(id=>Number(id.slice(1))%10)),JSON.stringify([9,8,7,6,5,4,3,2,1,0]));
  assert.equal(new Set(after).size,50);
 });
 test('Production HTML loads new learning modules before app entrypoint',()=>{
