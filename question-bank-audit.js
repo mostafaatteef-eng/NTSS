@@ -26,7 +26,7 @@ window.NTSS_BANK_AUDIT=(function(){
      if(seen.has(signature))issues.push("Similar question template (#"+(seen.get(signature)+1)+")");
      else seen.set(signature,index);
      const key=[subject,g,u,i,index].join(":");
-     return {index,prompt,answer,issues,review:notes.get(key)||{status:"unreviewed",comment:""}};
+     return {index,prompt,answer,options:choices||[],explanation:String(q.explanation??q.explain??"").slice(0,1000),sourceStatus:String(q.sourceStatus??"").slice(0,280),issues,review:notes.get(key)||{status:"unreviewed",comment:""}};
    });
    return {subject,grade:g,unit:u,lesson:i,count:list.length,issues:items.reduce((n,q)=>n+q.issues.length,0),items,status:"Automatic structural screening only; academic accuracy and curriculum alignment require a subject teacher."};
  }
