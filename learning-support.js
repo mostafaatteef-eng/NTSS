@@ -1,6 +1,6 @@
 /* NTSS formative support: no persistence, no impact on grades. */
 window.NTSS_LEARNING=(function(){
- const attempts=new Map(), opened=new Set(),skills=new Map();
+ const attempts=new Map(), opened=new Set(),skills=new Map(),toolsOpened=new Set();
  const escape=x=>String(x??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
  const lang=mode=>/arabic|economics|civics|social/i.test(mode)?"ar":/german/i.test(mode)?"de":"en";
  const strings={
@@ -8,7 +8,7 @@ window.NTSS_LEARNING=(function(){
   ar:["راجع الفكرة","اختياري · لا يؤثر على الدرجة","افهم السؤال","فسر الحل","طبّق الفكرة من جديد","حدد المعطيات والقاعدة المناسبة ثم اشرح لنفسك طريقة الحل.","نشاط تدريبي إضافي — اختياري"],
   de:["Überprüfe die Idee","Optional · ohne Einfluss auf die Note","Aufgabe verstehen","Lösung erklären","Erneut anwenden","Prüfe die Angaben und erkläre dir die Lösungsregel.","Optionales Lernspiel"]
  };
- function reset(mode){for(const map of [attempts,skills])for(const k of [...map.keys()])if(k.startsWith(mode+":"))map.delete(k);for(const k of [...opened])if(k.startsWith(mode+":"))opened.delete(k)}
+ function reset(mode){for(const k of [...toolsOpened])if(k.startsWith(mode+":"))toolsOpened.delete(k);for(const map of [attempts,skills])for(const k of [...map.keys()])if(k.startsWith(mode+":"))map.delete(k);for(const k of [...opened])if(k.startsWith(mode+":"))opened.delete(k)}
  function record(mode,index,correct,q){
   if(!Number.isInteger(index)||index<0||index>=50)return;
   const k=mode+":"+index;if(attempts.has(k))return;
@@ -35,6 +35,7 @@ window.NTSS_LEARNING=(function(){
   const t=strings[lang(mode)],key=mode+":tip:"+index;
   return '<details class="ntss-support ntss-adaptive-tip" '+(opened.has(key)?"open":"")+' ontoggle="NTSS_LEARNING.toggle('+escape(JSON.stringify(key))+',this.open)"><summary>◈ '+(lang(mode)==="ar"?"اقتراح مراجعة بناءً على محاولاتك":lang(mode)==="de"?"Persönlicher Wiederholungstipp":"Suggested review based on recent answers")+' <small>'+t[1]+'</small></summary><div class="ntss-support-inner"><p>'+escape(recent?.explanation||t[5])+'</p><p>'+t[5]+'</p></div></details>';
  }
+ function toolsToggle(key,isOpen){if(isOpen)toolsOpened.add(key);else toolsOpened.delete(key)}
  function decorate(root,mode){
   const screen=root?.querySelector?.(".practice-focus"),area=screen?.querySelector?.(".practice-focus__content");if(!area)return;
   const m=(screen.querySelector(".practice-focus__counter")?.textContent||"").match(/(?:Question|Frage|Mission|السؤال|سؤال)\s*(\d+)/i);if(!m)return;
@@ -48,6 +49,23 @@ window.NTSS_LEARNING=(function(){
    el.parentNode.insertBefore(panel,el);panel.append(summary,el);
   }
   window.NTSS_CONCEPTS?.attach(target,mode,screen.querySelector(".practice-focus__lesson")?.textContent||"");
+  // Disclose nonessential activities in a single drawer. Keep the assessed question in view.
+  const optional=[...target.querySelectorAll(".ntss-optional-game,.ntss-applied,.context-report,.practice-milestone,.practice-source,.ntss-concept,.ntss-support,.focus-mistake")].filter(el=>!el.closest(".ntss-learning-tools"));
+  const labs=[...screen.querySelectorAll(".practice-focus__header button")].filter(el=>el.getAttribute("onclick")?.startsWith("openCodeLab("));
+  if(optional.length||labs.length){
+    const key=mode+":"+index,drawer=document.createElement("details");drawer.className="ntss-learning-tools";
+    if(toolsOpened.has(key))drawer.open=true;
+    drawer.setAttribute("ontoggle","NTSS_LEARNING.toolsToggle("+JSON.stringify(key).replace(/"/g,"&quot;")+",this.open)");
+    const summary=document.createElement("summary");summary.textContent=lang(mode)==="ar"?"✦ أدوات التعلم (اختيارية)":lang(mode)==="de"?"✦ Lernwerkzeuge (optional)":"✦ Learning tools (optional)";
+    drawer.appendChild(summary);
+    if(labs.length){
+      const labWrap=document.createElement("div");labWrap.className="ntss-learning-tools-labs";
+      for(const el of labs){const parent=el.parentElement;labWrap.appendChild(el);if(parent&&parent.childElementCount===0)parent.remove()}
+      drawer.appendChild(labWrap);
+    }
+    for(const el of optional)drawer.appendChild(el);
+    target.appendChild(drawer);
+  }
  }
- return {record,reset,report,review,adaptiveAdvice,decorate,toggle};
+ return {record,reset,report,review,adaptiveAdvice,decorate,toggle,toolsToggle};
 })();
