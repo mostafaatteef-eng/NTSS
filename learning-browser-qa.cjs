@@ -64,6 +64,24 @@ function check(condition,msg){assert.ok(condition,msg)}
     check(width.scrollWidth<=width.clientWidth+8,device.name+' '+testCase.name+' horizontal overflow '+JSON.stringify(width));
     results.push({device:device.name,subject:testCase.name,lesson:result.lesson,counter:result.counter,tools:result.tools,viewport:width});
    }
+   // Exercise the real grading/Next buttons in the mathematics UI.
+   await page.evaluate(()=>{chooseGrade(1);chooseSubject('mathematics');mathChooseUnit(0);mathOpen(0)});
+   if(await page.locator('#math-answer').count()){
+     await page.locator('#math-answer').fill('1');
+   }else{
+     await page.evaluate(()=>window.EBDAA_MATH_PRACTICE.respond(0));
+   }
+   await page.locator('#math-check').click();
+   const checkButtonText=await page.locator('#math-check').innerText();
+   check(/Next question|Show result/i.test(checkButtonText),device.name+' answer verification did not advance to feedback');
+   await page.locator('#math-check').click();
+   check(/Question 2/i.test(await page.locator('.practice-focus__counter').innerText()),device.name+' next question did not appear after clicking');
+   // Check that the learning tools disclosure can receive keyboard focus.
+   const disclosure=page.locator('.ntss-learning-tools > summary').first();
+   if(await disclosure.count()){
+     await disclosure.focus();
+     check(await disclosure.evaluate(el=>document.activeElement===el),device.name+' learning tools summary cannot receive keyboard focus');
+   }
    // Correctly apply score-only practice feedback without depending on a real student.
    const review=await page.evaluate(()=>{
     const n=window.NTSS_LEARNING;
