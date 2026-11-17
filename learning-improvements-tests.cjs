@@ -41,10 +41,16 @@ test('Concept visualizations calculate correct physics, math, economics and lang
  ['arabicPractice','الجملة الاسمية','arabic-nominal'],
  ['arabicPractice','كان وأخواتها','arabic-kan'],
  ['arabicPractice','إن وأخواتها','arabic-inna'],
- ['englishPractice','Past Perfect in Context','english-past']
+ ['englishPractice','Past Perfect in Context','english-past'],
+ ['learn','Python Basics and Flow Control','python'],
+ ['advancedLab','SQL Mastery: Advanced Query Techniques, Joins, and Stored Procedures','sql'],
+ ['advancedLab','Introduction to Machine Learning: Definitions, Models, Algorithms, and Real-world Applications','knn']
  ];
  for(const [mode,title,kind] of expectations){assert.equal(viz.type(mode,title),kind,title);assert.ok(viz.visualization(kind,3).visual.length>50)}
  assert.match(viz.visualization('ohm',4).result,/2\.0 A/);
+ assert.match(viz.visualization('python',4).result,/total = 10/);
+ assert.match(viz.visualization('sql',3).result,/no matching project/);
+ assert.match(viz.visualization('knn',4).result,/Majority vote:/);
  assert.match(viz.visualization('mean',3).result,/8\.6/);
  assert.match(viz.visualization('arabic-kan',3).result,/اسم كان مرفوع/);
  assert.equal(viz.type('physicsPractice','Completely unrelated lesson'),null);
