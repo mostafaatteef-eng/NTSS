@@ -4,6 +4,11 @@ window.NTSS_CONCEPTS=(function(){
  const escape=x=>String(x??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
  function type(mode,title){
   const t=String(title||"").toLowerCase();
+  if(/arabic/i.test(mode)&&/الجملة الاسمية/.test(t))return "arabic-nominal";
+  if(/arabic/i.test(mode)&&/الجملة الفعلية/.test(t))return "arabic-verbal";
+  if(/arabic/i.test(mode)&&/كان وأخواتها/.test(t))return "arabic-kan";
+  if(/arabic/i.test(mode)&&/إن وأخواتها/.test(t))return "arabic-inna";
+  if(/english/i.test(mode)&&/past perfect/i.test(t))return "english-past";
   if(/physics/i.test(mode)&&/ohm|resistan|electric|current|voltage|circuit/i.test(t))return "ohm";
   if(/physics/i.test(mode)&&/motion|speed|velocity|acceleration|force|newton/i.test(t))return "motion";
   if(/math/i.test(mode)&&/mean|average|statistics|statistical|المتوسط|المتوسط الحسابي/i.test(t))return "mean";
@@ -21,7 +26,15 @@ window.NTSS_CONCEPTS=(function(){
   const coordinates=points.map(([x,y])=>(24+x*27)+","+yPos(y).toFixed(2)).join(" ");
   return '<svg class="ntss-viz-svg" viewBox="0 0 300 185" role="img" aria-label="Computed x and y relationship"><path d="M24 10 V158 H296" fill="none" stroke="#96b7aa" stroke-width="2"/><polyline points="'+coordinates+'" fill="none" stroke="#1CA29A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>'+points.map(([x,y])=>'<circle cx="'+(24+x*27)+'" cy="'+yPos(y).toFixed(2)+'" r="4" fill="#117e75"/>').join("")+'<text x="280" y="176" fill="#58736a" font-size="12">x</text><text x="9" y="16" fill="#58736a" font-size="12">y</text></svg>';
  }
+ function grammarDiagram(bits){
+  return '<div class="ntss-viz-sentence" dir="auto">'+bits.map(([word,role])=>'<span><strong>'+escape(word)+'</strong><small>'+escape(role)+'</small></span>').join("")+'</div>';
+ }
  function visualization(kind,n){
+  if(kind==="arabic-nominal")return {prompt:"الجملة الاسمية تبدأ في صورتها الأساسية بمبتدأ وخبر.",visual:grammarDiagram([["العلمُ","مبتدأ مرفوع"],["نافعٌ","خبر مرفوع"]]),result:"العلمُ نافعٌ: جملة اسمية تتكون من مبتدأ وخبر.",unit:"",value:n};
+  if(kind==="arabic-verbal")return {prompt:"الجملة الفعلية تبدأ بفعل، وقد تتضمن فاعلًا ومفعولًا به.",visual:grammarDiagram([["قرأَ","فعل ماض"],["الطالبُ","فاعل مرفوع"],["الكتابَ","مفعول به منصوب"]]),result:"حدد الفعل والفاعل والمفعول به إن وجد، ولا تفترض أن كل جملة فعلية لها مفعول به.",unit:"",value:n};
+  if(kind==="arabic-kan")return {prompt:"كان وأخواتها تدخل على الجملة الاسمية فترفع الاسم وتنصب الخبر.",visual:grammarDiagram([["كانَ","فعل ناسخ"],["الجوُّ","اسم كان مرفوع"],["جميلًا","خبر كان منصوب"]]),result:"كان الجوُّ جميلًا: انتبه إلى تغير إعراب الخبر.",unit:"",value:n};
+  if(kind==="arabic-inna")return {prompt:"إنَّ وأخواتها تنصب الاسم وترفع الخبر.",visual:grammarDiagram([["إنَّ","حرف ناسخ"],["الجوَّ","اسم إن منصوب"],["جميلٌ","خبر إن مرفوع"]]),result:"إنَّ الجوَّ جميلٌ: اسم إن منصوب وخبرها مرفوع.",unit:"",value:n};
+  if(kind==="english-past")return {prompt:"Past perfect often clarifies which of two past events happened first.",visual:grammarDiagram([["had finished","Earlier completed action"],["the meeting started","Later past action"]]),result:"The team had finished before the meeting started. Form: had + past participle.",unit:"",value:n};
   if(kind==="ohm"){const voltage=n*2,resistance=4,current=voltage/resistance;return {prompt:"Ohm's law: change voltage while resistance stays at 4 Ω.",visual:bars([["Voltage",voltage],["Current",current]],20,"#1CA29A"),result:"I = V / R = "+voltage+" / 4 = "+current.toFixed(1)+" A. Doubling voltage doubles current when resistance remains constant.",unit:"Voltage",value:voltage}}
   if(kind==="motion"){const t=n,acc=2,velocity=t*acc,distance=.5*acc*t*t;return {prompt:"Motion from rest with constant acceleration a = 2 m/s².",visual:graph(Array.from({length:7},(_,i)=>[i,i*acc])),result:"At t = "+t+" s, v = at = "+velocity+" m/s and s = ½at² = "+distance+" m.",unit:"Time",value:t}}
   if(kind==="mean"){const set=[4,6,8,10,12],data=set.map((v,i)=>v+(i===4?n:0)),avg=data.reduce((a,b)=>a+b,0)/data.length;return {prompt:"Change the last observation and watch the mean.",visual:bars(data.map((x,i)=>["x"+(i+1),x]),25,"#1CA29A"),result:"Mean = ("+data.join(" + ")+") / 5 = "+avg.toFixed(1)+".",unit:"Added value",value:n}}
@@ -48,7 +61,7 @@ window.NTSS_CONCEPTS=(function(){
  function inside(kind,id){
   const n=values.get(id)??3,v=visualization(kind,n);
   return '<div class="ntss-viz-display">'+display(kind,n)+'</div>'+
-   (kind==="sentence"?'':'<label class="ntss-viz-slider">'+escape(v.unit)+' <strong>'+v.value+'</strong><input type="range" min="1" max="8" step="1" value="'+n+'" oninput="NTSS_CONCEPTS.choose('+JSON.stringify(id).replace(/"/g,"&quot;")+',this.value)" aria-label="'+escape(v.unit)+'"></label>')+
+   (kind==="sentence"||kind.startsWith("arabic-")||kind==="english-past"?'':'<label class="ntss-viz-slider">'+escape(v.unit)+' <strong>'+v.value+'</strong><input type="range" min="1" max="8" step="1" value="'+n+'" oninput="NTSS_CONCEPTS.choose('+JSON.stringify(id).replace(/"/g,"&quot;")+',this.value)" aria-label="'+escape(v.unit)+'"></label>')+
    '<small>Illustrative synthetic values for practice · Does not alter your answer or certificate.</small>';
  }
  function attach(root,mode,title){
