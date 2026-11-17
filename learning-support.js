@@ -27,11 +27,20 @@ window.NTSS_LEARNING=(function(){
   const t=strings[lang(mode)],exp=r.explanation||t[5];
   return '<details class="ntss-support" '+(opened.has(key)?"open":"")+' ontoggle="NTSS_LEARNING.toggle('+escape(JSON.stringify(key))+',this.open)"><summary>'+t[0]+' <small>'+t[1]+'</small></summary><div class="ntss-support-inner"><b>01 · '+t[2]+'</b><p>'+escape(r.question)+'</p><b>02 · '+t[3]+'</b><p>'+escape(exp)+'</p><b>03 · '+t[4]+'</b><p>'+t[5]+'</p></div></details>';
  }
+ function adaptiveAdvice(mode,index){
+  if(index<4)return "";
+  const last=Array.from({length:5},(_,i)=>attempts.get(mode+":"+(index-5+i))).filter(Boolean);
+  if(last.length<4||last.filter(x=>x.correct).length>=3)return "";
+  const recent=last.filter(x=>!x.correct&&x.explanation).at(-1);
+  const t=strings[lang(mode)],key=mode+":tip:"+index;
+  return '<details class="ntss-support ntss-adaptive-tip" '+(opened.has(key)?"open":"")+' ontoggle="NTSS_LEARNING.toggle('+escape(JSON.stringify(key))+',this.open)"><summary>◈ '+(lang(mode)==="ar"?"اقتراح مراجعة بناءً على محاولاتك":lang(mode)==="de"?"Persönlicher Wiederholungstipp":"Suggested review based on recent answers")+' <small>'+t[1]+'</small></summary><div class="ntss-support-inner"><p>'+escape(recent?.explanation||t[5])+'</p><p>'+t[5]+'</p></div></details>';
+ }
  function decorate(root,mode){
   const screen=root?.querySelector?.(".practice-focus"),area=screen?.querySelector?.(".practice-focus__content");if(!area)return;
   const m=(screen.querySelector(".practice-focus__counter")?.textContent||"").match(/(?:Question|Frage|Mission|السؤال|سؤال)\s*(\d+)/i);if(!m)return;
   const index=Math.max(0,Math.min(49,Number(m[1])-1)),target=area.querySelector(".guided-question")||area.querySelector(".practice-flow")||area;
   const fragment=review(mode,index);if(fragment&&!target.querySelector(".focus-mistake"))target.insertAdjacentHTML("beforeend",fragment);
+  const tip=adaptiveAdvice(mode,index);if(tip)target.insertAdjacentHTML("beforeend",tip);
   for(const el of [...target.querySelectorAll(".context-game")]){
    if(el.closest(".ntss-optional-game"))continue;
    const panel=document.createElement("details");panel.className="ntss-optional-game";
@@ -40,5 +49,5 @@ window.NTSS_LEARNING=(function(){
   }
   window.NTSS_CONCEPTS?.attach(target,mode,screen.querySelector(".practice-focus__lesson")?.textContent||"");
  }
- return {record,reset,report,review,decorate,toggle};
+ return {record,reset,report,review,adaptiveAdvice,decorate,toggle};
 })();
