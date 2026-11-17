@@ -43,14 +43,14 @@ window.EBDAA_ECONOMICS_PRACTICE=(function(){
   return result;
  }
  const draw=()=>window.EBDA_APP_RENDER?.();
- function start(g,u,i){window.NTSS_APPLIED.reset("economics",[g,u,i].join("-"));s={g,u,i,items:build(g,u,i),cursor:0,answers:{},done:false,typed:""};feedback="";draw()}
+ function start(g,u,i){window.NTSS_LEARNING?.reset("economicsPractice");window.NTSS_APPLIED.reset("economics",[g,u,i].join("-"));s={g,u,i,items:build(g,u,i),cursor:0,answers:{},done:false,typed:""};feedback="";draw()}
  function select(v){if(s.answers[s.cursor]?.checked)return;s.answers[s.cursor]={value:v,checked:false,correct:false};draw()}
  function write(v){s.typed=String(v).slice(0,110)}
  function check(){
   const q=s.items[s.cursor],a=s.answers[s.cursor]||{},v=q.type==="fill"?s.typed:a.value;
   if(v===undefined||String(v).trim()==="")return;
   const ok=q.type==="fill"?(String(q.answer).match(/^[0-9]+$/)?Number(String(v).replace(/[٠-٩]/g,x=>"٠١٢٣٤٥٦٧٨٩".indexOf(x)))===Number(q.answer):norm(v)===norm(q.answer)):Number(v)===q.answer;
-  s.answers[s.cursor]={value:v,checked:true,correct:ok};feedback=ok?"أحسنت! إجابة صحيحة.":"راجع المعلومة وحاول تثبيتها في ذاكرتك.";draw();
+  s.answers[s.cursor]={value:v,checked:true,correct:ok};window.NTSS_LEARNING?.record("economicsPractice",s.cursor,ok,q);feedback=ok?"أحسنت! إجابة صحيحة.":"راجع المعلومة وحاول تثبيتها في ذاكرتك.";draw();
  }
  function move(delta){
   if(delta>0&&!s.answers[s.cursor]?.checked)return;
