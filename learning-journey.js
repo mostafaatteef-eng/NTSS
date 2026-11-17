@@ -17,13 +17,13 @@ window.NTSS_JOURNEY=(function(){
  quick:[Q("What is a training dataset?",["Examples used to fit a model","Only its final report","A PDF certificate"],0,"Training data helps fit model parameters."),Q("What tests generalization?",["Held-out examples","Only training score","More labels copied"],0,"Unseen data measures generalization."),Q("What is overfitting?",["Learning noise rather than general patterns","Lower memory usage","Shorter code"],0,"Overfit models can fail on unseen data."),Q("What is a feature?",["An input variable","Always a prediction","A monitor"],0,"Features describe inputs."),Q("What is classification?",["Predicting categories","Sorting folders","Calculating only averages"],0,"Classification predicts class labels.")],
  master:[Q("Which score helps test a classifier on unseen cases?",["Test accuracy","Training score alone","Source file size"],0,"A held-out test score evaluates new examples."),Q("Which task predicts a continuous number?",["Regression","Classification","Tokenization"],0,"Regression predicts numeric values."),Q("A model performs well in training but poorly in testing. Why?",["Possible overfitting","Guaranteed success","No issue"],0,"Training and test performance diverge under overfitting."),Q("What is label leakage?",["Using future/target information in features","Removing duplicate rows","Using a train/test split"],0,"Leakage contaminates evaluation."),Q("What should be minimized in student datasets?",["Unnecessary personal identifiers","Validation samples","Model documentation"],0,"Data minimization reduces privacy risk.")]}
  };
- const families=["programming","stats","stats","ml","ml","programming"];
- function family(g,u){const f=g===1?families[u]:(window.EBDAA_PERFORMANCE?.[g+"-"+(u+1)]?.engine||"stats");return /sql|database/.test(f)?"sql":/ml|agriculture|ai/.test(f)?"ml":/python|program|algorithms/.test(f)?"programming":"stats"}
+ const families=["programming","stats","stats",null,"ml","programming"];
+ function family(g,u){const f=g===1?families[u]:(window.EBDAA_PERFORMANCE?.[g+"-"+(u+1)]?.engine||"");if(!f)return null;if(/sql|database/.test(f))return "sql";if(/ml|agriculture/.test(f))return "ml";if(/python|program|algorithms/.test(f))return "programming";if(/stats|statistics/.test(f))return "stats";return null}
  function id(g,u,i){return g+":"+u+":"+i}
  function get(g,u,i){const k=id(g,u,i);if(!states.has(k))states.set(k,{quick:[],master:[],stage:"quick"});return states.get(k)}
  function choose(g,u,i,type,choice){
   if(!["quick","master"].includes(type))return;
-  const st=get(g,u,i),questions=bank[family(g,u)][type],arr=st[type];
+  const st=get(g,u,i),fam=family(g,u);if(!fam)return;const questions=bank[fam][type],arr=st[type];
   if(arr.length>=5)return;
   arr.push({choice:Number(choice),correct:Number(choice)===questions[arr.length].correct});
   const host=document.getElementById("ntss-journey-content");if(host)host.innerHTML=inside(g,u,i);
@@ -31,11 +31,12 @@ window.NTSS_JOURNEY=(function(){
  function stage(g,u,i,name){get(g,u,i).stage=name;const host=document.getElementById("ntss-journey-content");if(host)host.innerHTML=inside(g,u,i)}
  function reset(g,u,i){states.delete(id(g,u,i))}
  function inside(g,u,i){
-  const st=get(g,u,i),type=st.stage,questions=bank[family(g,u)][type],arr=st[type];
+  const st=get(g,u,i),type=st.stage,fam=family(g,u),questions=fam?bank[fam][type]:null,arr=st[type];
   const items=[["quick","1. Quick Check"],["explore","2. Learn & Explore"],["practice","3. Practice"],["review","4. Review"],["master","5. Mastery Check"],["later","6. Continue Later"]];
   const nav='<nav class="ntss-journey-nav">'+items.map(x=>'<button class="'+(x[0]===type?"active":"")+'" onclick="NTSS_JOURNEY.stage('+g+','+u+','+i+',\''+x[0]+'\')">'+x[1]+'</button>').join("")+'</nav>';
   let main="";
-  if(questions){
+  if(!fam&&(type==="quick"||type==="master"))main='<p>Topic-specific five-question checks are not yet academically reviewed for this unit. Continue with the normal lesson, interactive concepts and mistake review instead.</p>';
+  else if(questions){
     if(arr.length>=5){
      const correct=arr.filter(x=>x.correct).length;
      main='<div class="ntss-journey-result"><b>'+correct+' / 5</b><p>Practice insight only. This score does not affect the 50 assessed questions or certificates.</p></div>'+
