@@ -92,4 +92,7 @@ test('Production HTML loads new learning modules before app entrypoint',()=>{
  for(const name of ['learning-support.js','learning-concepts.js'])assert.ok(indexOf(name)>0&&indexOf(name)<indexOf('app-main.js'),name);
  assert.match(html,/learning-ux\.css/);
  assert.match(read('app-main.js'),/NTSS_LEARNING\?\.decorate\(app,mode\)/);
+ assert.match(read('learning-support.js'),/ntss-learning-tools/);
+ assert.match(read('learning-support.js'),/toolsToggle/);
+ assert.match(read('learning-ux.css'),/practice-flow>\.meter/);
 });
