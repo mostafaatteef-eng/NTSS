@@ -75,7 +75,7 @@ cachedStage='<div class="practice-flow"><div class="game-stats"><span>⭐ '+xp+'
 '<h3 class="practice-question">'+e(q.question)+'</h3>'+controls+hint+verdict+mistake+
 (!graded&&!hintShown?'<div class="actions"><button class="btn light" onclick="EBDAA_PRACTICE.showHint()">💡 Need a hint?</button></div>':'')+
 '<div class="stepfooter"><button class="btn light" onclick="EBDAA_PRACTICE.prev()" '+(cursor===0?'disabled':'')+'>← Previous</button>'+action+'</div>'+
-'<details class="practice-source"><summary>About this practice question</summary><p class="source">'+e(q.sourceStatus)+'</p></details></div>';const node=document.getElementById("ebdaa-practice-stage");if(node)node.innerHTML=cachedStage;syncFocusStatus();
+'<details class="practice-source"><summary>About this practice question</summary><p class="source">'+e(q.sourceStatus)+'</p></details></div>';const node=document.getElementById("ebdaa-practice-stage");if(node)node.innerHTML=cachedStage;syncFocusStatus();window.NTSS_LEARNING?.decorate(document.getElementById("app"),grade===1?"learn":"advancedLab");
 }
 return {panel,reset,ensure,isFinished,progress,gameChooseIndex,chooseOption,submitOrNext,begin,currentQuestion,questionOrder,answer,chooseOrder,clearOrder,showHint,check,next,continueCheckpoint,beginFromCheckpoint,prev,finish,restart,all:(g,u,i)=>window.EBDAA_QUESTION_FACTORY.all(g,u,i)};
 })();
