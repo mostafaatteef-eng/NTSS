@@ -34,3 +34,11 @@
 .ntss-viz-sentence span small{font-weight:500;font-size:11px;color:#4c7b69}
 .ntss-adaptive-tip summary{background:#f6fbf8}
 .ntss-viz-display{display:grid;gap:12px}
+
+.ntss-viz-code{display:block;background:#172d2a;color:#e9faf4;border-radius:12px;padding:14px 16px;max-width:100%;overflow-x:auto;font:13px/1.65 ui-monospace,Consolas,Monaco,monospace;white-space:pre-wrap}
+.ntss-viz-tables{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.ntss-viz-tables table{border-collapse:collapse;background:#fff;width:100%;font-size:12px}
+.ntss-viz-tables caption{font-weight:800;text-align:start;color:#116e65;margin:0 0 7px}
+.ntss-viz-tables td,.ntss-viz-tables th{padding:7px 9px;text-align:start;border:1px solid #d9e9e2}
+.ntss-viz-tables th{background:#eaf7f0}
+@media(max-width:420px){.ntss-viz-tables{grid-template-columns:1fr}}
