@@ -55,7 +55,7 @@ window.NTSS_LEARNING=(function(){
   if(optional.length||labs.length){
     const key=mode+":"+index,drawer=document.createElement("details");drawer.className="ntss-learning-tools";
     if(toolsOpened.has(key))drawer.open=true;
-    drawer.setAttribute("ontoggle","NTSS_LEARNING.toolsToggle("+JSON.stringify(key).replace(/"/g,"&quot;")+",this.open)");
+    drawer.setAttribute("ontoggle","NTSS_LEARNING.toolsToggle("+JSON.stringify(key)+",this.open)");
     const summary=document.createElement("summary");summary.textContent=lang(mode)==="ar"?"✦ أدوات التعلم (اختيارية)":lang(mode)==="de"?"✦ Lernwerkzeuge (optional)":"✦ Learning tools (optional)";
     drawer.appendChild(summary);
     if(labs.length){
