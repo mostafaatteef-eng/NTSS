@@ -33,9 +33,9 @@ function build(g,u,i){
  return out;
 }
 function refresh(){window.EBDA_APP_RENDER?.()}
-function start(g,u,i){window.NTSS_APPLIED.reset("ar",[g,u,i].join("-"));window.EBDAA_CONTEXT_GAMES.reset("ar",[g,u,i].join("-"));window.EBDAA_GAME.resetLesson('ar',[g,u,i].join('-'));state={grade:g,unit:u,lesson:i,questions:build(g,u,i),cursor:0,answers:{},finished:false};refresh()}
+function start(g,u,i){window.NTSS_LEARNING?.reset("arabicPractice");window.NTSS_APPLIED.reset("ar",[g,u,i].join("-"));window.EBDAA_CONTEXT_GAMES.reset("ar",[g,u,i].join("-"));window.EBDAA_GAME.resetLesson('ar',[g,u,i].join('-'));state={grade:g,unit:u,lesson:i,questions:build(g,u,i),cursor:0,answers:{},finished:false};refresh()}
 function choose(i){if(state.answers[state.cursor]?.checked)return;state.answers[state.cursor]={value:i};refresh()}
-function check(){const a=state.answers[state.cursor];if(!a||a.checked)return;a.checked=true;a.correct=a.value===state.questions[state.cursor].answer;refresh()}
+function check(){const a=state.answers[state.cursor];if(!a||a.checked)return;a.checked=true;a.correct=a.value===state.questions[state.cursor].answer;window.NTSS_LEARNING?.record("arabicPractice",state.cursor,a.correct,state.questions[state.cursor]);refresh()}
 function next(){if(!state.answers[state.cursor]?.checked)return;if(state.cursor===49)state.finished=true;else state.cursor++;refresh()}
 function previous(){if(state.cursor>0){state.cursor--;refresh()}}
 function restart(){start(state.grade,state.unit,state.lesson)}
