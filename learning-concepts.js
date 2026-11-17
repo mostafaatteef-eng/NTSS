@@ -85,7 +85,10 @@ window.NTSS_CONCEPTS=(function(){
  function attach(root,mode,title){
   const kind=type(mode,title);
   if(!kind||!root||root.querySelector(".ntss-concept"))return;
-  const id="ntss-concept-"+mode,html='<details class="ntss-concept" '+(opened.has(id)?"open":"")+' ontoggle="NTSS_CONCEPTS.expand('+JSON.stringify(id).replace(/"/g,"&quot;")+',this.open)"><summary><span>▥ Interactive Concept Visualizer</span><small>Optional · experiment and observe</small></summary><div class="ntss-concept-inner" id="'+id+'" data-kind="'+kind+'">'+inside(kind,id)+'</div></details>';
+  const isArabic=/arabic|economics|civics|social/i.test(mode),isGerman=/german/i.test(mode);
+  const heading=isArabic?"استكشف المفهوم بصريًا":isGerman?"Konzept visualisieren":"Interactive Concept Visualizer";
+  const subtitle=isArabic?"اختياري · جرّب وراقب":isGerman?"Optional · ausprobieren":"Optional · experiment and observe";
+  const id="ntss-concept-"+mode+"-"+kind,html='<details class="ntss-concept" '+(opened.has(id)?"open":"")+' ontoggle="NTSS_CONCEPTS.expand('+JSON.stringify(id).replace(/"/g,"&quot;")+',this.open)"><summary><span>▥ '+heading+'</span><small>'+subtitle+'</small></summary><div class="ntss-concept-inner" id="'+id+'" data-kind="'+kind+'">'+inside(kind,id)+'</div></details>';
   root.insertAdjacentHTML("beforeend",html);
  }
  return {type,visualization,attach,choose,expand};
