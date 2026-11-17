@@ -30,9 +30,9 @@ function build(g,u,i){
  return items;
 }
 function update(){window.EBDA_APP_RENDER?.()}
-function start(g,u,i){window.NTSS_APPLIED.reset("business",[g,u,i].join("-"));state={g,u,i,items:build(g,u,i),answers:{},cursor:0,done:false};note="";window.EBDAA_GAME.resetLesson("be",[g,u,i].join("-"));update()}
+function start(g,u,i){window.NTSS_LEARNING?.reset("businessPractice");window.NTSS_APPLIED.reset("business",[g,u,i].join("-"));state={g,u,i,items:build(g,u,i),answers:{},cursor:0,done:false};note="";window.EBDAA_GAME.resetLesson("be",[g,u,i].join("-"));update()}
 function choose(j){const s=state;if(s.answers[s.cursor]?.checked)return;s.answers[s.cursor]={value:Number(j),checked:false,correct:false};update()}
-function check(){const s=state,q=s.items[s.cursor],a=s.answers[s.cursor];if(!a||a.checked)return;a.checked=true;a.correct=a.value===q.answer;update()}
+function check(){const s=state,q=s.items[s.cursor],a=s.answers[s.cursor];if(!a||a.checked)return;a.checked=true;a.correct=a.value===q.answer;window.NTSS_LEARNING?.record("businessPractice",s.cursor,a.correct,q);update()}
 function move(dir){const s=state;if(dir>0&&(!s.answers[s.cursor]?.checked))return;if(dir>0&&s.cursor===49){s.done=true;update();return;}s.cursor=Math.min(49,Math.max(0,s.cursor+dir));update()}
 function restart(){start(state.g,state.u,state.i)}
 function listen(){const s=window.speechSynthesis;if(!s||typeof SpeechSynthesisUtterance==="undefined")return;try{s.cancel();const utter=new SpeechSynthesisUtterance(lesson().title);utter.lang="en-GB";utter.rate=.87;s.speak(utter)}catch(_e){}}
