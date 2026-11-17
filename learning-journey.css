@@ -1,0 +1,21 @@
+
+.ntss-review-entry{margin:22px 0;padding:22px;border:1px solid #d9e8df;border-radius:18px;background:#f7fcf9}
+.ntss-review-entry h2{font-size:19px;margin:0 0 9px}.ntss-review-entry p{font-size:13px;line-height:1.6;max-width:680px}
+.ntss-journey{border:1px solid #d7e8df;background:#fbfefd;border-radius:15px;margin:16px 0}
+.ntss-journey>summary{padding:14px 16px;color:#126f62;font-size:13px;font-weight:800;cursor:pointer;list-style:none}
+.ntss-journey>summary::-webkit-details-marker{display:none}
+.ntss-journey[open]>summary{border-bottom:1px solid #e5f0eb}
+#ntss-journey-content{padding:14px 16px;display:grid;gap:14px}
+.ntss-journey-nav{display:flex;flex-wrap:wrap;gap:7px}
+.ntss-journey-nav button{padding:8px 10px;background:white;border:1px solid #e0eae3;border-radius:99px;font:700 11px/1.4 inherit;color:#426c61}
+.ntss-journey-nav button.active{background:#dff7ed;border-color:#1ca29a;color:#116b60}
+.ntss-journey-test{display:grid;gap:10px;max-width:650px}
+.ntss-journey-test small{color:#638679;font-size:11px}.ntss-journey-test h3{font-size:18px;line-height:1.5;margin:3px 0}
+.ntss-journey-test button,.ntss-journey #ntss-journey-content>button{width:100%;text-align:start;padding:12px 14px;background:white;color:#244f44;border:1px solid #cfe1d7;border-radius:11px;font:inherit;cursor:pointer}
+.ntss-journey-test button:hover,.ntss-journey #ntss-journey-content>button:hover{border-color:#1ca29a;background:#effaf5}
+.ntss-journey-test button:focus-visible,.ntss-journey-nav button:focus-visible{outline:3px solid #8bd4bf;outline-offset:2px}
+.ntss-journey-result{padding:14px;border-radius:12px;background:#e6f8ef}
+.ntss-journey-result b{font-size:23px;color:#126d60}
+.ntss-restore{margin:12px 0;display:block;min-height:42px;padding:10px 14px;border:1px solid #1ca29a;background:#effaf5;color:#146c60;border-radius:12px;font-weight:800}
+#ntss-checkpoint-status{font-size:11px;color:#59786c}
+@media(max-width:520px){.ntss-journey-nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.ntss-journey-nav button{font-size:10px}.ntss-journey-test h3{font-size:16px}}
