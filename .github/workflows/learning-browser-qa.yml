@@ -1,0 +1,45 @@
+name: NTSS learning experience browser QA
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  learning-browser-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Playwright
+        run: npm install --no-save --no-package-lock playwright@1.56.1
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Start local server
+        run: |
+          python3 -m http.server 8765 --bind 127.0.0.1 > /tmp/ntss-server.log 2>&1 &
+          echo $! > /tmp/ntss-server.pid
+      - name: Wait for local server
+        run: |
+          for i in {1..20}; do
+            if curl --silent --fail http://127.0.0.1:8765/ >/dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/ntss-server.log
+          exit 1
+      - name: Cross-device learning QA
+        run: node learning-browser-qa.cjs
+      - name: Upload screenshots and QA results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ntss-learning-qa
+          path: qa-artifacts/
+          if-no-files-found: ignore
+          retention-days: 14
+      - name: Show server errors
+        if: failure()
+        run: cat /tmp/ntss-server.log
