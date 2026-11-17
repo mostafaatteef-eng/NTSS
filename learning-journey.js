@@ -39,7 +39,7 @@ window.NTSS_JOURNEY=(function(){
     if(arr.length>=5){
      const correct=arr.filter(x=>x.correct).length;
      main='<div class="ntss-journey-result"><b>'+correct+' / 5</b><p>Practice insight only. This score does not affect the 50 assessed questions or certificates.</p></div>'+
-      questions.map((q,j)=>'<p>'+e(j+1)+'. '+esc(q.q)+' — '+(arr[j].correct?"✓": "Review: "+esc(q.explain))+'</p>').join("");
+      questions.map((q,j)=>'<p>'+esc(j+1)+'. '+esc(q.q)+' — '+(arr[j].correct?"✓": "Review: "+esc(q.explain))+'</p>').join("");
     }else{
      const q=questions[arr.length];
      main='<div class="ntss-journey-test"><small>Question '+(arr.length+1)+' of 5 · formative only</small><h3>'+esc(q.q)+'</h3>'+q.options.map((option,j)=>'<button onclick="NTSS_JOURNEY.choose('+g+','+u+','+i+',\''+type+'\','+j+')">'+esc(option)+'</button>').join("")+'</div>';
