@@ -49,9 +49,9 @@ function build(g,u,i){
  return items;
 }
 function redraw(){window.EBDA_APP_RENDER?.()}
-function start(g,u,i){window.NTSS_APPLIED.reset("de",[g,u,i].join("-"));window.EBDAA_CONTEXT_GAMES.reset("de",[g,u,i].join("-"));window.EBDAA_GERMAN_AUDIO?.stop();window.EBDAA_GAME.resetLesson('de',[g,u,i].join('-'));s={grade:g,unit:u,lesson:i,items:build(g,u,i),cursor:0,answers:{},done:false};speechMessage="";transcriptVisible=false;redraw()}
+function start(g,u,i){window.NTSS_LEARNING?.reset("germanPractice");window.NTSS_APPLIED.reset("de",[g,u,i].join("-"));window.EBDAA_CONTEXT_GAMES.reset("de",[g,u,i].join("-"));window.EBDAA_GERMAN_AUDIO?.stop();window.EBDAA_GAME.resetLesson('de',[g,u,i].join('-'));s={grade:g,unit:u,lesson:i,items:build(g,u,i),cursor:0,answers:{},done:false};speechMessage="";transcriptVisible=false;redraw()}
 function choose(v){if(s.answers[s.cursor]?.checked)return;s.answers[s.cursor]={value:v};redraw()}
-function check(){const a=s.answers[s.cursor];if(!a||a.checked)return;a.checked=true;a.correct=a.value===s.items[s.cursor].answer;redraw()}
+function check(){const a=s.answers[s.cursor];if(!a||a.checked)return;a.checked=true;a.correct=a.value===s.items[s.cursor].answer;window.NTSS_LEARNING?.record("germanPractice",s.cursor,a.correct,s.items[s.cursor]);redraw()}
 function next(){if(!s.answers[s.cursor]?.checked)return;window.EBDAA_GERMAN_AUDIO?.stop();speechMessage="";transcriptVisible=false;if(s.cursor===s.items.length-1)s.done=true;else s.cursor++;redraw()}
 function previous(){window.EBDAA_GERMAN_AUDIO?.stop();speechMessage="";transcriptVisible=false;if(s.cursor>0)s.cursor--;redraw()}
 function restart(){start(s.grade,s.unit,s.lesson)}
