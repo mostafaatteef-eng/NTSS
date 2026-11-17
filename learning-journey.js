@@ -47,7 +47,7 @@ window.NTSS_JOURNEY=(function(){
   }else if(type==="explore")main='<p>Read the lesson explanation, then open Interactive Concept Visualizer from Learning Tools when available. Predict the result before moving a parameter.</p>';
   else if(type==="practice")main='<p>Return to the main question above. Complete ten questions at a time. The AI specialization uses recent performance to prioritize the next unanswered group.</p>';
   else if(type==="review")main='<p>Check missed questions in Learning Tools. Read the reasoning and try a similar question before continuing.</p>';
-  else main='<p>Save an opt-in checkpoint with the Continue Later control below. On shared school devices, clear the saved session when finished.</p><button onclick="EBDAA_PRACTICE.saveCheckpoint()">Save my progress on this device</button><button onclick="EBDAA_PRACTICE.clearCheckpoint()">Clear saved checkpoint</button>';
+  else main='<p>Save an opt-in checkpoint with the Continue Later control below. On shared school devices, clear the saved session when finished.</p><button onclick="EBDAA_PRACTICE.saveCheckpoint()">Save my progress on this device</button><button onclick="EBDAA_PRACTICE.clearCheckpoint()">Clear saved checkpoint</button><p id="ntss-checkpoint-status" role="status">Checkpoints are stored only if you choose to save. On a shared device, clear the saved session.</p>';
   return nav+main;
  }
  function panel(g,u,i){return '<details class="ntss-journey"><summary>Learning Journey · Quick Check → Mastery</summary><div id="ntss-journey-content">'+inside(g,u,i)+'</div></details>'}
