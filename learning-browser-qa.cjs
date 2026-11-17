@@ -3,7 +3,10 @@
  * Runs in real Chromium against the checked-out site (not a live student session).
  * All synthetic student data is thrown away; test is not an accessibility audit.
  */
-const {chromium}=require('playwright');
+const engines=require('playwright');
+const engineName=process.env.NTSS_BROWSER||'chromium';
+const browserType=engines[engineName];
+if(!['chromium','webkit'].includes(engineName)||!browserType)throw Error('Unsupported test browser');
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const ROOT=process.env.NTSS_TEST_URL||'http://127.0.0.1:8765/';
@@ -25,7 +28,7 @@ fs.mkdirSync(artifactDir,{recursive:true});
 const results=[];
 function check(condition,msg){assert.ok(condition,msg)}
 (async()=>{
- const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
+ const browser=await browserType.launch(engineName==='chromium'?{headless:true,args:['--no-sandbox']}:{headless:true});
  try{
   for(const device of viewports){
    const context=await browser.newContext({viewport:{width:device.width,height:device.height},deviceScaleFactor:1});
@@ -101,10 +104,10 @@ function check(condition,msg){assert.ok(condition,msg)}
    check(concept.ohm.includes('2.0 A')&&concept.sql.includes('no matching project')&&concept.knn.includes('Majority vote'),device.name+' computed visualizer');
    check(exceptions.length===0,device.name+' JavaScript errors: '+exceptions.join(' | '));
    check(violations.length===0,device.name+' CSP errors: '+violations.join(' | '));
-   await page.screenshot({path:artifactDir+'/'+device.name+'-last-subject.png',fullPage:true});
+   await page.screenshot({path:artifactDir+'/'+engineName+'-'+device.name+'-last-subject.png',fullPage:true});
    await context.close();
   }
-  fs.writeFileSync(artifactDir+'/qa-results.json',JSON.stringify({checkedAt:new Date().toISOString(),results},null,2));
-  console.log('PASS learning cross-device QA: '+results.length+' subject-device checks, '+viewports.length+' viewport sizes');
+  fs.writeFileSync(artifactDir+'/'+engineName+'-qa-results.json',JSON.stringify({browser:engineName,checkedAt:new Date().toISOString(),results},null,2));
+  console.log('PASS '+engineName+' learning cross-device QA: '+results.length+' subject-device checks, '+viewports.length+' viewport sizes');
  }finally{await browser.close()}
 })().catch(err=>{console.error(err);process.exitCode=1});
