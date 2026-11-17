@@ -25,6 +25,12 @@ function resumeCheckpoint(){
  responses=Object.fromEntries(Object.entries(v.responses||{}).filter(([k])=>/^\d{1,2}$/.test(k)&&Number(k)<50));
  hintFlags=v.hintFlags&&typeof v.hintFlags==="object"?v.hintFlags:{};
  correct=Object.values(reviewed).filter(Boolean).length;
+ // Rebuild formative evidence after restoring a saved attempt; never re-grade.
+ for(const [key,ok] of Object.entries(reviewed)){
+  const j=Number(key),q=items[j];if(!q)continue;
+  window.EBDA_MASTERY.record(g,u,i,q,ok,!!hintFlags[j]);
+  window.NTSS_LEARNING?.record(g===1?"learn":"advancedLab",j,ok,q);
+ }
  chosen=Object.hasOwn(responses,cursor)?responses[cursor]:null;
  graded=Object.hasOwn(reviewed,cursor);hintShown=!!hintFlags[cursor];
  finished=!!v.finished&&Object.keys(reviewed).length===50;
