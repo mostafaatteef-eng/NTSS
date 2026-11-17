@@ -5,7 +5,21 @@ const CORE=["./","./index.html","./app-main.js","./learning-support.js","./learn
 self.addEventListener("install",event=>{
  event.waitUntil((async()=>{
   const cache=await caches.open(CACHE);
-  await Promise.allSettled(CORE.map(path=>cache.add(new Request(new URL(path,self.registration.scope),{cache:"reload"}))));
+  // Pre-cache the exact versioned same-origin script/style URLs from the current HTML.
+  // First visit may be uncontrolled, so caching only unversioned names is insufficient.
+  let resources=[...CORE];
+  try{
+   const response=await fetch(new URL("./index.html",self.registration.scope),{cache:"reload"});
+   if(response.ok){
+    const html=await response.text();
+    const matches=[...html.matchAll(/(?:src|href)="([^"]+\.(?:js|css|png|svg|webp|jpg|jpeg)(?:\?[^"]*)?)"/gi)];
+    for(const match of matches.slice(0,150)){
+      const url=new URL(match[1],self.registration.scope);
+      if(url.origin===self.location.origin&&url.pathname.startsWith(new URL(self.registration.scope).pathname))resources.push(url.href);
+    }
+   }
+  }catch(_){}
+  await Promise.allSettled([...new Set(resources.map(path=>new URL(path,self.registration.scope).href))].map(url=>cache.add(new Request(url,{cache:"reload"}))));
   await self.skipWaiting();
  })());
 });
