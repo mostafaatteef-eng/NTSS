@@ -3,6 +3,35 @@
 window.EBDAA_PRACTICE=(function(){
 let items=[],cursor=0,chosen=null,graded=false,correct=0,reviewed={},session="",hintShown=false,checkpoint=false,grade=1,unit=0,lesson=0,cachedStage="",finished=false,responses={},hintFlags={};
 const previousOrders=new Map();let adaptedStages=new Set();
+const CHECKPOINT_KEY="ntss-private-practice-checkpoint-v1",CHECKPOINT_TTL=7*24*60*60*1000;
+function saved(){try{const raw=localStorage.getItem(CHECKPOINT_KEY);if(!raw)return null;const v=JSON.parse(raw);if(v?.version!==1||Date.now()-v.savedAt>CHECKPOINT_TTL||Date.now()<v.savedAt||!Array.isArray(v.order)||v.order.length!==50){localStorage.removeItem(CHECKPOINT_KEY);return null}return v}catch(_){return null}}
+function saveCheckpoint(){
+ if(!session||!items.length)return false;
+ try{
+  const v={version:1,savedAt:Date.now(),session,order:items.map(q=>q.id),cursor,chosen,graded,correct,reviewed,responses,hintFlags,hintShown,finished};
+  localStorage.setItem(CHECKPOINT_KEY,JSON.stringify(v));
+  const node=document.getElementById("ntss-checkpoint-status");if(node)node.textContent="Saved on this device for up to 7 days. Clear it on shared devices.";
+  return true;
+ }catch(_){const node=document.getElementById("ntss-checkpoint-status");if(node)node.textContent="Could not save. Your browser may block storage.";return false}
+}
+function clearCheckpoint(){try{localStorage.removeItem(CHECKPOINT_KEY)}catch(_){}const node=document.getElementById("ntss-checkpoint-status");if(node)node.textContent="Saved session cleared."}
+function resumeCheckpoint(){
+ const v=saved();if(!v||!/^[123]-\d+-\d+$/.test(v.session))return false;
+ const [g,u,i]=v.session.split("-").map(Number);
+ const bank=window.EBDAA_QUESTION_FACTORY.all(g,u,i),byId=new Map(bank.map(q=>[q.id,q]));
+ if(bank.length!==50||new Set(v.order).size!==50||v.order.some(id=>!byId.has(id))||!Number.isInteger(v.cursor)||v.cursor<0||v.cursor>=50)return false;
+ begin(g,u,i);items=v.order.map(id=>byId.get(id));cursor=v.cursor;
+ reviewed=Object.fromEntries(Object.entries(v.reviewed||{}).filter(([k,value])=>/^\d{1,2}$/.test(k)&&Number(k)<50&&typeof value==="boolean"));
+ responses=Object.fromEntries(Object.entries(v.responses||{}).filter(([k])=>/^\d{1,2}$/.test(k)&&Number(k)<50));
+ hintFlags=v.hintFlags&&typeof v.hintFlags==="object"?v.hintFlags:{};
+ correct=Object.values(reviewed).filter(Boolean).length;
+ chosen=Object.hasOwn(responses,cursor)?responses[cursor]:null;
+ graded=Object.hasOwn(reviewed,cursor);hintShown=!!hintFlags[cursor];
+ finished=!!v.finished&&Object.keys(reviewed).length===50;
+ adaptedStages=new Set([10,20,30,40].filter(x=>x<=cursor));
+ draw();window.EBDA_APP_RENDER?.();return true;
+}
+
 function shuffleQuestions(all,key){
  const shuffled=all.slice();
  // Fisher-Yates: shuffle once when the attempt begins, never during the attempt.
@@ -75,7 +104,7 @@ cachedStage='<div class="practice-flow"><div class="game-stats"><span>⭐ '+xp+'
 '<h3 class="practice-question">'+e(q.question)+'</h3>'+controls+hint+verdict+mistake+
 (!graded&&!hintShown?'<div class="actions"><button class="btn light" onclick="EBDAA_PRACTICE.showHint()">💡 Need a hint?</button></div>':'')+
 '<div class="stepfooter"><button class="btn light" onclick="EBDAA_PRACTICE.prev()" '+(cursor===0?'disabled':'')+'>← Previous</button>'+action+'</div>'+
-'<details class="practice-source"><summary>About this practice question</summary><p class="source">'+e(q.sourceStatus)+'</p></details></div>';const node=document.getElementById("ebdaa-practice-stage");if(node)node.innerHTML=cachedStage;syncFocusStatus();window.NTSS_LEARNING?.decorate(document.getElementById("app"),grade===1?"learn":"advancedLab");
+'<details class="practice-source"><summary>About this practice question</summary><p class="source">'+e(q.sourceStatus)+'</p></details>'+window.NTSS_JOURNEY.panel(grade,unit,lesson)+(saved()&&!finished?'<button class="ntss-restore" onclick="EBDAA_PRACTICE.resumeCheckpoint()">Resume saved session (this device)</button>':'')+'</div>';const node=document.getElementById("ebdaa-practice-stage");if(node)node.innerHTML=cachedStage;syncFocusStatus();window.NTSS_LEARNING?.decorate(document.getElementById("app"),grade===1?"learn":"advancedLab");
 }
-return {panel,reset,ensure,isFinished,progress,gameChooseIndex,chooseOption,submitOrNext,begin,currentQuestion,questionOrder,answer,chooseOrder,clearOrder,showHint,check,next,continueCheckpoint,beginFromCheckpoint,prev,finish,restart,all:(g,u,i)=>window.EBDAA_QUESTION_FACTORY.all(g,u,i)};
+return {panel,reset,ensure,isFinished,progress,gameChooseIndex,chooseOption,submitOrNext,begin,currentQuestion,questionOrder,answer,chooseOrder,clearOrder,showHint,check,next,continueCheckpoint,beginFromCheckpoint,prev,finish,restart,saveCheckpoint,clearCheckpoint,resumeCheckpoint,hasCheckpoint:()=>!!saved(),all:(g,u,i)=>window.EBDAA_QUESTION_FACTORY.all(g,u,i)};
 })();
