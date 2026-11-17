@@ -15,6 +15,9 @@ window.NTSS_CONCEPTS=(function(){
   if(/math/i.test(mode)&&/linear|equation|function|gradient|المعادلة|الدالة/i.test(t))return "linear";
   if(/economics/i.test(mode)&&/الطلب|العرض|السعر|الثمن/i.test(t))return "demand";
   if(/english|german|arabic/i.test(mode)&&/grammar|sentence|tense|past perfect|الجملة|إعراب|نحو|grammatik/i.test(t))return "sentence";
+  if(/learn|advancedLab/i.test(mode)&&/python|program|script|functions?|debug|loop|flow control/i.test(t))return "python";
+  if(/learn|advancedLab/i.test(mode)&&/sql|database|schema|normalization|query|join|data modeling/i.test(t))return "sql";
+  if(/learn|advancedLab/i.test(mode)&&/machine learning|deep learning|knn|classif|clustering|gradient descent|model evaluation/i.test(t))return "knn";
   if(/learn|advancedLab/i.test(mode)&&/statistics|data analysis|visual|chart|preprocess|monitor|quality/i.test(t))return "data";
   return null;
  }
@@ -35,6 +38,21 @@ window.NTSS_CONCEPTS=(function(){
   if(kind==="arabic-kan")return {prompt:"كان وأخواتها تدخل على الجملة الاسمية فترفع الاسم وتنصب الخبر.",visual:grammarDiagram([["كانَ","فعل ناسخ"],["الجوُّ","اسم كان مرفوع"],["جميلًا","خبر كان منصوب"]]),result:"كان الجوُّ جميلًا: انتبه إلى تغير إعراب الخبر.",unit:"",value:n};
   if(kind==="arabic-inna")return {prompt:"إنَّ وأخواتها تنصب الاسم وترفع الخبر.",visual:grammarDiagram([["إنَّ","حرف ناسخ"],["الجوَّ","اسم إن منصوب"],["جميلٌ","خبر إن مرفوع"]]),result:"إنَّ الجوَّ جميلٌ: اسم إن منصوب وخبرها مرفوع.",unit:"",value:n};
   if(kind==="english-past")return {prompt:"Past perfect often clarifies which of two past events happened first.",visual:grammarDiagram([["had finished","Earlier completed action"],["the meeting started","Later past action"]]),result:"The team had finished before the meeting started. Form: had + past participle.",unit:"",value:n};
+
+  if(kind==="python"){
+    const sequence=Array.from({length:n},(_,i)=>i+1),sum=sequence.reduce((a,b)=>a+b,0);
+    return {prompt:"Trace this Python loop, one iteration at a time.",visual:'<pre class="ntss-viz-code">total = 0\nfor value in range(1, '+(n+1)+'):\n    total += value\nprint(total)</pre>'+bars(sequence.map((x,i)=>["Step "+x,(x*(x+1))/2]),36,"#1CA29A"),result:"After "+n+" iterations: total = "+sum+". Trace values: "+sequence.map(x=>x*(x+1)/2).join(" → ")+".",unit:"Iterations",value:n};
+  }
+  if(kind==="sql"){
+    const id=(n-1)%3+1,students={1:"Mona",2:"Nour",3:"Salma"},projects={1:"Python",2:"Data Analysis"};
+    return {prompt:"Explore what an INNER JOIN does with a matching foreign key.",visual:'<div class="ntss-viz-tables"><table><caption>students</caption><tr><th>id</th><th>name</th></tr>'+Object.keys(students).map(x=>'<tr><td>'+x+'</td><td>'+students[x]+'</td></tr>').join("")+'</table><table><caption>projects</caption><tr><th>student_id</th><th>topic</th></tr>'+Object.keys(projects).map(x=>'<tr><td>'+x+'</td><td>'+projects[x]+'</td></tr>').join("")+'</table></div>',result:"Selected student id = "+id+" ("+students[id]+"). INNER JOIN result: "+(projects[id]?students[id]+" — "+projects[id]:"no matching project; this row is excluded")+".",unit:"Student selector",value:id};
+  }
+  if(kind==="knn"){
+    const points=[{x:1,label:"Low"},{x:3,label:"Low"},{x:5,label:"High"},{x:7,label:"High"},{x:8,label:"High"}];
+    const nearest=points.map(p=>({...p,d:Math.abs(p.x-n)})).sort((a,b)=>a.d-b.d||a.x-b.x).slice(0,3);
+    const high=nearest.filter(x=>x.label==="High").length;
+    return {prompt:"Classify a new observation using the three nearest labeled points (k = 3).",visual:bars(points.map(p=>["x="+p.x,p.x]),8,"#1CA29A"),result:"Query x = "+n+". Nearest points: "+nearest.map(x=>x.x+" ("+x.label+")").join(", ")+". Majority vote: "+(high>=2?"High":"Low")+".",unit:"Query position",value:n};
+  }
   if(kind==="ohm"){const voltage=n*2,resistance=4,current=voltage/resistance;return {prompt:"Ohm's law: change voltage while resistance stays at 4 Ω.",visual:bars([["Voltage",voltage],["Current",current]],20,"#1CA29A"),result:"I = V / R = "+voltage+" / 4 = "+current.toFixed(1)+" A. Doubling voltage doubles current when resistance remains constant.",unit:"Voltage",value:voltage}}
   if(kind==="motion"){const t=n,acc=2,velocity=t*acc,distance=.5*acc*t*t;return {prompt:"Motion from rest with constant acceleration a = 2 m/s².",visual:graph(Array.from({length:7},(_,i)=>[i,i*acc])),result:"At t = "+t+" s, v = at = "+velocity+" m/s and s = ½at² = "+distance+" m.",unit:"Time",value:t}}
   if(kind==="mean"){const set=[4,6,8,10,12],data=set.map((v,i)=>v+(i===4?n:0)),avg=data.reduce((a,b)=>a+b,0)/data.length;return {prompt:"Change the last observation and watch the mean.",visual:bars(data.map((x,i)=>["x"+(i+1),x]),25,"#1CA29A"),result:"Mean = ("+data.join(" + ")+") / 5 = "+avg.toFixed(1)+".",unit:"Added value",value:n}}
