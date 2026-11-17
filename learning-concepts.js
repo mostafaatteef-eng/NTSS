@@ -17,8 +17,9 @@ window.NTSS_CONCEPTS=(function(){
   return '<div class="ntss-viz-bars" role="img" aria-label="Illustrative comparison chart">'+pairs.map(([label,value])=>'<div class="ntss-viz-bar"><span class="ntss-viz-value">'+escape(value)+'</span><div class="ntss-viz-column" style="height:'+Math.max(8,Math.round(Number(value)/max*108))+'px;background:'+color+'"></div><small>'+escape(label)+'</small></div>').join("")+'</div>';
  }
  function graph(points){
-  const coordinates=points.map(([x,y])=>(24+x*27)+","+(158-y*11)).join(" ");
-  return '<svg class="ntss-viz-svg" viewBox="0 0 300 185" role="img" aria-label="Computed x and y relationship"><path d="M24 10 V158 H296" fill="none" stroke="#96b7aa" stroke-width="2"/><polyline points="'+coordinates+'" fill="none" stroke="#1CA29A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>'+points.map(([x,y])=>'<circle cx="'+(24+x*27)+'" cy="'+(158-y*11)+'" r="4" fill="#117e75"/>').join("")+'<text x="280" y="176" fill="#58736a" font-size="12">x</text><text x="9" y="16" fill="#58736a" font-size="12">y</text></svg>';
+  const maxY=Math.max(1,...points.map(p=>p[1]));const yPos=y=>158-(y/maxY)*132;
+  const coordinates=points.map(([x,y])=>(24+x*27)+","+yPos(y).toFixed(2)).join(" ");
+  return '<svg class="ntss-viz-svg" viewBox="0 0 300 185" role="img" aria-label="Computed x and y relationship"><path d="M24 10 V158 H296" fill="none" stroke="#96b7aa" stroke-width="2"/><polyline points="'+coordinates+'" fill="none" stroke="#1CA29A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>'+points.map(([x,y])=>'<circle cx="'+(24+x*27)+'" cy="'+yPos(y).toFixed(2)+'" r="4" fill="#117e75"/>').join("")+'<text x="280" y="176" fill="#58736a" font-size="12">x</text><text x="9" y="16" fill="#58736a" font-size="12">y</text></svg>';
  }
  function visualization(kind,n){
   if(kind==="ohm"){const voltage=n*2,resistance=4,current=voltage/resistance;return {prompt:"Ohm's law: change voltage while resistance stays at 4 Ω.",visual:bars([["Voltage",voltage],["Current",current]],20,"#1CA29A"),result:"I = V / R = "+voltage+" / 4 = "+current.toFixed(1)+" A. Doubling voltage doubles current when resistance remains constant.",unit:"Voltage",value:voltage}}
@@ -29,11 +30,24 @@ window.NTSS_CONCEPTS=(function(){
   if(kind==="data"){const source=[3,7,11,17,23,28],threshold=3*n,count=source.filter(x=>x>=threshold).length;return {prompt:"Move a threshold and observe which sample readings are retained.",visual:bars(source.map((v,i)=>["S"+(i+1),v]),30,"#1CA29A"),result:"Filter: value ≥ "+threshold+" → "+count+" of "+source.length+" readings remain.",unit:"Threshold step",value:n}}
   return {prompt:"Explore a simple sentence pattern.",visual:'<div class="ntss-viz-sentence"><span>Subject</span><span>Verb</span><span>Object / complement</span></div>',result:"Identify the function of each element in the current lesson. This is a general language pattern; not every sentence uses all three elements.",unit:"Step",value:n};
  }
- function choose(id,n){values.set(id,Math.min(8,Math.max(1,Number(n)||1)));const host=document.getElementById(id);if(host)host.innerHTML=inside(host.dataset.kind,id)}
+
+ function display(kind,n){
+  const v=visualization(kind,n);
+  return '<p class="ntss-viz-prompt">'+escape(v.prompt)+'</p>'+v.visual+'<p class="ntss-viz-result" aria-live="polite">'+escape(v.result)+'</p>';
+ }
+ function choose(id,n){
+  const val=Math.min(8,Math.max(1,Number(n)||1));values.set(id,val);
+  const host=document.getElementById(id);
+  if(!host)return;
+  const dynamic=host.querySelector(".ntss-viz-display");
+  if(dynamic)dynamic.innerHTML=display(host.dataset.kind,val);
+  const label=host.querySelector(".ntss-viz-slider strong");
+  if(label)label.textContent=String(visualization(host.dataset.kind,val).value);
+ }
  function expand(id,open){if(open)opened.add(id);else opened.delete(id)}
  function inside(kind,id){
-  const n=values.get(id)??3,v=visualization(kind,n),ar=kind==="demand";
-  return '<p class="ntss-viz-prompt">'+escape(v.prompt)+'</p>'+v.visual+'<p class="ntss-viz-result" aria-live="polite">'+escape(v.result)+'</p>'+
+  const n=values.get(id)??3,v=visualization(kind,n);
+  return '<div class="ntss-viz-display">'+display(kind,n)+'</div>'+
    (kind==="sentence"?'':'<label class="ntss-viz-slider">'+escape(v.unit)+' <strong>'+v.value+'</strong><input type="range" min="1" max="8" step="1" value="'+n+'" oninput="NTSS_CONCEPTS.choose('+JSON.stringify(id).replace(/"/g,"&quot;")+',this.value)" aria-label="'+escape(v.unit)+'"></label>')+
    '<small>Illustrative synthetic values for practice · Does not alter your answer or certificate.</small>';
  }
