@@ -40,7 +40,7 @@ window.NTSS_LEARNING=(function(){
   const m=(screen.querySelector(".practice-focus__counter")?.textContent||"").match(/(?:Question|Frage|Mission|السؤال|سؤال)\s*(\d+)/i);if(!m)return;
   const index=Math.max(0,Math.min(49,Number(m[1])-1)),target=area.querySelector(".guided-question")||area.querySelector(".practice-flow")||area;
   const fragment=review(mode,index);if(fragment&&!target.querySelector(".focus-mistake"))target.insertAdjacentHTML("beforeend",fragment);
-  const tip=adaptiveAdvice(mode,index);if(tip)target.insertAdjacentHTML("beforeend",tip);
+  const tip=adaptiveAdvice(mode,index);if(tip&&!fragment)target.insertAdjacentHTML("beforeend",tip);
   for(const el of [...target.querySelectorAll(".context-game")]){
    if(el.closest(".ntss-optional-game"))continue;
    const panel=document.createElement("details");panel.className="ntss-optional-game";
