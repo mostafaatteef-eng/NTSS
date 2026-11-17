@@ -52,7 +52,7 @@ test('Concept visualizations calculate correct physics, math, economics and lang
  assert.match(viz.visualization('sql',3).result,/no matching project/);
  assert.match(viz.visualization('knn',4).result,/Majority vote:/);
  assert.match(viz.visualization('mean',3).result,/8\.6/);
- assert.match(viz.visualization('arabic-kan',3).result,/اسم كان مرفوع/);
+ assert.match(viz.visualization('arabic-kan',3).visual,/اسم كان مرفوع/);
  assert.equal(viz.type('physicsPractice','Completely unrelated lesson'),null);
  assert.match(read('learning-concepts.js'),/ntss-viz-display/);
 });
@@ -82,7 +82,9 @@ test('Adaptive AI sprint reprioritizes only the next ten unanswered items',()=>{
  assert.equal(ordered,1,'Exactly one adaptive reorder at a ten-question boundary');
  assert.equal(JSON.stringify(after.slice(0,10)),JSON.stringify(before.slice(0,10)));
  assert.equal(JSON.stringify(after.slice(20)),JSON.stringify(before.slice(20)));
- assert.equal(JSON.stringify(after.slice(10,20).map(id=>Number(id.slice(1))%10)),JSON.stringify([9,8,7,6,5,4,3,2,1,0]));
+ const priorities=after.slice(10,20).map(id=>Number(id.slice(1))%10);
+ assert.equal(JSON.stringify(priorities),JSON.stringify([...priorities].sort((a,b)=>b-a)));
+ assert.equal(JSON.stringify(before.slice(10,20).sort()),JSON.stringify(after.slice(10,20).sort()));
  assert.equal(new Set(after).size,50);
 });
 test('Production HTML loads new learning modules before app entrypoint',()=>{
