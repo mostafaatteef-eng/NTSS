@@ -50,7 +50,7 @@ window.NTSS_LEARNING=(function(){
   }
   window.NTSS_CONCEPTS?.attach(target,mode,screen.querySelector(".practice-focus__lesson")?.textContent||"");
   // Disclose nonessential activities in a single drawer. Keep the assessed question in view.
-  const optional=[...target.querySelectorAll(".ntss-optional-game,.ntss-applied,.context-report,.practice-milestone,.practice-source,.ntss-concept,.ntss-support,.focus-mistake")].filter(el=>!el.closest(".ntss-learning-tools"));
+  const optional=[...target.querySelectorAll(".ntss-optional-game,.ntss-applied,.context-report,.practice-milestone,.practice-source,.ntss-concept,.ntss-support,.focus-mistake,.ntss-journey,.ntss-restore")].filter(el=>!el.closest(".ntss-learning-tools"));
   const labs=[...screen.querySelectorAll(".practice-focus__header button")].filter(el=>el.getAttribute("onclick")?.startsWith("openCodeLab("));
   if(optional.length||labs.length){
     const key=mode+":"+index,drawer=document.createElement("details");drawer.className="ntss-learning-tools";
