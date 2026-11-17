@@ -161,10 +161,34 @@ function focusPractice(){
  '<div class="practice-focus__content">'+content+(nextLesson?'<div class="practice-focus__finish">'+nextLesson+'</div>':'')+'</div>'+
  '</section>';
 }
+
+/* Public teacher preview, no role authorization or server-side approval. */
+let tq={subject:"ai",grade:1,unit:0,lesson:0};
+function teacherOpen(){mode="teacherReview";render()}
+function teacherChange(k,v){tq[k]=k==="subject"?v:Number(v);if(k==="subject"){tq.grade=v==="economics"?3:1;tq.unit=0;tq.lesson=0}if(k==="grade"){tq.unit=0;tq.lesson=0}if(k==="unit")tq.lesson=0;render()}
+function teacherNote(i,text){const a=window.NTSS_BANK_AUDIT;const q=a.audit(tq.subject,tq.grade,tq.unit,tq.lesson).items[i];a.mark(tq.subject,tq.grade,tq.unit,tq.lesson,i,q.review.status,text)}
+function teacherMark(i,status){const el=document.getElementById("teacher-review-note-"+i);window.NTSS_BANK_AUDIT.mark(tq.subject,tq.grade,tq.unit,tq.lesson,i,status,el?.value||"");render()}
+function teacherView(){
+ const a=window.NTSS_BANK_AUDIT,e=a.escape;
+ const select=(label,key,items)=>'<label>'+label+'<select onchange="teacherChange(\''+key+'\',this.value)">'+items.map(x=>'<option value="'+e(x[0])+'" '+(String(x[0])===String(tq[key])?'selected':'')+'>'+e(x[1])+'</option>').join("")+'</select></label>';
+ const names={math:"EBDAA_MATH_UNITS",en:"EBDAA_ENGLISH_UNITS",ar:"EBDAA_ARABIC_UNITS",de:"EBDAA_GERMAN_UNITS",physics:"EBDAA_PHYSICS_UNITS",business:"EBDAA_BUSINESS_ENGLISH_UNITS",economics:"EBDAA_ECONOMICS_UNITS",civics:"EBDAA_CIVICS_UNITS",social:"EBDAA_SOCIAL_STUDIES_UNITS"};
+ const units=tq.subject==="ai"?(tq.grade===1?window.EBDAA_DATA.names.map((title,j)=>({title,sessions:window.EBDAA_DATA.sessions.filter(x=>x.unit===j+1).map(x=>x.title)})):window.EBDAA_GRADES.grades[tq.grade-1].subjects[0].units):(window[names[tq.subject]]?.[tq.grade]||[]);
+ const sub=select("Subject","subject",Object.keys(a.engines).map(x=>[x,x.toUpperCase()]));
+ const grd=select("Year","grade",[1,2,3].map(x=>[x,"Year "+x]));
+ if(!units.length)return '<section class="ntss-teacher"><button class="btn light" onclick="nav(\'home\')">← Home</button><h1>Teacher review preview</h1><p>No lessons available for the selected year.</p>'+sub+grd+'</section>';
+ tq.unit=Math.min(tq.unit,units.length-1);
+ const unit=units[tq.unit],lessons=unit.sessions||[];
+ if(!lessons.length)return '<section class="ntss-teacher"><h1>No lessons available</h1>'+sub+grd+'</section>';
+ tq.lesson=Math.min(tq.lesson,lessons.length-1);
+ const unitSelect=select("Unit","unit",units.map((x,j)=>[j,x.title||x.name||"Unit "+(j+1)]));
+ const lessonSelect=select("Lesson","lesson",lessons.map((x,j)=>[j,typeof x==="string"?x:x.title||"Lesson "+(j+1)]));
+ let report;try{report=a.audit(tq.subject,tq.grade,tq.unit,tq.lesson)}catch(err){return '<section class="ntss-teacher"><p>'+e(err.message)+'</p>'+sub+grd+unitSelect+lessonSelect+'</section>'}
+ return '<section class="ntss-teacher"><button class="btn light" onclick="nav(\'home\')">← Back</button><h1>Teacher Mode · Question Bank Review</h1><p><b>Public preview, not an authenticated teacher account.</b> Review judgments are local until exported and checked by the academic team. Automated warnings do not confirm scientific accuracy.</p><div class="ntss-teacher-filters">'+sub+grd+unitSelect+lessonSelect+'</div><div class="ntss-teacher-summary"><b>'+report.count+' questions</b><span>'+report.issues+' structural warnings</span><button class="btn teal" onclick="NTSS_BANK_AUDIT.exportReport(tq.subject,tq.grade,tq.unit,tq.lesson)">Export review JSON</button></div><div class="ntss-teacher-items">'+report.items.map(q=>'<article class="ntss-teacher-item"><b>Question '+(q.index+1)+'</b><p>'+e(q.prompt)+'</p><p><b>Answer key:</b> '+e(q.answer)+'</p><p class="'+(q.issues.length?"ntss-teacher-warning":"muted")+'">'+e(q.issues.join(" · ")||"No structural warning — teacher review still required")+'</p><label>Review note<textarea id="teacher-review-note-'+q.index+'" rows="2" oninput="teacherNote('+q.index+',this.value)">'+e(q.review.comment)+'</textarea></label><div class="actions"><button class="btn light" onclick="teacherMark('+q.index+',\'revise\')">Revise</button><button class="btn teal" onclick="teacherMark('+q.index+',\'approved\')">Reviewed locally</button><small>'+e(q.review.status)+'</small></div></article>').join("")+'</div></section>';
+}
 function render(){
  const focused=practiceActive()||mode==="codeLab"||mode==="mathPractice"||mode==="physicsPractice"||mode==="englishPractice"||mode==="businessPractice"||mode==="economicsPractice"||mode==="civicsPractice"||mode==="socialPractice"||mode==="arabicPractice"||mode==="germanPractice";
  if(document.body?.classList)document.body.classList.toggle("practice-focus-active",focused);
- app.innerHTML=mode==="economicsPractice"?window.EBDAA_ECONOMICS_PRACTICE.render():mode==="civicsPractice"?window.EBDAA_CIVICS_PRACTICE.render():mode==="socialPractice"?window.EBDAA_SOCIAL_STUDIES_PRACTICE.render():mode==="businessPractice"?window.EBDAA_BUSINESS_PRACTICE.render():mode==="physicsPractice"?window.EBDAA_PHYSICS_PRACTICE.render():mode==="codeLab"?window.EBDAA_CODE_LABS.render():mode==="germanPractice"?window.EBDAA_GERMAN_PRACTICE.render():mode==="arabicPractice"?window.EBDAA_ARABIC_PRACTICE.render():mode==="englishPractice"?window.EBDAA_ENGLISH_PRACTICE.render():mode==="mathPractice"?window.EBDAA_MATH_PRACTICE.render():focused?focusPractice():mode==="home"?home():mode==="browse"?browse():mode==="subject"?subjectUnits():mode==="unitPreview"?previewUnit():mode==="advancedLab"?advancedLab():mode==="learn"?learn():about();
+ app.innerHTML=mode==="teacherReview"?teacherView():mode==="economicsPractice"?window.EBDAA_ECONOMICS_PRACTICE.render():mode==="civicsPractice"?window.EBDAA_CIVICS_PRACTICE.render():mode==="socialPractice"?window.EBDAA_SOCIAL_STUDIES_PRACTICE.render():mode==="businessPractice"?window.EBDAA_BUSINESS_PRACTICE.render():mode==="physicsPractice"?window.EBDAA_PHYSICS_PRACTICE.render():mode==="codeLab"?window.EBDAA_CODE_LABS.render():mode==="germanPractice"?window.EBDAA_GERMAN_PRACTICE.render():mode==="arabicPractice"?window.EBDAA_ARABIC_PRACTICE.render():mode==="englishPractice"?window.EBDAA_ENGLISH_PRACTICE.render():mode==="mathPractice"?window.EBDAA_MATH_PRACTICE.render():focused?focusPractice():mode==="home"?home():mode==="browse"?browse():mode==="subject"?subjectUnits():mode==="unitPreview"?previewUnit():mode==="advancedLab"?advancedLab():mode==="learn"?learn():about();
  window.NTSS_QUEST_PATH?.render(app,mode);
  window.NTSS_LEARNING?.decorate(app,mode);
 }
