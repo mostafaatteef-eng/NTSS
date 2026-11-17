@@ -42,3 +42,15 @@
 .ntss-viz-tables td,.ntss-viz-tables th{padding:7px 9px;text-align:start;border:1px solid #d9e9e2}
 .ntss-viz-tables th{background:#eaf7f0}
 @media(max-width:420px){.ntss-viz-tables{grid-template-columns:1fr}}
+
+/* Single progressive-disclosure drawer: all bonus tools below the actual question */
+.ntss-learning-tools{display:block;margin:22px 0 2px;border:1px solid #dcebe5;background:#f8fcfa;border-radius:14px;overflow:hidden}
+.ntss-learning-tools>summary{display:flex;align-items:center;min-height:48px;padding:12px 16px;cursor:pointer;color:#1b7366;font-size:13px;font-weight:800;list-style:none}
+.ntss-learning-tools>summary::-webkit-details-marker{display:none}
+.ntss-learning-tools>summary:focus-visible{outline:3px solid #8bcab7;outline-offset:-3px}
+.ntss-learning-tools[open]>summary{border-bottom:1px solid #e3eee8}
+.ntss-learning-tools>.ntss-concept,.ntss-learning-tools>.ntss-support,.ntss-learning-tools>.ntss-optional-game,.ntss-learning-tools>.ntss-applied,.ntss-learning-tools>.context-report,.ntss-learning-tools>.practice-milestone,.ntss-learning-tools>.practice-source,.ntss-learning-tools>.focus-mistake{margin:10px 12px}
+.ntss-learning-tools-labs{display:flex;flex-wrap:wrap;gap:8px;padding:12px 12px 0}
+.ntss-learning-tools-labs>.btn{min-height:38px;font-size:12px}
+.practice-focus .practice-flow>.meter{display:none}
+@media(max-width:600px){.ntss-learning-tools>summary{font-size:12px}.ntss-learning-tools-labs{flex-direction:column}.ntss-learning-tools-labs>.btn{width:100%}}
