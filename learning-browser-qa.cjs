@@ -116,7 +116,10 @@ function check(condition,msg){assert.ok(condition,msg)}
    // Verify a previously visited site shell can reopen without a network connection.
    await page.evaluate(async()=>{
      if(!('serviceWorker' in navigator))throw Error('No service worker support');
-     await navigator.serviceWorker.ready;
+     await Promise.race([
+       navigator.serviceWorker.ready,
+       new Promise((_,reject)=>setTimeout(()=>reject(new Error('Service worker did not become ready in 10 seconds')),10000))
+     ]);
      if(!navigator.serviceWorker.controller){await new Promise(resolve=>{navigator.serviceWorker.addEventListener('controllerchange',resolve,{once:true});setTimeout(resolve,3500)})}
    });
    await page.waitForTimeout(700);
