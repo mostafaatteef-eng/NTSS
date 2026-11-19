@@ -94,4 +94,7 @@ test('Offline support does not cache foreign CDN code, and teacher preview is la
  assert.match(page,/question-bank-audit\.js/);
  assert.match(page,/learning-journey\.js/);
  assert.match(page,/offline-support\.js/);
+ assert.match(read('offline-support.js'),/127\.0\.0\.1/);
+ assert.match(read('learning-browser-qa.cjs'),/setOffline\(true\)/);
+ assert.match(read('learning-browser-qa.cjs'),/failure\.json/);
 });
