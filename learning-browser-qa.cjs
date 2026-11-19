@@ -26,6 +26,9 @@ const cases=[
 const artifactDir='qa-artifacts';
 fs.mkdirSync(artifactDir,{recursive:true});
 const results=[];
+const failures=[];
+let activePage=null,activeDevice='startup',activeCase='startup';
+process.on('unhandledRejection',e=>{console.error('Unhandled QA rejection:',e)})
 function check(condition,msg){assert.ok(condition,msg)}
 (async()=>{
  const browser=await browserType.launch(engineName==='chromium'?{headless:true,args:['--no-sandbox']}:{headless:true});
@@ -33,6 +36,7 @@ function check(condition,msg){assert.ok(condition,msg)}
   for(const device of viewports){
    const context=await browser.newContext({viewport:{width:device.width,height:device.height},deviceScaleFactor:1});
    const page=await context.newPage();
+   activePage=page;activeDevice=device.name;
    const exceptions=[],violations=[];
    page.on('pageerror',e=>exceptions.push(e.message));
    page.on('console',e=>{if(/Content Security Policy|violates.*directive|Refused to/i.test(e.text()))violations.push(e.text())});
@@ -40,6 +44,7 @@ function check(condition,msg){assert.ok(condition,msg)}
    await page.waitForFunction(()=>typeof window.EBDA_APP_RENDER==='function',{timeout:25000});
    check(await page.locator('#app').count()===1,'Missing app element');
    for(const testCase of cases){
+    activeCase=testCase.name;
     const result=await page.evaluate(({grade,subject,unit,lesson})=>{
       chooseGrade(grade);
       chooseSubject(subject);
@@ -67,6 +72,7 @@ function check(condition,msg){assert.ok(condition,msg)}
     check(width.scrollWidth<=width.clientWidth+8,device.name+' '+testCase.name+' horizontal overflow '+JSON.stringify(width));
     results.push({device:device.name,subject:testCase.name,lesson:result.lesson,counter:result.counter,tools:result.tools,viewport:width});
    }
+   activeCase='math-answer-flow';
    // Exercise the real grading/Next buttons in the mathematics UI.
    await page.evaluate(()=>{chooseGrade(1);chooseSubject('mathematics');mathChooseUnit(0);mathOpen(0)});
    if(await page.locator('#math-answer').count()){
@@ -86,6 +92,7 @@ function check(condition,msg){assert.ok(condition,msg)}
      check(await disclosure.evaluate(el=>document.activeElement===el),device.name+' learning tools summary cannot receive keyboard focus');
    }
    // Correctly apply score-only practice feedback without depending on a real student.
+   activeCase='smart-mistake-review';
    const review=await page.evaluate(()=>{
     const n=window.NTSS_LEARNING;
     n.reset('mathPractice');
@@ -97,6 +104,7 @@ function check(condition,msg){assert.ok(condition,msg)}
     return {advice:advice.includes('Suggested review'),review:reviewHtml.includes('Review this mathematical rule'),attempted:report.attempted,correct:report.correct,cleared:n.report('mathPractice').attempted===0};
    });
    check(review.advice&&review.review&&review.attempted===5&&review.correct===1&&review.cleared,device.name+' smart review evidence');
+   activeCase='interactive-concept-models';
    const concept=await page.evaluate(()=>{
     const c=window.NTSS_CONCEPTS;
     return {ohm:c.visualization('ohm',4).result,sql:c.visualization('sql',3).result,knn:c.visualization('knn',4).result};
@@ -104,10 +112,31 @@ function check(condition,msg){assert.ok(condition,msg)}
    check(concept.ohm.includes('2.0 A')&&concept.sql.includes('no matching project')&&concept.knn.includes('Majority vote'),device.name+' computed visualizer');
    check(exceptions.length===0,device.name+' JavaScript errors: '+exceptions.join(' | '));
    check(violations.length===0,device.name+' CSP errors: '+violations.join(' | '));
+   activeCase='offline-reload';
+   // Verify a previously visited site shell can reopen without a network connection.
+   await page.evaluate(async()=>{
+     if(!('serviceWorker' in navigator))throw Error('No service worker support');
+     await navigator.serviceWorker.ready;
+     if(!navigator.serviceWorker.controller){await new Promise(resolve=>{navigator.serviceWorker.addEventListener('controllerchange',resolve,{once:true});setTimeout(resolve,3500)})}
+   });
+   await page.waitForTimeout(700);
+   await context.setOffline(true);
+   await page.reload({waitUntil:'domcontentloaded',timeout:15000});
+   await page.waitForFunction(()=>typeof window.EBDA_APP_RENDER==='function',{timeout:10000});
+   check((await page.locator('#app').innerText()).length>10,device.name+' offline app shell missing');
+   await context.setOffline(false);
    await page.screenshot({path:artifactDir+'/'+engineName+'-'+device.name+'-last-subject.png',fullPage:true});
-   await context.close();
+   await context.close();activePage=null;
   }
   fs.writeFileSync(artifactDir+'/'+engineName+'-qa-results.json',JSON.stringify({browser:engineName,checkedAt:new Date().toISOString(),results},null,2));
   console.log('PASS '+engineName+' learning cross-device QA: '+results.length+' subject-device checks, '+viewports.length+' viewport sizes');
  }finally{await browser.close()}
-})().catch(err=>{console.error(err);process.exitCode=1});
+})().catch(async err=>{
+ console.error('QA FAILED',engineName,activeDevice,activeCase,err);
+ const failure={browser:engineName,device:activeDevice,case:activeCase,message:String(err?.stack||err),completed:results};
+ try{
+  fs.writeFileSync(artifactDir+'/'+engineName+'-failure.json',JSON.stringify(failure,null,2));
+  if(activePage&&!activePage.isClosed())await activePage.screenshot({path:artifactDir+'/'+engineName+'-'+activeDevice+'-'+activeCase+'-failure.png',fullPage:true,timeout:5000});
+ }catch(e){console.error('Could not capture failure screenshot:',e.message)}
+ process.exitCode=1;
+});
