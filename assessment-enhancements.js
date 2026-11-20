@@ -43,16 +43,42 @@ window.NTSS_ASSESSMENT=(function(){
     if(!options.includes(count))options[0]=count;
     while(options.length<4)options.push([0,1,2,3,4].find(v=>!options.includes(v)));
     const sorted=options.sort((a,b)=>a-b).map(String);
-    return {...base,mode:"visual-data",question:"📊 Data Detective — How many sensor readings are strictly above "+threshold+"?",visual:{readings,threshold},options:sorted,answer:String(count),
+    return {...base,mode:"visual-data",display:["bars","table","dots"][(cycle+u+i+slot)%3],question:"📊 Data Detective — How many sensor readings are strictly above "+threshold+"?",visual:{readings,threshold},options:sorted,answer:String(count),
       explanation:"Readings: "+readings.join(", ")+". Only values greater than "+threshold+" count. Correct answer: "+count+".",
       sourceStatus:"Original visual reasoning question using synthetic factory sensor readings."};
    }
    return base;
   });
  }
+
+ // Presentation rotates by question position while remaining faithful to question data.
+ function questionView(q,index){
+  const t=safe(q.question),slot=index%10;
+  const kind=q.mode==="live-code"?"code":q.mode==="visual-data"?"data":q.mode==="order"?"sequence":slot===0||slot===5?"scenario":slot===1||slot===8?"calculation":"decision";
+  const label={code:"CODING MISSION",data:"DATA INVESTIGATION",sequence:"SEQUENCE CHALLENGE",scenario:"REAL-WORLD REASONING",calculation:"NUMBER LAB",decision:"QUICK DECISION"}[kind];
+  const emblem={code:"⌘",data:"▥",sequence:"↗",scenario:"◎",calculation:"∑",decision:"◇"}[kind];
+  const instruction=kind==="code"?"Write and test a solution":kind==="data"?"Inspect the evidence before answering":kind==="sequence"?"Build a valid sequence":kind==="calculation"?"Work out the result":"Read carefully and choose";
+  return '<section class="ntss-question-layout ntss-question-layout--'+kind+'" aria-label="'+label+'">'+
+   '<div class="ntss-presentation-top"><span class="ntss-presentation-symbol" aria-hidden="true">'+emblem+'</span><span>'+label+'</span><small>'+safe(instruction)+'</small></div>'+
+   '<h3 class="practice-question">'+t+'</h3></section>';
+ }
  function visual(q,probe){
   const v=q.visual;if(!v)return "";
   const max=Math.max(...v.readings,24),selected=Number.isFinite(probe)?probe:v.threshold;
+  const display=q.display||"bars";
+  if(display==="table"){
+   return '<div class="ntss-data-card ntss-data-table"><div class="ntss-chart-head"><b>Sensor inspection sheet</b><span>DATA TABLE</span></div>'+
+    '<table><thead><tr><th scope="col">Sensor</th><th scope="col">Reading</th><th scope="col">Above '+v.threshold+'?</th></tr></thead><tbody>'+
+    v.readings.map((n,j)=>'<tr><th scope="row">S'+(j+1)+'</th><td>'+n+'</td><td><span class="ntss-table-state '+(n>v.threshold?"is-high":"")+'">'+(n>v.threshold?"Yes":"No")+'</span></td></tr>').join("")+
+    '</tbody></table><p class="ntss-probe-note">Only readings strictly greater than '+v.threshold+' are counted.</p></div>';
+  }
+  if(display==="dots"){
+   return '<div class="ntss-data-card ntss-data-dot"><div class="ntss-chart-head"><b>Sensor readings · dot plot</b><span>COMPARE VALUES</span></div>'+
+    '<div class="ntss-dots" role="img" aria-label="Readings '+safe(v.readings.join(", "))+'; threshold '+v.threshold+'">'+
+    v.readings.map((n,j)=>'<div class="ntss-dot-line"><span>S'+(j+1)+'</span><div class="ntss-dot-track"><span class="ntss-dot-position '+(n>v.threshold?"is-high":"")+'" style="left:'+Math.round(n/max*100)+'%"></span></div><b>'+n+'</b></div>').join("")+'</div>'+
+    '<p class="ntss-probe-note">Threshold: '+v.threshold+' · Values to its right exceed the limit.</p></div>';
+  }
+
   return '<div class="ntss-data-card"><div class="ntss-chart-head"><b>Factory sensor readings</b><span>Explore the threshold</span></div>'+
    '<div class="ntss-chart" role="img" aria-label="Sensor readings: '+safe(v.readings.join(", "))+'">'+
    v.readings.map((n,j)=>'<div class="ntss-chart-item"><strong>'+n+'</strong><div class="ntss-chart-track"><div class="ntss-chart-bar '+(n>selected?"is-high":"")+'" style="height:'+Math.round(100*n/max)+'%"></div></div><small>S'+(j+1)+'</small></div>').join("")+'</div>'+
@@ -93,5 +119,5 @@ window.NTSS_ASSESSMENT=(function(){
   }catch(err){finish({runtimeError:true,message:String(err?.message||err)})}
   return ()=>finish({runtimeError:true,message:"Cancelled"});
  }
- return {enhance,visual,codePanel,run};
+ return {enhance,visual,questionView,codePanel,run};
 })();
