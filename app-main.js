@@ -140,7 +140,7 @@ function exitPractice(){
 function startNamedPractice(g,u,i){
  const k=["ai",g,u,i].join(":");
  const field=document.getElementById("ebda-lesson-student-name");
- const name=String(field?.value||"").replace(/[\\u0000-\\u001f]/g,"").trim().replace(/\\s+/g," ");
+ const name=String(field?.value||"").replace(/[\u0000-\u001f]/g,"").trim().replace(/\s+/g," ");
  if(name.length<3){
   const status=document.getElementById("ebda-name-error");
   if(status)status.textContent="Please enter your full name (at least 3 characters).";
