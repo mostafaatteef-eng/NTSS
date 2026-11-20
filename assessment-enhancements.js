@@ -108,7 +108,11 @@ window.NTSS_ASSESSMENT=(function(){
    worker.onerror=()=>finish({runtimeError:true,message:"Runtime failed to load. Check your connection and retry."});
    worker.onmessage=event=>{
     const r=event.data||{},task=q.codeTask;
-    if(!r.ok)return finish({runtimeError:false,passed:false,message:String(r.output||"Execution error").slice(0,400)});
+    if(!r.ok){
+     const error=String(r.output||"Execution error");
+     const infrastructure=/importScripts|loadPyodide|failed to fetch|network error|networkerror|webassembly|wasm|failed to load|cdn\.jsdelivr|sql-wasm\.js|pyodide\.js|out of memory/i.test(error);
+     return finish({runtimeError:infrastructure,passed:false,message:(infrastructure?"Coding runtime unavailable — check internet or reload. Your attempt was not graded. ":"Code error — ")+error.slice(0,320)});
+    }
     if(kind==="python"){
      const got=String(r.output||"").trim().split("\n");
      const markers=got.filter(line=>line.startsWith("NTSS_TEST:"));
