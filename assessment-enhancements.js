@@ -114,21 +114,19 @@ window.NTSS_ASSESSMENT=(function(){
      return finish({runtimeError:infrastructure,passed:false,message:(infrastructure?"Coding runtime unavailable — check internet or reload. Your attempt was not graded. ":"Code error — ")+error.slice(0,320)});
     }
     if(kind==="python"){
-     const got=String(r.output||"").trim().split("\n");
-     const markers=got.filter(line=>line.startsWith("NTSS_TEST:"));
-     const passed=markers.length===task.tests.length&&markers.every(line=>line==="NTSS_TEST:PASS");
-     return finish({runtimeError:false,passed,message:markers.length+"/"+task.tests.length+" cases evaluated · "+markers.filter(x=>x==="NTSS_TEST:PASS").length+" passed"+(passed?" ✓":" · Check your function and edge cases")});
+     const tests=Array.isArray(r.testCases)?r.testCases:[];
+     const completed=tests.length===task.tests.length;
+     const passCount=tests.filter(t=>t?.pass===true).length;
+     const passed=completed&&passCount===task.tests.length;
+     return finish({runtimeError:false,passed,message:passCount+"/"+task.tests.length+" independent Python tests passed"+(passed?" ✓":" · Review your function and edge cases")});
     }
     const got=r.assessmentCases||[];
     const passed=got.length===2&&JSON.stringify(got[0])===JSON.stringify(task.expected)&&JSON.stringify(got[1])===JSON.stringify(task.second);
     const passedCount=got.filter((rows,j)=>JSON.stringify(rows)===JSON.stringify(j===0?task.expected:task.second)).length;
     finish({runtimeError:false,passed,message:passedCount+"/2 SQL datasets passed"+(passed?" ✓":" · Compare the result and try again")});
    };
-   if(kind==="python"){
-    const checks=q.codeTask.tests.map(([expr,expected])=>
-     "try:\n    _ntss_value = "+expr+"\n    print('NTSS_TEST:PASS' if _ntss_value == "+JSON.stringify(expected)+" else 'NTSS_TEST:FAIL')\nexcept Exception:\n    print('NTSS_TEST:ERROR')").join("\n");
-    worker.postMessage({code:code+"\n"+checks});
-   }else worker.postMessage({code,assessment:true});
+   if(kind==="python")worker.postMessage({code,assessment:true,tests:task.tests});
+   else worker.postMessage({code,assessment:true});
   }catch(err){finish({runtimeError:true,message:String(err?.message||err)})}
   return ()=>finish({runtimeError:true,message:"Cancelled"});
  }
