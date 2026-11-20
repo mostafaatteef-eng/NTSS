@@ -38,14 +38,16 @@ window.NTSS_ASSESSMENT=(function(){
    if(slot===2||slot===7){
     const readings=[5+(index+u)%5,9+(index+i)%6,14+(cycle%4),19+(u%5)];
     const threshold=12+(i%3);
+    const exercise=(cycle+slot)%4;
     const count=readings.filter(x=>x>threshold).length;
-    const options=[0,1,2,3,4].filter(v=>Math.abs(v-count)<3).slice(0,4);
-    if(!options.includes(count))options[0]=count;
-    while(options.length<4)options.push([0,1,2,3,4].find(v=>!options.includes(v)));
-    const sorted=options.sort((a,b)=>a-b).map(String);
-    return {...base,mode:"visual-data",display:["bars","table","dots"][(cycle+u+i+slot)%3],question:"📊 Data Detective — How many sensor readings are strictly above "+threshold+"?",visual:{readings,threshold},options:sorted,answer:String(count),
-      explanation:"Readings: "+readings.join(", ")+". Only values greater than "+threshold+" count. Correct answer: "+count+".",
-      sourceStatus:"Original visual reasoning question using synthetic factory sensor readings."};
+    const sortedValues=readings.slice().sort((a,b)=>a-b);
+    const result=exercise===0?count:exercise===1?sortedValues[3]-sortedValues[0]:exercise===2?readings.reduce((a,b)=>a+b,0):sortedValues[3];
+    const task=exercise===0?"How many sensor readings are strictly above "+threshold+"?":exercise===1?"What is the range (highest minus lowest) of the readings?":exercise===2?"What is the total of all four readings?":"What is the highest recorded reading?";
+    const answers=[result,result+1,result+2,Math.max(0,result-1)].map(String);
+    const options=answers.slice((index+i)%4).concat(answers.slice(0,(index+i)%4));
+    return {...base,mode:"visual-data",display:["bars","table","dots"][(cycle+u+i+slot)%3],question:"📊 Data Detective — "+task,visual:{readings,threshold},options,answer:String(result),
+      explanation:"Values: "+readings.join(", ")+". "+(exercise===0?"Count only values greater than "+threshold:exercise===1?"Subtract the minimum from the maximum":exercise===2?"Add all four readings":"Find the maximum")+". Correct result: "+result+".",
+      sourceStatus:"Original visual quantitative-reasoning question using synthetic factory sensor readings."};
    }
    return base;
   });
