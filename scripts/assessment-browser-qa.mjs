@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import {chromium} from "playwright";
+import {chromium,firefox,webkit} from "playwright";
 import {createServer} from "node:http";
 import {createReadStream,existsSync,statSync} from "node:fs";
 import path from "node:path";
@@ -15,7 +15,10 @@ const server=createServer((req,res)=>{
 await new Promise(done=>server.listen(0,"127.0.0.1",done));
 let browser;
 try{
- browser=await chromium.launch({headless:true,args:["--no-sandbox"]});
+ const engine=process.env.NTSS_BROWSER||"chromium";
+ const engines={chromium,firefox,webkit};
+ assert.ok(engines[engine],"Supported browser engine");
+ browser=await engines[engine].launch(engine==="chromium"?{headless:true,args:["--no-sandbox"]}:{headless:true});
  const url="http://127.0.0.1:"+server.address().port+"/";
  for(const width of [360,430,768,1366]){
   const page=await browser.newPage({viewport:{width,height:850},serviceWorkers:"block"});
@@ -84,6 +87,7 @@ try{
  assert.deepEqual(certificate,{named:true,issued:true,failedNotIssued:true},"Certificate name and eligibility");
  await study.close();
  // Run real Pyodide and SQLite workers in Chromium, not just mocked grading logic.
+ if((process.env.NTSS_BROWSER||"chromium")==="chromium"){
  const runtimePage=await browser.newPage({viewport:{width:820,height:900},serviceWorkers:"block"});
  await runtimePage.goto(url,{waitUntil:"load"});
  const runtime=await runtimePage.evaluate(async()=>{
@@ -97,7 +101,8 @@ try{
  assert.equal(runtime.python.passed,true,"Pyodide three-case Python test: "+runtime.python.message);
  assert.equal(runtime.sqlite.passed,true,"SQLite two-dataset SQL test: "+runtime.sqlite.message);
  await runtimePage.close();
- console.log("Assessment browser QA passed: responsive sizes, checkpoint, certificate, live Pyodide and SQLite.");
+ }
+ console.log("Assessment browser QA passed on "+(process.env.NTSS_BROWSER||"chromium")+": four sizes, checkpoint, and certificate; live workers verified on Chromium.");
 
 
 }finally{await browser?.close();await new Promise(done=>server.close(done))}
