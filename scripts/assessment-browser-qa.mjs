@@ -59,6 +59,29 @@ try{
   assert.deepEqual(errors,[],"JS errors at viewport "+width);
   await page.close();
  }
+ // Verify optional lab modules are absent at startup but available for Year 2/3.
+ const lazyPage=await browser.newPage({viewport:{width:820,height:850},serviceWorkers:"block"});
+ await lazyPage.goto(url,{waitUntil:"load"});
+ const initialLazy=await lazyPage.evaluate(()=>({
+  registered:!!window.NTSS_LAZY,
+  ready:window.NTSS_LAZY?.isReady(),
+  studio:!!window.EBDAA_STUDIO
+ }));
+ assert.equal(initialLazy.registered,true,"Lazy loader should initialize");
+ assert.equal(initialLazy.ready,false,"Optional lab should not run at startup");
+ assert.equal(initialLazy.studio,false,"Studio must not block the home page");
+ await lazyPage.evaluate(()=>window.NTSS_LAZY.ensureStudio());
+ const readyLazy=await lazyPage.evaluate(()=>({
+  ready:window.NTSS_LAZY.isReady(),
+  studio:!!window.EBDAA_STUDIO,
+  cases:!!window.EBDAA_CASE,
+  visual:!!window.EBDA_VISUALIZER
+ }));
+ assert.equal(readyLazy.ready,true,"Optional lab should complete loading");
+ assert.equal(readyLazy.studio,true,"Studio should initialize");
+ assert.equal(readyLazy.cases,true,"Case labs should initialize");
+ assert.equal(readyLazy.visual,true,"Visualizer should initialize");
+ await lazyPage.close();
  // Verify a first answer survives a real page reload in local browser storage.
  const study=await browser.newPage({viewport:{width:430,height:850},serviceWorkers:"block"});
  await study.goto(url,{waitUntil:"load"});
