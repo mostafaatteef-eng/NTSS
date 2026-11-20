@@ -38,5 +38,38 @@ try{
   assert.deepEqual(errors,[],"JS errors at viewport "+width);
   await page.close();
  }
- console.log("Assessment browser QA passed at 360, 430, 768, 1366 px.");
+ // Verify a first answer survives a real page reload in local browser storage.
+ const study=await browser.newPage({viewport:{width:430,height:850},serviceWorkers:"block"});
+ await study.goto(url,{waitUntil:"load"});
+ const before=await study.evaluate(()=>{
+  window.EBDAA_PRACTICE.begin(1,0,0);
+  const q=window.EBDAA_PRACTICE.currentQuestion();
+  const response=q.mode==="live-code"?"pass":q.mode==="order"?q.answer.split("|"):q.answer;
+  window.EBDAA_PRACTICE.answer(response);
+  window.EBDAA_PRACTICE.check();
+  window.EBDAA_PRACTICE.saveCheckpoint();
+  return window.EBDAA_PRACTICE.progress().answered;
+ });
+ assert.equal(before,1,"First response counted");
+ await study.reload({waitUntil:"load"});
+ const resumed=await study.evaluate(()=>({
+  ok:window.EBDAA_PRACTICE.resumeCheckpoint(),
+  answered:window.EBDAA_PRACTICE.progress().answered
+ }));
+ assert.equal(resumed.ok,true,"Resume checkpoint");
+ assert.equal(resumed.answered,1,"Saved response remains after reload");
+ const certificate=await study.evaluate(()=>{
+  const k="ai:1:0:0";
+  window.EBDA_COMPLETION.setName(k,"QA Student");
+  window.EBDA_COMPLETION.open(k);
+  const data={subject:"ai",grade:1,unit:0,index:0,lesson:"Test Lesson",total:50};
+  const pass=window.EBDA_COMPLETION.render({...data,correct:40});
+  const fail=window.EBDA_COMPLETION.render({...data,correct:30});
+  window.EBDAA_PRACTICE.clearCheckpoint();
+  return {named:pass.includes("QA Student"),issued:pass.includes('id="ebda-certificate-sheet"'),failedNotIssued:!fail.includes('id="ebda-certificate-sheet"')};
+ });
+ assert.deepEqual(certificate,{named:true,issued:true,failedNotIssued:true},"Certificate name and eligibility");
+ await study.close();
+ console.log("Assessment browser QA passed: four responsive sizes, checkpoint reload, named certificate and eligibility.");
+
 }finally{await browser?.close();await new Promise(done=>server.close(done))}
