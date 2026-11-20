@@ -5,13 +5,13 @@ const safe=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;
 let activeKey="";
 function related(g,u,i,q){
  const bank=window.EBDAA_QUESTION_FACTORY.all(g,u,i);
- return bank.find(x=>x.focus===q.focus&&x.id!==q.id&&x.mode!=="order")||bank.find(x=>x.id!==q.id);
+ return bank.find(x=>x.focus===q.focus&&x.id!==q.id&&x.question!==q.question&&!["order","live-code"].includes(x.mode))||bank.find(x=>x.id!==q.id&&x.question!==q.question&&!["order","live-code"].includes(x.mode));
 }
 function state(g,u,i,q){const key=g+"|"+u+"|"+i+"|"+q.id;activeKey=key;if(!states.has(key))states.set(key,{level:0,typed:"",result:null,related:related(g,u,i,q)});return states.get(key)}
 function clear(){states.clear();activeKey=""}
 function advance(){const s=states.get(activeKey);if(!s)return;s.level=Math.min(3,s.level+1);update()}
 function type(value){const s=states.get(activeKey);if(s)s.typed=String(value)}
-function check(){const s=states.get(activeKey);if(!s)return;const q=s.related;const raw=String(s.typed).trim();if(!raw)return;
+function check(){const s=states.get(activeKey);if(!s)return;const q=s.related;const raw=String(s.typed).trim();if(!q||!raw)return;
  s.result=q.mode==="number"?Number.isFinite(Number(raw))&&Math.abs(Number(raw)-Number(q.answer))<=0.005:String(raw).toLowerCase()===String(q.answer).toLowerCase();update()}
 function html(g,u,i,q){
  const s=state(g,u,i,q),next=s.related;
