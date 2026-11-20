@@ -215,9 +215,9 @@ function all(g,u,i){
         sourceStatus:"Original scored SQL-clause-building activity. Uses fictional data and does not execute SQL.",parameter:value,focus:skill+1});
     }else{
       const t=py[(variant+i+u)%py.length];
-      const options=[t.others[0],t.fix,t.others[1]];
+      const options=[t.others[0],t.fix,t.others[1],"Replace the entire program with pass"];
       questions.push({id,number:no,title,unit:unitName,heading:"🐍 Python Bug Hunt",
-        question:"🐍 PYTHON GAME — Debug this code: "+t.code.replace(/\\n/g," | ")+" — Which fix makes it valid?",
+        question:"🐍 PYTHON GAME — Find and repair the bug. Which change fixes the code?",code:t.code.replace(/\\n/g,"\n"),
         answer:t.fix,mode:"choice",options,
         explanation:t.why,sourceStatus:"Original scored code-debugging question; code is inspected, not executed.",parameter:value,focus:skill+1});
     }
