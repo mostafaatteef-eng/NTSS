@@ -140,6 +140,6 @@ window.NTSS_ASSESSMENT.questionView(q,cursor)+questionActivity+controls+hint+ver
 '<div class="stepfooter"><button class="btn light" onclick="EBDAA_PRACTICE.prev()" '+(cursor===0?'disabled':'')+'>← Previous</button>'+action+'</div>'+
 (cursor===0&&saved()?.session===session&&Object.keys(reviewed).length===0?'<button class="ntss-restore" onclick="EBDAA_PRACTICE.resumeCheckpoint()">Continue saved practice on this device</button>':'')+'</div>';const node=document.getElementById("ebdaa-practice-stage");if(node)node.innerHTML=cachedStage;syncFocusStatus();window.NTSS_LEARNING?.decorate(document.getElementById("app"),grade===1?"learn":"advancedLab");
 }
-window.addEventListener?.("pagehide",()=>{if(saveDelay)clearTimeout(saveDelay);saveDelay=null;if(session&&!finished)saveCheckpoint()});
+window.addEventListener?.("pagehide",()=>{if(saveDelay)clearTimeout(saveDelay);saveDelay=null;if(session&&!finished&&(Object.keys(reviewed).length>0||Object.keys(codeDrafts).length>0))saveCheckpoint()});
 return {panel,reset,ensure,isFinished,progress,gameChooseIndex,chooseOption,submitOrNext,begin,currentQuestion,questionOrder,answer,chooseOrder,clearOrder,showHint,check,next,continueCheckpoint,beginFromCheckpoint,prev,finish,restart,saveCheckpoint,clearCheckpoint,resumeCheckpoint,codeInput,runCode,probe,hasCheckpoint:()=>!!saved(),all:(g,u,i)=>window.EBDAA_QUESTION_FACTORY.all(g,u,i)};
 })();
