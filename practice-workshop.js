@@ -99,19 +99,17 @@ const lessonTitle=grade===1?(window.EBDAA_DATA.sessions.filter(x=>x.unit===unit+
 // Embedded code challenge belongs to the question card, not a separate screen.
 const questionActivity=q.code?'<pre class="context-code" style="white-space:pre-wrap;overflow-x:auto" aria-label="Python code to debug">'+e(q.code)+'</pre>':''; // Coding is part of the scored question.
 const hint=hintShown?'<div class="hint"><b>Thinking hint:</b> '+(q.mode==="order"?'Follow the logical or SQL clause sequence.':'Write down the relevant operation, then test it on a simpler input before using the displayed values.')+'</div>':'';
-const verdict=graded?(reviewed[cursor]?'<div class="feedback"><b>✓ Correct!</b><p>'+e(q.explanation)+'</p></div>':'<div class="feedback error"><b>Not quite yet</b><p>Open the step-by-step review below and solve a similar problem.</p></div>'):'';
-const milestone=cursor>0&&cursor%10===0?
- '<details class="practice-milestone"><summary>✓ '+cursor+' questions completed · Review your skills (optional)</summary>'+
- window.EBDA_MASTERY.map(grade,unit,lesson)+'</details>':'';
+const verdict=graded?(reviewed[cursor]?'<div class="feedback"><b>✓ Correct!</b><p>'+e(q.explanation)+'</p></div>':'<div class="feedback error"><b>Not quite yet</b><p>Review the explanation below to understand the correct answer.</p></div>'):'';
+const milestone='';
 const mistake=graded&&reviewed[cursor]===false?'<details class="focus-mistake"><summary>Review this mistake</summary><div id="mistake-review">'+window.EBDA_MISTAKES.html(grade,unit,lesson,q)+'</div></details>':'';
 const action=graded?'<button class="btn teal" onclick="EBDAA_PRACTICE.next()">'+(cursor===49?'Show summary':'Next question →')+'</button>':'<button id="ebdaa-check" class="btn teal" onclick="EBDAA_PRACTICE.check()" '+((chosen===null||(q.mode==="order"&&chosen.length!==4))?'disabled':'')+'>Check answer</button>';
 const completed=Object.keys(reviewed).length,streak=(()=>{let n=0;for(let k=cursor;k>=0;k--){if(reviewed[k]===true)n++;else break}return n})();const xp=correct*10+Math.min(streak,5)*5;
-cachedStage='<div class="practice-flow"><div class="game-stats"><span>⭐ '+xp+' XP</span><span>🔥 '+streak+' streak</span><span>🎯 Sprint '+(Math.floor(cursor/10)+1)+'/5</span></div>'+milestone+'<div class="topmeta"><span class="pill">QUESTION '+(cursor+1)+' / 50</span><span class="pill">Answered: '+Object.keys(reviewed).length+' / 50</span></div>'+
-'<div class="meter" role="progressbar" aria-label="Answered questions" aria-valuemin="0" aria-valuemax="50" aria-valuenow="'+Object.keys(reviewed).length+'"><i style="width:'+progress+'%"></i></div>'+
+cachedStage='<div class="practice-flow">'+milestone+'<div class="topmeta"><span class="pill">QUESTION '+(cursor+1)+' / 50</span><span class="pill">Answered: '+Object.keys(reviewed).length+' / 50</span></div>'+
+''+
 '<h3 class="practice-question">'+e(q.question)+'</h3>'+questionActivity+controls+hint+verdict+mistake+
 (!graded&&!hintShown?'<div class="actions"><button class="btn light" onclick="EBDAA_PRACTICE.showHint()">💡 Need a hint?</button></div>':'')+
 '<div class="stepfooter"><button class="btn light" onclick="EBDAA_PRACTICE.prev()" '+(cursor===0?'disabled':'')+'>← Previous</button>'+action+'</div>'+
-'<details class="practice-source"><summary>About this practice question</summary><p class="source">'+e(q.sourceStatus)+'</p></details>'+window.NTSS_JOURNEY.panel(grade,unit,lesson)+(saved()&&!finished?'<button class="ntss-restore" onclick="EBDAA_PRACTICE.resumeCheckpoint()">Resume saved session (this device)</button>':'')+'</div>';const node=document.getElementById("ebdaa-practice-stage");if(node)node.innerHTML=cachedStage;syncFocusStatus();window.NTSS_LEARNING?.decorate(document.getElementById("app"),grade===1?"learn":"advancedLab");
+(saved()&&!finished?'<button class="ntss-restore" onclick="EBDAA_PRACTICE.resumeCheckpoint()">Resume saved session (this device)</button>':'')+'</div>';const node=document.getElementById("ebdaa-practice-stage");if(node)node.innerHTML=cachedStage;syncFocusStatus();window.NTSS_LEARNING?.decorate(document.getElementById("app"),grade===1?"learn":"advancedLab");
 }
 return {panel,reset,ensure,isFinished,progress,gameChooseIndex,chooseOption,submitOrNext,begin,currentQuestion,questionOrder,answer,chooseOrder,clearOrder,showHint,check,next,continueCheckpoint,beginFromCheckpoint,prev,finish,restart,saveCheckpoint,clearCheckpoint,resumeCheckpoint,hasCheckpoint:()=>!!saved(),all:(g,u,i)=>window.EBDAA_QUESTION_FACTORY.all(g,u,i)};
 })();
