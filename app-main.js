@@ -154,7 +154,7 @@ function focusPractice(){
  return '<section class="practice-focus" aria-label="Focused practice session">'+
  '<header class="practice-focus__header"><div class="practice-focus__header-row">'+
  '<button class="practice-focus__exit" onclick="exitPractice()" aria-label="Back to lessons">← All lessons</button>'+
- '<span class="practice-focus__year">YEAR '+g+' · PRACTICE</span><div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn light" style="font-size:12px;padding:7px 11px" onclick="openCodeLab(\'python\')">🐍 Python Lab</button><button class="btn light" style="font-size:12px;padding:7px 11px" onclick="openCodeLab(\'sql\')">🗄 SQL Lab</button></div></div>'+
+ '<span class="practice-focus__year">YEAR '+g+' · PRACTICE</span></div>'++
  '<div class="practice-focus__info"><h1 class="practice-focus__lesson">'+esc(name)+'</h1>'+
  '<span id="focus-counter" class="practice-focus__counter">'+(finished?'Completed · 50 / 50':'Question '+progress.position+' / '+progress.total)+'</span></div>'+
  '<div id="focus-progress-track" class="practice-focus__track" role="progressbar" aria-label="Answered questions" aria-valuemin="0" aria-valuemax="50" aria-valuenow="'+progress.answered+'"><i id="focus-progress-fill" style="width:'+percent+'%"></i></div></header>'+
