@@ -25,6 +25,11 @@ try{
   const errors=[];page.on("pageerror",err=>errors.push(err.message));
   await page.goto(url,{waitUntil:"load"});
   await page.waitForFunction(()=>!!window.NTSS_ASSESSMENT&&!!window.EBDAA_QUESTION_FACTORY);
+  const metrics=await page.evaluate(()=>{
+   const nav=performance.getEntriesByType("navigation")[0];
+   return {domReadyMs:Math.round(nav?.domContentLoadedEventEnd||0),totalResources:performance.getEntriesByType("resource").length};
+  });
+  console.log("EBDA "+width+"px startup: DOM ready "+metrics.domReadyMs+"ms; resources "+metrics.totalResources);
   await page.evaluate(()=>{
    const qs=window.EBDAA_QUESTION_FACTORY.all(2,0,0);
    const visual=qs.find(q=>q.mode==="visual-data"),coding=qs.find(q=>q.mode==="live-code");
