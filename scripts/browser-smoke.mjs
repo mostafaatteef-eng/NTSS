@@ -86,6 +86,10 @@ try{
  if(!await page.locator(".advanced-stage-content").getByText(/Correct/).count())throw Error("Concept feedback missing");
  await next();
  if(!await page.locator(".practice-focus").count())throw Error("Focus Practice view missing");
+ if(await page.locator("#ebda-lesson-student-name").count()){
+  await page.locator("#ebda-lesson-student-name").fill("QA Student");
+  await page.getByRole("button",{name:/Start lesson/i}).click();
+ }
  if(await page.locator(".side-list, .lesson-steps, .lab-support").count())throw Error("Distractions still visible during practice");
  if(await page.locator(".practice-focus").getByText(/PRACTICAL RUBRIC|UNIT CASEFILE/).count())throw Error("Extraneous modules in Focus Practice");
  if((await page.locator("#focus-counter").textContent())!=="Question 1 / 50")throw Error("Question counter missing");
