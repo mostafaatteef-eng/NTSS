@@ -118,8 +118,9 @@ window.NTSS_ASSESSMENT=(function(){
     finish({runtimeError:false,passed,message:(passed?"Query passed":"Query result differs from expected rows")+" · "+JSON.stringify(got).slice(0,230)});
    };
    if(kind==="python"){
-    const checks=q.codeTask.tests.map(([expr,expected])=>"try:\\n    _ntss_value = "+expr+"\\n    print('NTSS_TEST:PASS' if _ntss_value == "+JSON.stringify(expected)+" else 'NTSS_TEST:FAIL')\\nexcept Exception:\\n    print('NTSS_TEST:ERROR')").join("\\n");
-    worker.postMessage({code:code+"\\n"+checks.replace(/\\\\n/g,"\\n")});
+    const checks=q.codeTask.tests.map(([expr,expected])=>
+     "try:\n    _ntss_value = "+expr+"\n    print('NTSS_TEST:PASS' if _ntss_value == "+JSON.stringify(expected)+" else 'NTSS_TEST:FAIL')\nexcept Exception:\n    print('NTSS_TEST:ERROR')").join("\n");
+    worker.postMessage({code:code+"\n"+checks});
    }else worker.postMessage({code});
   }catch(err){finish({runtimeError:true,message:String(err?.message||err)})}
   return ()=>finish({runtimeError:true,message:"Cancelled"});
