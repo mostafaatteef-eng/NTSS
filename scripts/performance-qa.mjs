@@ -19,4 +19,16 @@ assert.doesNotThrow(()=>new vm.Script(sw));
 assert.ok(!sw.includes("html.matchAll("),"Do not eagerly fetch every linked asset during service worker install");
 assert.ok(sw.includes("event.waitUntil(cache.put("),"Cache assets in background after first response");
 assert.ok(sw.includes("ntss-static-20261120-speed"),"Cache version must update after optimizing install");
+const calls=[];
+const fake={};
+const doc={
+ createElement(){return {async:true,src:"",remove(){}}},
+ head:{appendChild(script){calls.push(script.src);Promise.resolve().then(()=>script.onload())}}
+};
+new Function("window","document",lazy)(fake,doc);
+await Promise.all([fake.NTSS_LAZY.ensureStudio(),fake.NTSS_LAZY.ensureStudio()]);
+assert.equal(fake.NTSS_LAZY.isReady(),true);
+assert.deepEqual(calls,lazyModules,"Exactly seven lazy scripts should load once and in order");
+await fake.NTSS_LAZY.ensureStudio();
+assert.equal(calls.length,7,"Repeated requests should not load scripts again");
 console.log("Speed checks passed: "+scriptTags.length+" nonblocking scripts, seven lazy modules, progressive cache.");
