@@ -1,0 +1,14 @@
+import assert from "node:assert/strict";
+import {readFileSync} from "node:fs";
+import vm from "node:vm";
+const html=readFileSync("index.html","utf8");
+const sw=readFileSync("sw.js","utf8");
+const scriptTags=[...html.matchAll(/<script\b[^>]*\bsrc="[^"]+"[^>]*><\/script>/gi)].map(m=>m[0]);
+assert.ok(scriptTags.length>=40,"Application scripts should still be linked");
+assert.ok(scriptTags.every(tag=>/\bdefer\b/.test(tag)),"All classic app scripts should be deferred, not parser blocking");
+assert.ok(!scriptTags.some(tag=>/\basync\b/.test(tag)),"Async would break ordered module dependencies");
+assert.doesNotThrow(()=>new vm.Script(sw));
+assert.ok(!sw.includes("html.matchAll("),"Do not eagerly fetch every linked asset during service worker install");
+assert.ok(sw.includes("event.waitUntil(cache.put("),"Cache assets in background after first response");
+assert.ok(sw.includes("ntss-static-20261120-speed"),"Cache version must update after optimizing install");
+console.log("Speed regression checks passed: "+scriptTags.length+" nonblocking ordered scripts and lightweight progressive offline caching.");
