@@ -19,7 +19,21 @@ let codeLabReturn=null;
 function openCodeLab(language="python"){const oldMode=mode;codeLabReturn={mode:oldMode,grade,unit,year2Unit,advancedSession,selectedId,step,advancedStep};const u=grade===1?Math.max(0,unit-1):year2Unit;const i=grade===1?Math.max(0,D.sessions.filter(s=>s.unit===unit).findIndex(s=>s.id===selectedId)):advancedSession;mode="codeLab";window.EBDAA_CODE_LABS.start(grade,u,i,language);scrollTo(0,0)}
 function closeCodeLab(){window.EBDAA_CODE_LABS.stop();mode=codeLabReturn?.mode||"subject";render();scrollTo(0,0)}
 function backToAIQuestions(){window.EBDAA_CODE_LABS.stop();if(codeLabReturn?.mode==="learn"||codeLabReturn?.mode==="advancedLab"){mode=codeLabReturn.mode;render()}else if(grade===1){mode="subject";render()}else{mode="unitPreview";render()}scrollTo(0,0)}
-function chooseGradeUnit(n){if(grade===1){openUnit(n+1)}else{year2Unit=n;nav("unitPreview")}}function openAdvancedSession(i){window.EBDAA_PRACTICE.reset();advancedSession=i;advancedStep=4;window.EBDAA_STUDIO.reset();nav("advancedLab")}
+function chooseGradeUnit(n){if(grade===1){openUnit(n+1)}else{year2Unit=n;nav("unitPreview");window.NTSS_LAZY.ensureStudio().catch(()=>{/* Retry on lesson open. */})}}function openAdvancedSession(i){
+ window.EBDAA_PRACTICE.reset();
+ advancedSession=i;advancedStep=4;
+ if(window.NTSS_LAZY.isReady()){window.EBDAA_STUDIO.reset();nav("advancedLab");return}
+ mode="advancedLoading";
+ render();
+ window.NTSS_LAZY.ensureStudio().then(()=>{
+  if(mode!=="advancedLoading")return;
+  window.EBDAA_STUDIO.reset();nav("advancedLab");
+ }).catch(error=>{
+  if(mode!=="advancedLoading")return;
+  const holder=document.getElementById("app");
+  if(holder)holder.innerHTML='<div class="card" role="alert"><h2>Unable to load the laboratory</h2><p>Check your connection and try again. Your lesson progress is not changed.</p><button class="btn teal" onclick="openAdvancedSession('+advancedSession+')">Retry loading</button></div>';
+ });
+}
 function goAdvancedStep(n){
  const next=Math.max(0,Math.min(4,Number(n)||0));
  if(advancedStep===3&&next>3&&!window.EBDAA_STUDIO.isChecked())return;
@@ -219,7 +233,7 @@ function teacherView(){
 function render(){
  const focused=practiceActive()||mode==="codeLab"||mode==="mathPractice"||mode==="physicsPractice"||mode==="englishPractice"||mode==="businessPractice"||mode==="economicsPractice"||mode==="civicsPractice"||mode==="socialPractice"||mode==="arabicPractice"||mode==="germanPractice";
  if(document.body?.classList)document.body.classList.toggle("practice-focus-active",focused);
- app.innerHTML=mode==="teacherReview"?teacherView():mode==="economicsPractice"?window.EBDAA_ECONOMICS_PRACTICE.render():mode==="civicsPractice"?window.EBDAA_CIVICS_PRACTICE.render():mode==="socialPractice"?window.EBDAA_SOCIAL_STUDIES_PRACTICE.render():mode==="businessPractice"?window.EBDAA_BUSINESS_PRACTICE.render():mode==="physicsPractice"?window.EBDAA_PHYSICS_PRACTICE.render():mode==="codeLab"?window.EBDAA_CODE_LABS.render():mode==="germanPractice"?window.EBDAA_GERMAN_PRACTICE.render():mode==="arabicPractice"?window.EBDAA_ARABIC_PRACTICE.render():mode==="englishPractice"?window.EBDAA_ENGLISH_PRACTICE.render():mode==="mathPractice"?window.EBDAA_MATH_PRACTICE.render():focused?focusPractice():mode==="home"?home():mode==="browse"?browse():mode==="subject"?subjectUnits():mode==="unitPreview"?previewUnit():mode==="advancedLab"?advancedLab():mode==="learn"?learn():about();
+ app.innerHTML=mode==="advancedLoading"?'<section class="practice-focus" aria-label="Loading laboratory"><div class="practice-focus__content" role="status"><h2>Loading the lesson…</h2><p>Preparing the practical activities.</p></div></section>':mode==="teacherReview"?teacherView():mode==="economicsPractice"?window.EBDAA_ECONOMICS_PRACTICE.render():mode==="civicsPractice"?window.EBDAA_CIVICS_PRACTICE.render():mode==="socialPractice"?window.EBDAA_SOCIAL_STUDIES_PRACTICE.render():mode==="businessPractice"?window.EBDAA_BUSINESS_PRACTICE.render():mode==="physicsPractice"?window.EBDAA_PHYSICS_PRACTICE.render():mode==="codeLab"?window.EBDAA_CODE_LABS.render():mode==="germanPractice"?window.EBDAA_GERMAN_PRACTICE.render():mode==="arabicPractice"?window.EBDAA_ARABIC_PRACTICE.render():mode==="englishPractice"?window.EBDAA_ENGLISH_PRACTICE.render():mode==="mathPractice"?window.EBDAA_MATH_PRACTICE.render():focused?focusPractice():mode==="home"?home():mode==="browse"?browse():mode==="subject"?subjectUnits():mode==="unitPreview"?previewUnit():mode==="advancedLab"?advancedLab():mode==="learn"?learn():about();
  window.NTSS_QUEST_PATH?.render(app,mode);
  window.NTSS_LEARNING?.decorate(app,mode);
 }
