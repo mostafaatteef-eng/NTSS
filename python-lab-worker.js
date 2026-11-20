@@ -16,7 +16,24 @@ self.onmessage=async ({data})=>{
   const result=await pyodide.runPythonAsync(data.code);
   if(result!==undefined&&result!==null&&out.length===0)out.push(String(result));
   if(result?.destroy)result.destroy();
-  self.postMessage({ok:true,output:out.join("\n").slice(0,MAX_OUTPUT)||"(Executed. No printed output)"});
+  let testCases;
+  if(data.assessment===true){
+    const specs=Array.isArray(data.tests)?data.tests:[];
+    if(specs.length<1||specs.length>10)throw Error("Invalid assessment test configuration.");
+    testCases=[];
+    for(const pair of specs){
+      const [expr,expected]=pair;
+      if(typeof expr!=="string"||expr.length>200||!Number.isFinite(expected))throw Error("Invalid assessment case.");
+      let value;
+      try{
+        value=await pyodide.runPythonAsync(expr);
+        const actual=value?.toJs?value.toJs():value;
+        testCases.push({pass:typeof actual==="number"&&Number.isFinite(actual)&&Math.abs(actual-expected)<1e-9});
+      }catch(error){testCases.push({pass:false})}
+      finally{if(value?.destroy)value.destroy()}
+    }
+  }
+  self.postMessage({ok:true,output:out.join("\n").slice(0,MAX_OUTPUT)||"(Executed. No printed output)",...(testCases?{testCases}:{})});
  }catch(e){self.postMessage({ok:false,output:(out.join("\n")+"\n"+String(e?.message||e)).slice(0,1000)})}
  finally{try{pyodide?.globals.delete("_ntss_source")}catch(_){}}
 };
