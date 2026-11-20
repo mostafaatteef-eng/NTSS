@@ -11,18 +11,21 @@ window.NTSS_LAZY=(function(){
   "theory-studio.js",
   "lab-studio.js"
  ];
- const ready=new Set();
+ const ready=new Set(),loading=new Map();
  let pending=null;
  function request(file){
   if(ready.has(file))return Promise.resolve();
-  return new Promise((resolve,reject)=>{
+  if(loading.has(file))return loading.get(file);
+  const promise=new Promise((resolve,reject)=>{
    const script=document.createElement("script");
    script.async=false;
    script.src=file;
    script.onload=()=>{ready.add(file);resolve()};
    script.onerror=()=>{script.remove();reject(Error("Unable to load "+file))};
    document.head.appendChild(script);
-  });
+  }).finally(()=>loading.delete(file));
+  loading.set(file,promise);
+  return promise;
  }
  function ensureStudio(){
   if(studioFiles.every(file=>ready.has(file)))return Promise.resolve();
