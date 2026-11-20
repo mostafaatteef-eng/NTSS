@@ -26,15 +26,28 @@ try{
    const qs=window.EBDAA_QUESTION_FACTORY.all(2,0,0);
    const visual=qs.find(q=>q.mode==="visual-data"),coding=qs.find(q=>q.mode==="live-code");
    document.querySelector("#app").innerHTML=
-    '<main style="width:100%;max-width:850px;margin:auto;padding:12px">'+
+    '<section class="practice-focus"><div class="practice-focus__content"><main style="width:100%;max-width:850px;margin:auto;padding:12px">'+
     window.NTSS_ASSESSMENT.questionView(visual,2)+window.NTSS_ASSESSMENT.visual(visual)+
-    window.NTSS_ASSESSMENT.codePanel(coding,coding.codeTask.starter,false,"")+'</main>';
+    window.NTSS_ASSESSMENT.codePanel(coding,coding.codeTask.starter,false,"")+'</main></div></section>';
   });
   assert.ok(await page.locator(".ntss-question-layout").count(),"Question layout");
   assert.ok(await page.locator(".ntss-data-card").count(),"Visual card");
   assert.ok(await page.locator("#ntss-code-editor").count(),"Code editor");
-  const overflow=await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+2);
-  assert.equal(overflow,false,"Horizontal overflow at viewport "+width);
+  const sizes=await page.evaluate(()=>{
+   const btn=document.querySelector(".ntss-code-actions .btn");
+   const editor=document.querySelector("#ntss-code-editor");
+   const input=editor?.getBoundingClientRect();
+   return {
+    overflow:document.documentElement.scrollWidth>innerWidth+2,
+    buttonHeight:btn?.getBoundingClientRect().height||0,
+    editorFont:parseFloat(getComputedStyle(editor).fontSize),
+    editorOutside:!!input&&(input.right>innerWidth+2||input.left<0)
+   };
+  });
+  assert.equal(sizes.overflow,false,"Horizontal overflow at viewport "+width);
+  assert.ok(sizes.buttonHeight>=44,"Touch button under 44px at "+width);
+  assert.ok(sizes.editorFont>=16||width>600,"Mobile editor font too small at "+width);
+  assert.equal(sizes.editorOutside,false,"Code editor outside viewport at "+width);
   assert.deepEqual(errors,[],"JS errors at viewport "+width);
   await page.close();
  }
