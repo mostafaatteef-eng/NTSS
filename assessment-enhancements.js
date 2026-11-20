@@ -26,6 +26,15 @@ window.NTSS_ASSESSMENT=(function(){
     return {...base,mode:"live-code",engine:kind,codeTask:task,question:(kind==="sql"?"🗄 SQL Challenge — ":"🐍 Python Challenge — ")+task.task,
       options:[],answer:"pass",explanation:task.solution,sourceStatus:"Original assessed coding task executed inside a browser worker using fictional data."};
    }
+   if(slot===6){
+    const family=String(base.unit||"")+" "+String(base.title||"");
+    const steps=/sql|database|relational/i.test(family)?["Inspect schema","Write SELECT query","Run read-only query","Interpret resulting rows"]:
+      /python|program|script|algorithm/i.test(family)?["Understand input","Write the algorithm","Execute the program","Verify output"]:
+      ["Inspect source data","Choose a suitable method","Apply the method","Validate the result"];
+    return {...base,mode:"order",question:"🧩 Put these four steps in the correct order for this lesson.",
+      options:[steps[2],steps[0],steps[3],steps[1]],answer:steps.join("|"),
+      explanation:"A sound workflow follows "+steps.join(" → ")+".",sourceStatus:"Original sequence-building question aligned with the lesson's general workflow."};
+   }
    if(slot===2||slot===7){
     const readings=[5+(index+u)%5,9+(index+i)%6,14+(cycle%4),19+(u%5)];
     const threshold=12+(i%3);
