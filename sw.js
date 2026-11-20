@@ -1,6 +1,6 @@
 /* EBDA lightweight service worker: cache shell immediately, other same-origin assets on demand.
    No student answers or names are handled or cached here; external WebAssembly runtimes stay network-only. */
-const CACHE="ntss-static-20261120-all-subject-cert-v4";
+const CACHE="ntss-static-20261120-all-subject-lazy-v5";
 const CORE=["./","./index.html","./ebda-ui.css"];
 const scope=new URL(self.registration.scope);
 const root=scope.pathname;
