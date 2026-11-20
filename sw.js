@@ -1,6 +1,6 @@
 /* NTSS: limited offline reading and quiz shell; same-origin assets only.
    Does not cache student answers, CDN libraries or executable lab runtimes. */
-const CACHE="ntss-static-20261120-assessment-v2";
+const CACHE="ntss-static-20261120-layouts-v3";
 const CORE=["./","./index.html","./app-main.js","./learning-support.js","./learning-concepts.js","./learning-ux.css","./question-factory.js","./assessment-enhancements.js","./practice-workshop.js","./lesson-completion.js","./teacher-review.css","./question-bank-audit.js"];
 self.addEventListener("install",event=>{
  event.waitUntil((async()=>{
