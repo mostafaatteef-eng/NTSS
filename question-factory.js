@@ -188,13 +188,39 @@ function all(g,u,i){
    if(options.length!==4)renderMode="number";
   }
   if(skill===4){
-    const steps=workflow[family]||workflow.ai;
-    const shuffled=[steps[2],steps[0],steps[3],steps[1]];
-    questions.push({id:g+"-"+(u+1)+"-"+(i+1)+"-"+no,number:no,title,unit:unitName,heading,
-      question:"In the "+["factory data center","production control room","field research station","quality-control lab","operations team"][variant]+", arrange the four steps of '"+title+"' into a sensible workflow.",
-      answer:steps.join("|"),mode:"order",options:shuffled,
-      explanation:"Start with: "+steps.join(" → ")+"; adapt the workflow to the practical task.",
-      sourceStatus:"Author-developed conceptual workflow; not a verbatim official assessment.",parameter:value,focus:skill+1});
+    // One in every ten items is a scored programming mini-game, not an optional bonus.
+    const sql=/sql|database|relational|query|normaliz/i.test(title+" "+family)
+      ||(!/python|programming|scripting|algorithm/i.test(title+" "+family)&&variant%2===1);
+    const py=[
+      {code:"scores = [70, 80, 90]\\nprint(sum(scores) / len(score))",fix:"Change len(score) to len(scores)",others:["Replace sum(scores) with max(scores)","Remove print()"],why:"The list is named scores, not score."},
+      {code:"age = 18\\nif age >= 18\\n    print('Eligible')",fix:"Add : after the if condition",others:["Remove indentation","Replace >= with ="],why:"Python if statements require a trailing colon."},
+      {code:"for i in range(3):\\nprint(i)",fix:"Indent print(i) inside the loop",others:["Use range(0)","Remove the colon"],why:"The loop body must be indented."},
+      {code:"values = [8, 9, 10]\\nprint(values[3])",fix:"Use values[2] for the last element",others:["Use values[4]","Use values[-4]"],why:"List indexing starts at zero."},
+      {code:"def square(x):\\n    x * x\\nprint(square(5))",fix:"Add return x * x",others:["Change multiplication to addition","Remove the function call"],why:"Without return, a function returns None."}
+    ];
+    const sqlTasks=[
+      {task:"Find students scoring at least 85",tokens:["SELECT name","FROM students","WHERE grade >= 85","ORDER BY grade DESC;"]},
+      {task:"Count students in each city",tokens:["SELECT city, COUNT(*)","FROM students","GROUP BY city","ORDER BY city;"]},
+      {task:"Show student names and project topics",tokens:["SELECT s.name, p.topic","FROM students s","JOIN projects p ON s.id = p.student_id","ORDER BY s.name;"]},
+      {task:"Show the two highest grades",tokens:["SELECT name, grade","FROM students","ORDER BY grade DESC","LIMIT 2;"]},
+      {task:"Find distinct non-null cities",tokens:["SELECT DISTINCT city","FROM students","WHERE city IS NOT NULL","ORDER BY city;"]}
+    ];
+    const id=g+"-"+(u+1)+"-"+(i+1)+"-"+no;
+    if(sql){
+      const t=sqlTasks[(variant+i+u)%sqlTasks.length];
+      questions.push({id,number:no,title,unit:unitName,heading:"🗄 SQL Query Builder",
+        question:"🗄 SQL GAME — "+t.task+". Tap the four SQL clauses in execution order.",
+        answer:t.tokens.join("|"),mode:"order",options:[t.tokens[2],t.tokens[0],t.tokens[3],t.tokens[1]],
+        explanation:"Correct query: "+t.tokens.join(" ")+" SQL clauses must be arranged in their valid syntactic sequence.",
+        sourceStatus:"Original scored SQL-clause-building activity. Uses fictional data and does not execute SQL.",parameter:value,focus:skill+1});
+    }else{
+      const t=py[(variant+i+u)%py.length];
+      const options=[t.others[0],t.fix,t.others[1]];
+      questions.push({id,number:no,title,unit:unitName,heading:"🐍 Python Bug Hunt",
+        question:"🐍 PYTHON GAME — Debug this code: "+t.code.replace(/\\n/g," | ")+" — Which fix makes it valid?",
+        answer:t.fix,mode:"choice",options,
+        explanation:t.why,sourceStatus:"Original scored code-debugging question; code is inspected, not executed.",parameter:value,focus:skill+1});
+    }
     continue;
   }
   questions.push({id:g+"-"+(u+1)+"-"+(i+1)+"-"+no,number:no,title,unit:unitName,heading,
