@@ -11,6 +11,11 @@ window.NTSS_LAZY=(function(){
   "theory-studio.js",
   "lab-studio.js"
  ];
+ const subjectFiles={
+  mathPractice:"math-practice.js",physicsPractice:"physics-practice.js",englishPractice:"english-practice.js",
+  businessPractice:"business-english-practice.js",germanPractice:"german-practice.js",arabicPractice:"arabic-practice.js",
+  socialPractice:"social-studies-practice.js",civicsPractice:"civics-practice.js",economicsPractice:"economics-practice.js"
+ };
  const ready=new Set(),loading=new Map();
  let pending=null;
  function request(file){
@@ -34,5 +39,10 @@ window.NTSS_LAZY=(function(){
   pending=Promise.all(studioFiles.filter(file=>!ready.has(file)).map(request)).then(()=>undefined).finally(()=>{pending=null});
   return pending;
  }
- return {ensureStudio,isReady:()=>studioFiles.every(file=>ready.has(file)),files:studioFiles.slice()};
+ function ensureSubject(mode){
+  const file=subjectFiles[mode];
+  return file?request(file):Promise.reject(Error("Unknown subject module"));
+ }
+ function isSubjectReady(mode){return !!subjectFiles[mode]&&ready.has(subjectFiles[mode])}
+ return {ensureStudio,isReady:()=>studioFiles.every(file=>ready.has(file)),ensureSubject,isSubjectReady,subjectFiles:{...subjectFiles},files:studioFiles.slice()};
 })();
