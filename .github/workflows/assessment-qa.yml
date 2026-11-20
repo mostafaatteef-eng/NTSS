@@ -20,6 +20,7 @@ jobs:
           node scripts/assessment-qa.mjs
           node scripts/assessment-grader-qa.mjs
           node scripts/performance-qa.mjs
+          node scripts/certificate-coverage-qa.mjs
       - name: Install browser test runtime
         run: |
           npm install --no-save playwright@1.58.2
