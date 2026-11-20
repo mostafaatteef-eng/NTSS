@@ -16,7 +16,9 @@ jobs:
         with:
           node-version: '22'
       - name: Structural assessment tests
-        run: node scripts/assessment-qa.mjs
+        run: |
+          node scripts/assessment-qa.mjs
+          node scripts/assessment-grader-qa.mjs
       - name: Install browser test runtime
         run: |
           npm install --no-save playwright@1.58.2
