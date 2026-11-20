@@ -66,5 +66,28 @@ window.EBDA_COMPLETION=(function(){
   const form=eligible?(visible?'<div class="ebda-finish-print-actions"><button class="ebda-finish-btn ebda-finish-primary" onclick="EBDA_COMPLETION.print()">⬇ '+(arabic?"حفظ PDF / طباعة":"Save as PDF / Print")+'</button><button class="ebda-finish-btn ebda-finish-secondary" onclick="EBDA_COMPLETION.edit('+JSON.stringify(k)+')">'+(arabic?"تعديل الاسم":"Edit name")+'</button></div>':'<div class="ebda-finish-form"><label for="ebda-student-name">'+(arabic?"اسم الطالب على الشهادة":"Student name on certificate")+'</label><div class="ebda-finish-input-wrap"><input id="ebda-student-name" dir="auto" type="text" maxlength="80" autocomplete="off" placeholder="'+(arabic?"اكتب الاسم كما تريد ظهوره":"Enter your full name")+'" value="'+esc(name)+'" oninput="EBDA_COMPLETION.setName('+JSON.stringify(k)+',this.value)"><button class="ebda-finish-btn ebda-finish-primary" onclick="EBDA_COMPLETION.open('+JSON.stringify(k)+')">'+(arabic?"معاينة الشهادة":"Preview certificate")+'</button></div><small>'+(arabic?"الاسم للاستخدام داخل متصفحك فقط، ولا يُحفظ على خادم.":"Your name is used in this browser session only.")+'</small></div>'):"";
   return '<section class="ebda-lesson-completed" dir="'+(arabic?"rtl":"ltr")+'" lang="'+locale+'"><div class="ebda-finish-card">'+header+intro+'<p class="ebda-finish-message">'+msg+'</p>'+missionReview+form+actions+'</div>'+certificate+'</section>';
  }
- return {render,setName,getName,open,edit,forget,print};
+ function participation({subject,grade,unit,index,lesson,back}){
+  const k=key({subject,grade,unit,index}),name=getName(k).trim(),valid=name.length>=3;
+  const date=new Intl.DateTimeFormat("en-GB",{day:"numeric",month:"short",year:"numeric"}).format(new Date());
+  if(!valid)return '<section class="ebda-lesson-completed"><div class="ebda-finish-card"><h2>Enter your name before this project</h2><p>Return to the project and enter your name to create your participation record.</p></div></section>';
+  const sheet='<article id="ebda-certificate-sheet" class="ebda-certificate" dir="ltr" lang="en">'+
+    '<div class="ebda-certificate-header">'+logo()+'</div>'+
+    '<h2 class="ebda-certificate-heading">Certificate of Participation</h2>'+
+    '<p class="ebda-certificate-pretitle">This local record is issued to</p>'+
+    '<div class="ebda-certificate-student" dir="auto">'+esc(name)+'</div>'+
+    '<p class="ebda-certificate-text">For preparing a self-reported project outline for</p>'+
+    '<div class="ebda-certificate-lesson" dir="auto">'+esc(lesson)+'</div>'+
+    '<div class="ebda-certificate-metadata">'+
+      '<div><span class="ebda-certificate-detail-label">Date</span><b>'+esc(date)+'</b></div>'+
+      '<div><span class="ebda-certificate-detail-label">Subject</span><b>'+esc(subjects[subject]||subject)+'</b></div>'+
+      '<div><span class="ebda-certificate-detail-label">Grade</span><b>'+esc(["","First","Second","Third"][grade]||grade)+'</b></div>'+
+      '<div><span class="ebda-certificate-detail-label">Assessment</span><b>Not graded</b></div>'+
+    '</div>'+
+    '<p class="ebda-certificate-disclaimer">Self-reported project preparation only · No teacher verification or academic grade · Not an official school certificate</p></article>';
+  return '<section class="ebda-lesson-completed"><div class="ebda-finish-card"><h1 class="ebda-finish-title">Project preparation recorded</h1>'+
+    '<p>Your outline has been prepared. Actual presentation and writing skills require teacher assessment.</p>'+
+    '<div class="ebda-finish-print-actions"><button class="ebda-finish-btn ebda-finish-primary" onclick="EBDA_COMPLETION.print()">Save as PDF / Print</button>'+
+    (back?'<button class="ebda-finish-btn ebda-finish-secondary" onclick="'+back+'">Back to lessons</button>':'')+'</div></div>'+sheet+'</section>';
+ }
+ return {render,participation,setName,getName,open,edit,forget,print};
 })();
