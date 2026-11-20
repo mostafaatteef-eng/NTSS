@@ -26,7 +26,7 @@ try{
    const qs=window.EBDAA_QUESTION_FACTORY.all(2,0,0);
    const visual=qs.find(q=>q.mode==="visual-data"),coding=qs.find(q=>q.mode==="live-code");
    document.querySelector("#app").innerHTML=
-    '<section class="practice-focus"><div class="practice-focus__content"><main style="width:100%;max-width:850px;margin:auto;padding:12px">'+
+    '<section class="practice-focus"><div class="practice-focus__content"><main style="width:100%;max-width:850px;margin:auto;box-sizing:border-box;padding:12px">'+
     window.NTSS_ASSESSMENT.questionView(visual,2)+window.NTSS_ASSESSMENT.visual(visual)+
     window.NTSS_ASSESSMENT.codePanel(coding,coding.codeTask.starter,false,"")+'</main></div></section>';
   });
