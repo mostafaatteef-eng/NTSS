@@ -22,6 +22,10 @@ jobs:
       - name: Install browser test runtime
         run: |
           npm install --no-save playwright@1.58.2
-          npx playwright install --with-deps chromium
-      - name: Responsive browser checks
-        run: node scripts/assessment-browser-qa.mjs
+          npx playwright install --with-deps chromium firefox webkit
+      - name: Responsive Chromium and live workers
+        run: NTSS_BROWSER=chromium node scripts/assessment-browser-qa.mjs
+      - name: Responsive Firefox
+        run: NTSS_BROWSER=firefox node scripts/assessment-browser-qa.mjs
+      - name: Responsive WebKit
+        run: NTSS_BROWSER=webkit node scripts/assessment-browser-qa.mjs
