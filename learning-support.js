@@ -37,6 +37,8 @@ window.NTSS_LEARNING=(function(){
  }
  function toolsToggle(key,isOpen){if(isOpen)toolsOpened.add(key);else toolsOpened.delete(key)}
  function decorate(root,mode){
+  // AI lessons use a single-question focus view. Never inject optional panels into this view.
+  if(mode==="learn"||mode==="advancedLab")return;
   const screen=root?.querySelector?.(".practice-focus"),area=screen?.querySelector?.(".practice-focus__content");if(!area)return;
   const m=(screen.querySelector(".practice-focus__counter")?.textContent||"").match(/(?:Question|Frage|Mission|السؤال|سؤال)\s*(\d+)/i);if(!m)return;
   const index=Math.max(0,Math.min(49,Number(m[1])-1)),target=area.querySelector(".guided-question")||area.querySelector(".practice-flow")||area;
