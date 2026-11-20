@@ -227,7 +227,7 @@ function all(g,u,i){
     question:stem,answer:correct,mode:renderMode,options,
     explanation:item.why,sourceStatus:"Authored parameterized practice, associated with unit topic; requires lesson-level instructor review.",parameter:value,focus:skill+1});
  }
- return questions;
+ return window.NTSS_ASSESSMENT?.enhance(questions,g,u,i)||questions;
 }
 return {all,templates:F};
 })();
