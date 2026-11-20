@@ -137,6 +137,18 @@ function exitPractice(){
  if(mode==="advancedLab")nav("unitPreview");
  else nav("subject");
 }
+function startNamedPractice(g,u,i){
+ const k=["ai",g,u,i].join(":");
+ const field=document.getElementById("ebda-lesson-student-name");
+ const name=String(field?.value||"").replace(/[\\u0000-\\u001f]/g,"").trim().replace(/\\s+/g," ");
+ if(name.length<3){
+  const status=document.getElementById("ebda-name-error");
+  if(status)status.textContent="Please enter your full name (at least 3 characters).";
+  field?.focus();return;
+ }
+ window.EBDA_COMPLETION.setName(k,name);
+ window.EBDA_COMPLETION.open(k);
+}
 function focusPractice(){
  let g,u,i,name;
  if(mode==="learn"){
@@ -145,6 +157,25 @@ function focusPractice(){
  }else{
   g=grade;u=year2Unit;i=advancedSession;
   name=window.EBDAA_GRADES.grades[g-1].subjects[0].units[u].sessions[i];
+ }
+ const studentKey=["ai",g,u,i].join(":");
+ if(!window.EBDA_COMPLETION.getName(studentKey).trim()){
+  return '<section class="practice-focus" aria-label="Student name before lesson">'+
+   '<header class="practice-focus__header"><div class="practice-focus__header-row">'+
+   '<button class="practice-focus__exit" onclick="exitPractice()">← All lessons</button>'+
+   '<span class="practice-focus__year">YEAR '+g+' · WELCOME</span></div></header>'+
+   '<div class="practice-focus__content"><div class="ebda-name-gate">'+
+   '<div class="ebda-name-gate__symbol" aria-hidden="true">✦</div>'+
+   '<span class="eyebrow">BEFORE YOU BEGIN</span><h1>Welcome to your lesson</h1>'+
+   '<p class="ebda-name-gate__lesson">'+esc(name)+'</p>'+
+   '<p>Enter your name as you want it printed on your completion certificate.</p>'+
+   '<form onsubmit="startNamedPractice('+g+','+u+','+i+');return false">'+
+   '<label for="ebda-lesson-student-name">Student full name</label>'+
+   '<input id="ebda-lesson-student-name" name="studentName" type="text" dir="auto" minlength="3" maxlength="80" autocomplete="name" required placeholder="Your full name" aria-describedby="ebda-name-privacy ebda-name-error">'+
+   '<p id="ebda-name-error" role="alert" class="ebda-name-gate__error"></p>'+
+   '<button class="btn teal" type="submit">Start lesson →</button></form>'+
+   '<p id="ebda-name-privacy" class="ebda-name-gate__privacy">Your name is only used for this certificate in the current browser session. It is not sent to a school server.</p>'+
+   '</div></div></section>';
  }
  const content=window.EBDAA_PRACTICE.panel(g,u,i);
  const progress=window.EBDAA_PRACTICE.progress();
