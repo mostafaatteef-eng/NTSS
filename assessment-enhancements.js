@@ -9,11 +9,11 @@ window.NTSS_ASSESSMENT=(function(){
  {task:"Define count_ai(topics) to count occurrences of 'AI'.",starter:"def count_ai(topics):\n    pass",tests:[["count_ai(['AI','SQL','AI','Python','AI'])",3],["count_ai(['SQL'])",0],["count_ai(['AI'])",1]],solution:"Return topics.count('AI')."}
  ];
  const sql=[
- {task:"Show names of students whose grade is at least 85, highest grade first.",starter:"SELECT name FROM students",expected:[["Nour"],["Mona"],["Salma"]],solution:"SELECT name FROM students WHERE grade >= 85 ORDER BY grade DESC;"},
- {task:"Count the students from Cairo.",starter:"SELECT COUNT(*) FROM students",expected:[[2]],solution:"SELECT COUNT(*) FROM students WHERE city='Cairo';"},
- {task:"Count students in each city, ordered alphabetically.",starter:"SELECT city, COUNT(*) FROM students",expected:[["Alexandria",1],["Cairo",2],["Giza",2]],solution:"SELECT city, COUNT(*) FROM students GROUP BY city ORDER BY city;"},
- {task:"Show students' names and project topics ordered alphabetically by student name.",starter:"SELECT s.name, p.topic FROM students s",expected:[["Mona","Python"],["Nour","AI"],["Salma","SQL"]],solution:"SELECT s.name, p.topic FROM students s JOIN projects p ON s.id=p.student_id ORDER BY s.name;"},
- {task:"Show the two highest student grades, highest first.",starter:"SELECT name, grade FROM students",expected:[["Nour",95],["Mona",91]],solution:"SELECT name, grade FROM students ORDER BY grade DESC LIMIT 2;"}
+ {task:"Show names of students whose grade is at least 85, highest grade first.",starter:"SELECT name FROM students",expected:[["Nour"],["Mona"],["Salma"]],second:[["Ali"],["Omar"],["Salma"]],solution:"SELECT name FROM students WHERE grade >= 85 ORDER BY grade DESC;"},
+ {task:"Count the students from Cairo.",starter:"SELECT COUNT(*) FROM students",expected:[[2]],second:[[2]],solution:"SELECT COUNT(*) FROM students WHERE city='Cairo';"},
+ {task:"Count students in each city, ordered alphabetically.",starter:"SELECT city, COUNT(*) FROM students",expected:[["Alexandria",1],["Cairo",2],["Giza",2]],second:[["Alexandria",1],["Cairo",2],["Giza",2]],solution:"SELECT city, COUNT(*) FROM students GROUP BY city ORDER BY city;"},
+ {task:"Show students' names and project topics ordered alphabetically by student name.",starter:"SELECT s.name, p.topic FROM students s",expected:[["Mona","Python"],["Nour","AI"],["Salma","SQL"]],second:[["Ali","AI"],["Mona","Python"],["Salma","SQL"]],solution:"SELECT s.name, p.topic FROM students s JOIN projects p ON s.id=p.student_id ORDER BY s.name;"},
+ {task:"Show the two highest student grades, highest first.",starter:"SELECT name, grade FROM students",expected:[["Nour",95],["Mona",91]],second:[["Ali",98],["Omar",90]],solution:"SELECT name, grade FROM students ORDER BY grade DESC LIMIT 2;"}
  ];
  function enhance(all,g,u,i){
   return all.map((base,index)=>{
@@ -113,15 +113,16 @@ window.NTSS_ASSESSMENT=(function(){
      const passed=markers.length===task.tests.length&&markers.every(line=>line==="NTSS_TEST:PASS");
      return finish({runtimeError:false,passed,message:markers.length+"/"+task.tests.length+" cases evaluated · "+markers.filter(x=>x==="NTSS_TEST:PASS").length+" passed"+(passed?" ✓":" · Check your function and edge cases")});
     }
-    const got=r.results?.[0]?.values||[];
-    const passed=JSON.stringify(got)===JSON.stringify(task.expected);
-    finish({runtimeError:false,passed,message:(passed?"Query passed":"Query result differs from expected rows")+" · "+JSON.stringify(got).slice(0,230)});
+    const got=r.assessmentCases||[];
+    const passed=got.length===2&&JSON.stringify(got[0])===JSON.stringify(task.expected)&&JSON.stringify(got[1])===JSON.stringify(task.second);
+    const passedCount=got.filter((rows,j)=>JSON.stringify(rows)===JSON.stringify(j===0?task.expected:task.second)).length;
+    finish({runtimeError:false,passed,message:passedCount+"/2 SQL datasets passed"+(passed?" ✓":" · Compare the result and try again")});
    };
    if(kind==="python"){
     const checks=q.codeTask.tests.map(([expr,expected])=>
      "try:\n    _ntss_value = "+expr+"\n    print('NTSS_TEST:PASS' if _ntss_value == "+JSON.stringify(expected)+" else 'NTSS_TEST:FAIL')\nexcept Exception:\n    print('NTSS_TEST:ERROR')").join("\n");
     worker.postMessage({code:code+"\n"+checks});
-   }else worker.postMessage({code});
+   }else worker.postMessage({code,assessment:true});
   }catch(err){finish({runtimeError:true,message:String(err?.message||err)})}
   return ()=>finish({runtimeError:true,message:"Cancelled"});
  }
