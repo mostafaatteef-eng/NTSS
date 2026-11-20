@@ -37,4 +37,46 @@ assert.ok(read("practice-workshop.js").includes("saveCheckpoint()}"),"Automatic 
 assert.ok(read("practice-workshop.js").includes("codeDrafts"),"Draft resume");
 assert.ok(read("mistake-review.js").includes('x.question!==q.question'),"Different recovery prompt");
 assert.ok(read("index.html").includes("assessment-enhancements.js"),"Assessment loaded");
+// Full assessment state-machine regression: saved draft, scored progress, all 50 questions and a named certificate.
+{
+ const memory=new Map(),local={
+  getItem:key=>memory.get(key)||null,
+  setItem:(key,value)=>memory.set(key,value),
+  removeItem:key=>memory.delete(key)
+ };
+ const mockDocument={getElementById:()=>null,querySelector:()=>null};
+ const site={
+  EBDA_APP_RENDER(){},NTSS_ORIGINAL_LOGO:"",
+  EBDAA_GAME:{resetLesson(){},render(){return ""}},
+  NTSS_LEARNING:{reset(){},record(){},decorate(){}},
+  NTSS_APPLIED:{reset(){}},EBDAA_CONTEXT_GAMES:{reset(){}},
+  addEventListener(){}
+ };
+ for(const path of ["grade-catalog.js","curriculum-data.js","performance-map.js","assessment-enhancements.js","question-factory.js","mastery-engine.js","mistake-review.js","lesson-completion.js","practice-workshop.js"]){
+  new Function("window","document","localStorage","setTimeout","clearTimeout",read(path))(site,mockDocument,local,()=>1,()=>{});
+ }
+ const practice=site.EBDAA_PRACTICE;
+ practice.begin(1,0,0);
+ const first=practice.currentQuestion();
+ const firstAnswer=first.mode==="order"?first.answer.split("|"):first.mode==="live-code"?"pass":first.answer;
+ practice.answer(firstAnswer);
+ assert.equal(practice.hasCheckpoint(),true,"Ungraded answer must be saved");
+ practice.reset();
+ assert.equal(practice.resumeCheckpoint(),true,"Resume ungraded question");
+ assert.equal(practice.progress().answered,0);
+ site.EBDA_COMPLETION.setName("ai:1:0:0","QA Student");
+ site.EBDA_COMPLETION.open("ai:1:0:0");
+ for(let n=0;n<50;n++){
+  const item=practice.currentQuestion();
+  const answer=item.mode==="order"?item.answer.split("|"):item.mode==="live-code"?"pass":item.answer;
+  practice.answer(answer);
+  practice.check();
+  assert.equal(practice.progress().answered,n+1,"Question progress at "+n);
+  practice.next();
+ }
+ assert.equal(practice.isFinished(),true);
+ assert.equal(practice.hasCheckpoint(),false,"Completed assessment clears saved draft");
+ const certificate=site.EBDA_COMPLETION.render({subject:"ai",grade:1,unit:0,index:0,lesson:"QA Lesson",correct:50,total:50});
+ assert.ok(certificate.includes("QA Student")&&certificate.includes('id="ebda-certificate-sheet"'));
+}
 console.log("Assessment QA passed: syntax, all 116 lessons, 50-question contract, six layouts, multi-case coding, recovery and resume.");
