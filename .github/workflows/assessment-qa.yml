@@ -1,0 +1,25 @@
+name: NTSS Assessment QA
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  assessment:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Structural assessment tests
+        run: node scripts/assessment-qa.mjs
+      - name: Install browser test runtime
+        run: |
+          npm install --no-save playwright@1.58.2
+          npx playwright install --with-deps chromium
+      - name: Responsive browser checks
+        run: node scripts/assessment-browser-qa.mjs
