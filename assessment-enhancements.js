@@ -68,8 +68,8 @@ window.NTSS_ASSESSMENT=(function(){
   const display=q.display||"bars";
   if(display==="table"){
    return '<div class="ntss-data-card ntss-data-table"><div class="ntss-chart-head"><b>Sensor inspection sheet</b><span>DATA TABLE</span></div>'+
-    '<table><thead><tr><th scope="col">Sensor</th><th scope="col">Reading</th><th scope="col">Above '+v.threshold+'?</th></tr></thead><tbody>'+
-    v.readings.map((n,j)=>'<tr><th scope="row">S'+(j+1)+'</th><td>'+n+'</td><td><span class="ntss-table-state '+(n>v.threshold?"is-high":"")+'">'+(n>v.threshold?"Yes":"No")+'</span></td></tr>').join("")+
+    '<table><thead><tr><th scope="col">Sensor</th><th scope="col">Reading</th></tr></thead><tbody>'+
+    v.readings.map((n,j)=>'<tr><th scope="row">S'+(j+1)+'</th><td>'+n+'</td></tr>').join("")+
     '</tbody></table><p class="ntss-probe-note">Only readings strictly greater than '+v.threshold+' are counted.</p></div>';
   }
   if(display==="dots"){
