@@ -125,7 +125,7 @@ window.NTSS_ASSESSMENT=(function(){
     const passedCount=got.filter((rows,j)=>JSON.stringify(rows)===JSON.stringify(j===0?task.expected:task.second)).length;
     finish({runtimeError:false,passed,message:passedCount+"/2 SQL datasets passed"+(passed?" ✓":" · Compare the result and try again")});
    };
-   if(kind==="python")worker.postMessage({code,assessment:true,tests:task.tests});
+   if(kind==="python")worker.postMessage({code,assessment:true,tests:q.codeTask.tests});
    else worker.postMessage({code,assessment:true});
   }catch(err){finish({runtimeError:true,message:String(err?.message||err)})}
   return ()=>finish({runtimeError:true,message:"Cancelled"});
