@@ -135,7 +135,7 @@ const action=q.mode==="live-code"&&!graded?'':graded?'<button class="btn teal" o
 const completed=Object.keys(reviewed).length,streak=(()=>{let n=0;for(let k=cursor;k>=0;k--){if(reviewed[k]===true)n++;else break}return n})();const xp=correct*10+Math.min(streak,5)*5;
 cachedStage='<div class="practice-flow">'+milestone+'<div class="topmeta"><span class="pill">QUESTION '+(cursor+1)+' / 50</span><span class="pill">Answered: '+Object.keys(reviewed).length+' / 50</span></div>'+
 ''+
-'<h3 class="practice-question">'+e(q.question)+'</h3>'+questionActivity+controls+hint+verdict+mistake+
+window.NTSS_ASSESSMENT.questionView(q,cursor)+questionActivity+controls+hint+verdict+mistake+
 (!graded&&!hintShown?'<div class="actions"><button class="btn light" onclick="EBDAA_PRACTICE.showHint()">💡 Need a hint?</button></div>':'')+
 '<div class="stepfooter"><button class="btn light" onclick="EBDAA_PRACTICE.prev()" '+(cursor===0?'disabled':'')+'>← Previous</button>'+action+'</div>'+
 (saved()&&!finished?'<button class="ntss-restore" onclick="EBDAA_PRACTICE.resumeCheckpoint()">Resume saved session (this device)</button>':'')+'</div>';const node=document.getElementById("ebdaa-practice-stage");if(node)node.innerHTML=cachedStage;syncFocusStatus();window.NTSS_LEARNING?.decorate(document.getElementById("app"),grade===1?"learn":"advancedLab");
