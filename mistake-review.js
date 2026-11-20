@@ -4,8 +4,22 @@ const states=new Map();
 const safe=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 let activeKey="";
 function related(g,u,i,q){
+ if(q.mode==="visual-data"&&q.visual){
+  const readings=q.visual.readings.map((n,j)=>n+1+(j%2)),threshold=q.visual.threshold;
+  const sorted=readings.slice().sort((a,b)=>a-b);
+  const answer=/range/i.test(q.question)?sorted[3]-sorted[0]:/total/i.test(q.question)?readings.reduce((a,b)=>a+b,0):/highest/i.test(q.question)?sorted[3]:readings.filter(n=>n>threshold).length;
+  const stem=/range/i.test(q.question)?"What is the range?":/total/i.test(q.question)?"What is the total?":/highest/i.test(q.question)?"What is the maximum?":"How many readings exceed "+threshold+"?";
+  return {id:q.id+"-recovery",mode:"number",question:"New readings: "+readings.join(", ")+". "+stem,answer,explanation:"Apply the same operation to the new values."};
+ }
+ if(q.mode==="live-code"){
+  const question=q.engine==="python"?"Which approach best verifies a Python function works on different inputs?":"Why should a SQL query be tested against different database records?";
+  const options=q.engine==="python"?["Only check the sample","Test multiple inputs and edge cases","Copy the example output","Skip invalid inputs"]:["To memorize a query","To test the formatting only","To detect assumptions tied to sample rows","To avoid running queries"];
+  const answer=q.engine==="python"?options[1]:options[2];
+  return {id:q.id+"-recovery",mode:"choice",question,options,answer,explanation:"Test behavior on independent examples to identify hidden assumptions."};
+ }
  const bank=window.EBDAA_QUESTION_FACTORY.all(g,u,i);
- return bank.find(x=>x.focus===q.focus&&x.id!==q.id&&x.question!==q.question&&!["order","live-code","visual-data"].includes(x.mode))||bank.find(x=>x.id!==q.id&&x.question!==q.question&&!["order","live-code","visual-data"].includes(x.mode));
+ return bank.find(x=>x.focus===q.focus&&x.id!==q.id&&x.question!==q.question&&!["order","live-code","visual-data"].includes(x.mode))||
+        bank.find(x=>x.id!==q.id&&x.question!==q.question&&!["order","live-code","visual-data"].includes(x.mode));
 }
 function state(g,u,i,q){const key=g+"|"+u+"|"+i+"|"+q.id;activeKey=key;if(!states.has(key))states.set(key,{level:0,typed:"",result:null,related:related(g,u,i,q)});return states.get(key)}
 function clear(){states.clear();activeKey=""}
