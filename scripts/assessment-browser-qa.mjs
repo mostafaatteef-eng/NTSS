@@ -70,6 +70,21 @@ try{
  });
  assert.deepEqual(certificate,{named:true,issued:true,failedNotIssued:true},"Certificate name and eligibility");
  await study.close();
- console.log("Assessment browser QA passed: four responsive sizes, checkpoint reload, named certificate and eligibility.");
+ // Run real Pyodide and SQLite workers in Chromium, not just mocked grading logic.
+ const runtimePage=await browser.newPage({viewport:{width:820,height:900},serviceWorkers:"block"});
+ await runtimePage.goto(url,{waitUntil:"load"});
+ const runtime=await runtimePage.evaluate(async()=>{
+  const py=window.EBDAA_QUESTION_FACTORY.all(3,0,0).find(q=>q.mode==="live-code"&&q.engine==="python");
+  const sql=window.EBDAA_QUESTION_FACTORY.all(2,2,0).find(q=>q.mode==="live-code"&&q.engine==="sql");
+  const execute=(q,code)=>new Promise(resolve=>window.NTSS_ASSESSMENT.run(q,code,resolve));
+  const python=await execute(py,"def average(values):\n    return sum(values)/len(values)");
+  const sqlite=await execute(sql,sql.codeTask.solution);
+  return {python,sqlite};
+ });
+ assert.equal(runtime.python.passed,true,"Pyodide three-case Python test: "+runtime.python.message);
+ assert.equal(runtime.sqlite.passed,true,"SQLite two-dataset SQL test: "+runtime.sqlite.message);
+ await runtimePage.close();
+ console.log("Assessment browser QA passed: responsive sizes, checkpoint, certificate, live Pyodide and SQLite.");
+
 
 }finally{await browser?.close();await new Promise(done=>server.close(done))}
