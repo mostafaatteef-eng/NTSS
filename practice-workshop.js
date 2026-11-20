@@ -2,9 +2,9 @@
    Answers only live in memory; no cookies, tracking, remote submission or server storage. */
 window.EBDAA_PRACTICE=(function(){
 let items=[],cursor=0,chosen=null,graded=false,correct=0,reviewed={},session="",hintShown=false,checkpoint=false,grade=1,unit=0,lesson=0,cachedStage="",finished=false,responses={},hintFlags={};
-let codeDrafts={},codeRunning=false,codeMessage="",runToken=0,visualProbe=null;
+let codeDrafts={},codeRunning=false,codeMessage="",runToken=0,visualProbe=null,saveDelay=null;
 const previousOrders=new Map();let adaptedStages=new Set();
-const CHECKPOINT_KEY="ntss-private-practice-checkpoint-v3",CHECKPOINT_TTL=7*24*60*60*1000;
+const CHECKPOINT_KEY="ntss-private-practice-checkpoint-v4",CHECKPOINT_TTL=7*24*60*60*1000;
 function saved(){try{const raw=localStorage.getItem(CHECKPOINT_KEY);if(!raw)return null;const v=JSON.parse(raw);if(v?.version!==1||Date.now()-v.savedAt>CHECKPOINT_TTL||Date.now()<v.savedAt||!Array.isArray(v.order)||v.order.length!==50){localStorage.removeItem(CHECKPOINT_KEY);return null}return v}catch(_){return null}}
 function saveCheckpoint(){
  if(!session||!items.length)return false;
@@ -15,7 +15,7 @@ function saveCheckpoint(){
   return true;
  }catch(_){const node=document.getElementById("ntss-checkpoint-status");if(node)node.textContent="Could not save. Your browser may block storage.";return false}
 }
-function clearCheckpoint(){try{localStorage.removeItem(CHECKPOINT_KEY)}catch(_){}const node=document.getElementById("ntss-checkpoint-status");if(node)node.textContent="Saved session cleared."}
+function clearCheckpoint(){if(saveDelay)clearTimeout(saveDelay);saveDelay=null;try{localStorage.removeItem(CHECKPOINT_KEY)}catch(_){}const node=document.getElementById("ntss-checkpoint-status");if(node)node.textContent="Saved session cleared."}
 function resumeCheckpoint(){
  const v=saved();if(!v||!/^[123]-\d+-\d+$/.test(v.session))return false;
  const [g,u,i]=v.session.split("-").map(Number);
@@ -59,7 +59,7 @@ function currentQuestion(){return items[cursor]||null}
 function questionOrder(){return items.map(q=>q.id)}
 
 const e=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-function reset(){if(window.EBDA_MISTAKES)window.EBDA_MISTAKES.clear();items=[];session="";cursor=0;chosen=null;graded=false;correct=0;reviewed={};responses={};hintFlags={};cachedStage="";checkpoint=false;finished=false;codeDrafts={};runToken++;codeRunning=false;codeMessage="";visualProbe=null}
+function reset(){if(saveDelay)clearTimeout(saveDelay);saveDelay=null;if(window.EBDA_MISTAKES)window.EBDA_MISTAKES.clear();items=[];session="";cursor=0;chosen=null;graded=false;correct=0;reviewed={};responses={};hintFlags={};cachedStage="";checkpoint=false;finished=false;codeDrafts={};runToken++;codeRunning=false;codeMessage="";visualProbe=null}
 function ensure(g,u,i){if(session!==[g,u,i].join("-")||!items.length)begin(g,u,i)}
 function isFinished(){return finished}
 function progress(){return {position:finished?50:cursor+1,answered:Object.keys(reviewed).length,total:items.length||50,finished}}
@@ -77,22 +77,22 @@ function panel(g,u,i){
  if(finished)return completionView();
  return '<div class="guided-question" aria-label="Lesson questions"><div class="eyebrow">GUIDED PRACTICE · 50 QUESTIONS</div><div id="ebdaa-practice-stage" aria-live="polite">'+cachedStage+'</div></div>';
 }
-function begin(g,u,i){runToken++;codeRunning=false;codeMessage="";codeDrafts={};visualProbe=null;adaptedStages=new Set();window.NTSS_LEARNING?.reset(g===1?"learn":"advancedLab");window.NTSS_APPLIED.reset("ai",[g,u,i].join("-"));window.EBDAA_CONTEXT_GAMES.reset('ai',[g,u,i].join('-'));window.EBDAA_GAME.resetLesson("ai",[g,u,i].join("-"));if(window.EBDA_MISTAKES)window.EBDA_MISTAKES.clear();const key=[g,u,i].join("-");items=shuffleQuestions(window.EBDAA_QUESTION_FACTORY.all(g,u,i),key);cursor=0;chosen=null;graded=false;correct=0;reviewed={};responses={};hintFlags={};session=key;grade=g;unit=u;lesson=i;window.EBDA_MASTERY.begin(g,u,i);hintShown=false;checkpoint=false;finished=false;draw()}
+function begin(g,u,i){if(saveDelay)clearTimeout(saveDelay);saveDelay=null;runToken++;codeRunning=false;codeMessage="";codeDrafts={};visualProbe=null;adaptedStages=new Set();window.NTSS_LEARNING?.reset(g===1?"learn":"advancedLab");window.NTSS_APPLIED.reset("ai",[g,u,i].join("-"));window.EBDAA_CONTEXT_GAMES.reset('ai',[g,u,i].join('-'));window.EBDAA_GAME.resetLesson("ai",[g,u,i].join("-"));if(window.EBDA_MISTAKES)window.EBDA_MISTAKES.clear();const key=[g,u,i].join("-");items=shuffleQuestions(window.EBDAA_QUESTION_FACTORY.all(g,u,i),key);cursor=0;chosen=null;graded=false;correct=0;reviewed={};responses={};hintFlags={};session=key;grade=g;unit=u;lesson=i;window.EBDA_MASTERY.begin(g,u,i);hintShown=false;checkpoint=false;finished=false;draw()}
 function answer(v){if(graded)return;chosen=v;responses[cursor]=Array.isArray(v)?v.slice():v;if(items[cursor]?.mode==="number"){const b=document.getElementById("ebdaa-check");if(b)b.disabled=String(v).trim()==="";return}draw()}
 function chooseOrder(v){if(graded)return;if(!Array.isArray(chosen))chosen=[];if(!chosen.includes(v))chosen.push(v);responses[cursor]=chosen.slice();draw()}
 function clearOrder(){if(graded)return;chosen=[];responses[cursor]=[];draw()}
 function showHint(){hintShown=true;hintFlags[cursor]=true;draw()}
 function check(){const q=items[cursor];if(graded||chosen===null||!q||(q.mode==="number"&&String(chosen).trim()==="")||(q.mode==="order"&&(!Array.isArray(chosen)||chosen.length!==4)))return;graded=true;const ok=q.mode==="number"?Number.isFinite(Number(chosen))&&Math.abs(Number(chosen)-Number(q.answer))<=0.005:q.mode==="order"?Array.isArray(chosen)&&chosen.join("|")===q.answer:q.mode==="live-code"?chosen==="pass":String(chosen)===String(q.answer);
-if(!Object.hasOwn(reviewed,cursor)){reviewed[cursor]=ok;window.EBDA_MASTERY.record(grade,unit,lesson,q,ok,hintShown);if(ok)correct++}window.NTSS_LEARNING?.record(grade===1?"learn":"advancedLab",cursor,ok,q);draw()}
+if(!Object.hasOwn(reviewed,cursor)){reviewed[cursor]=ok;window.EBDA_MASTERY.record(grade,unit,lesson,q,ok,hintShown);if(ok)correct++}window.NTSS_LEARNING?.record(grade===1?"learn":"advancedLab",cursor,ok,q);draw();saveCheckpoint()}
 function next(){if(!graded||finished)return;runToken++;codeRunning=false;codeMessage="";visualProbe=null;if(cursor===49){finish();scrollToQuestion();return}continueCheckpoint();scrollToQuestion()}
-function continueCheckpoint(){runToken++;codeRunning=false;codeMessage="";visualProbe=null;checkpoint=false;if(cursor+1<items.length){const next=cursor+1;if(next%10===0&&!adaptedStages.has(next)){const remaining=items.slice(next,Math.min(next+10,items.length));const ordered=window.EBDA_MASTERY.prioritizeUpcoming(grade,unit,lesson,remaining);items.splice(next,remaining.length,...ordered);adaptedStages.add(next)}cursor++;chosen=Object.hasOwn(responses,cursor)?(Array.isArray(responses[cursor])?responses[cursor].slice():responses[cursor]):null;graded=Object.hasOwn(reviewed,cursor);hintShown=!!hintFlags[cursor];draw()}}
+function continueCheckpoint(){runToken++;codeRunning=false;codeMessage="";visualProbe=null;checkpoint=false;if(cursor+1<items.length){const next=cursor+1;if(next%10===0&&!adaptedStages.has(next)){const remaining=items.slice(next,Math.min(next+10,items.length));const ordered=window.EBDA_MASTERY.prioritizeUpcoming(grade,unit,lesson,remaining);items.splice(next,remaining.length,...ordered);adaptedStages.add(next)}cursor++;chosen=Object.hasOwn(responses,cursor)?(Array.isArray(responses[cursor])?responses[cursor].slice():responses[cursor]):null;graded=Object.hasOwn(reviewed,cursor);hintShown=!!hintFlags[cursor];draw();saveCheckpoint()}}
 function drawCheckpoint(){const completed=cursor+1,round=completed/10;const inStage=Array.from({length:10},(_,i)=>reviewed[completed-10+i]===true).filter(Boolean).length;const suggested=window.EBDA_MASTERY.weakest(grade,unit,lesson);cachedStage='<div class="feedback" role="status"><div class="eyebrow">CHECKPOINT '+round+' / 5</div><h3>Great — one learning sprint completed</h3><p>First-attempt correct answers in this sprint: <b>'+inStage+'/10</b>. Incorrect answers are opportunities to revisit the experiment and try a similar task.</p><p>Questions completed: <b>'+completed+'/50</b>. Review Skill '+suggested.id+' if it needs more practice. The question order stays fixed for this attempt. No score is stored after you leave the page.</p><div class="actions"><button class="btn light" onclick="EBDAA_PRACTICE.beginFromCheckpoint()">Review this sprint</button><button class="btn teal" onclick="EBDAA_PRACTICE.continueCheckpoint()">Continue to sprint '+(round+1)+' →</button></div></div>'+window.EBDA_MASTERY.map(grade,unit,lesson);const node=document.getElementById("ebdaa-practice-stage");if(node)node.innerHTML=cachedStage}
 function beginFromCheckpoint(){checkpoint=false;cursor=Math.max(0,cursor-9);chosen=Object.hasOwn(responses,cursor)?(Array.isArray(responses[cursor])?responses[cursor].slice():responses[cursor]):null;graded=Object.hasOwn(reviewed,cursor);hintShown=!!hintFlags[cursor];draw()}
-function prev(){if(cursor>0){runToken++;codeRunning=false;codeMessage="";visualProbe=null;cursor--;chosen=Object.hasOwn(responses,cursor)?(Array.isArray(responses[cursor])?responses[cursor].slice():responses[cursor]):null;graded=Object.hasOwn(reviewed,cursor);hintShown=!!hintFlags[cursor];draw();scrollToQuestion()}}
+function prev(){if(cursor>0){runToken++;codeRunning=false;codeMessage="";visualProbe=null;cursor--;chosen=Object.hasOwn(responses,cursor)?(Array.isArray(responses[cursor])?responses[cursor].slice():responses[cursor]):null;graded=Object.hasOwn(reviewed,cursor);hintShown=!!hintFlags[cursor];draw();saveCheckpoint();scrollToQuestion()}}
 function finish(){finished=true;cachedStage=completionView();const node=document.getElementById("ebdaa-practice-stage");if(node)node.innerHTML=cachedStage;window.EBDA_APP_RENDER?.()}
 function restart(){if(!session)return;const [g,u,i]=session.split("-").map(Number);begin(g,u,i);scrollToQuestion()}
 
-function codeInput(value){if(graded||codeRunning)return;codeDrafts[cursor]=String(value).slice(0,3000)}
+function codeInput(value){if(graded||codeRunning)return;codeDrafts[cursor]=String(value).slice(0,3000);if(saveDelay)clearTimeout(saveDelay);saveDelay=setTimeout(()=>{saveDelay=null;saveCheckpoint()},450)}
 function probe(value){
  const q=currentQuestion();if(!q?.visual)return;
  const n=Number(value);if(!Number.isFinite(n))return;
@@ -138,7 +138,8 @@ cachedStage='<div class="practice-flow">'+milestone+'<div class="topmeta"><span 
 window.NTSS_ASSESSMENT.questionView(q,cursor)+questionActivity+controls+hint+verdict+mistake+
 (!graded&&!hintShown?'<div class="actions"><button class="btn light" onclick="EBDAA_PRACTICE.showHint()">💡 Need a hint?</button></div>':'')+
 '<div class="stepfooter"><button class="btn light" onclick="EBDAA_PRACTICE.prev()" '+(cursor===0?'disabled':'')+'>← Previous</button>'+action+'</div>'+
-(saved()&&!finished?'<button class="ntss-restore" onclick="EBDAA_PRACTICE.resumeCheckpoint()">Resume saved session (this device)</button>':'')+'</div>';const node=document.getElementById("ebdaa-practice-stage");if(node)node.innerHTML=cachedStage;syncFocusStatus();window.NTSS_LEARNING?.decorate(document.getElementById("app"),grade===1?"learn":"advancedLab");
+(cursor===0&&saved()?.session===session&&Object.keys(reviewed).length===0?'<button class="ntss-restore" onclick="EBDAA_PRACTICE.resumeCheckpoint()">Continue saved practice on this device</button>':'')+'</div>';const node=document.getElementById("ebdaa-practice-stage");if(node)node.innerHTML=cachedStage;syncFocusStatus();window.NTSS_LEARNING?.decorate(document.getElementById("app"),grade===1?"learn":"advancedLab");
 }
+window.addEventListener?.("pagehide",()=>{if(saveDelay)clearTimeout(saveDelay);saveDelay=null;if(session&&!finished)saveCheckpoint()});
 return {panel,reset,ensure,isFinished,progress,gameChooseIndex,chooseOption,submitOrNext,begin,currentQuestion,questionOrder,answer,chooseOrder,clearOrder,showHint,check,next,continueCheckpoint,beginFromCheckpoint,prev,finish,restart,saveCheckpoint,clearCheckpoint,resumeCheckpoint,codeInput,runCode,probe,hasCheckpoint:()=>!!saved(),all:(g,u,i)=>window.EBDAA_QUESTION_FACTORY.all(g,u,i)};
 })();
