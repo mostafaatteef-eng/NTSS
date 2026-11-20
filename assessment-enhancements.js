@@ -2,11 +2,11 @@
 window.NTSS_ASSESSMENT=(function(){
  const safe=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
  const python=[
- {task:"Write Python that prints the average of these three scores.",starter:"scores = [70, 80, 90]\nprint()",expected:"80.0",solution:"Use sum(scores) / len(scores) inside print()."},
- {task:"Print the square of 7 using Python.",starter:"n = 7\nprint()",expected:"49",solution:"Multiply n by n, or use n ** 2."},
- {task:"Count how many scores are greater than 80.",starter:"scores = [64, 91, 75, 88, 95]\nprint()",expected:"3",solution:"Count values for which x > 80."},
- {task:"Print the sum of the first five positive integers.",starter:"values = [1, 2, 3, 4, 5]\nprint()",expected:"15",solution:"Use sum(values) or a for loop."},
- {task:"Print the number of times AI appears in the list.",starter:"topics = ['AI', 'SQL', 'AI', 'Python', 'AI']\nprint()",expected:"3",solution:"Use topics.count('AI')."}
+ {task:"Define average(values) to return the arithmetic mean of a non-empty list.",starter:"def average(values):\n    pass",tests:[["average([70,80,90])",80],["average([2,4,6])",4],["average([10,20])",15]],solution:"Return sum(values) / len(values)."},
+ {task:"Define square(n) to return n squared.",starter:"def square(n):\n    pass",tests:[["square(7)",49],["square(0)",0],["square(-4)",16]],solution:"Return n * n or n ** 2."},
+ {task:"Define count_high(scores) to count values strictly greater than 80.",starter:"def count_high(scores):\n    pass",tests:[["count_high([64,91,75,88,95])",3],["count_high([80,80,80])",0],["count_high([81,100])",2]],solution:"Use sum(x > 80 for x in scores)."},
+ {task:"Define total(values) to return the sum of a list.",starter:"def total(values):\n    pass",tests:[["total([1,2,3,4,5])",15],["total([])",0],["total([-2,2,6])",6]],solution:"Return sum(values), or accumulate values in a loop."},
+ {task:"Define count_ai(topics) to count occurrences of 'AI'.",starter:"def count_ai(topics):\n    pass",tests:[["count_ai(['AI','SQL','AI','Python','AI'])",3],["count_ai(['SQL'])",0],["count_ai(['AI'])",1]],solution:"Return topics.count('AI')."}
  ];
  const sql=[
  {task:"Show names of students whose grade is at least 85, highest grade first.",starter:"SELECT name FROM students",expected:[["Nour"],["Mona"],["Salma"]],solution:"SELECT name FROM students WHERE grade >= 85 ORDER BY grade DESC;"},
@@ -108,14 +108,19 @@ window.NTSS_ASSESSMENT=(function(){
     const r=event.data||{},task=q.codeTask;
     if(!r.ok)return finish({runtimeError:false,passed:false,message:String(r.output||"Execution error").slice(0,400)});
     if(kind==="python"){
-     const got=String(r.output||"").trim();
-     return finish({runtimeError:false,passed:got===String(task.expected),message:"Output: "+got.slice(0,200)+(got===String(task.expected)?" · Test passed":" · Expected: "+task.expected)});
+     const got=String(r.output||"").trim().split("\n");
+     const markers=got.filter(line=>line.startsWith("NTSS_TEST:"));
+     const passed=markers.length===task.tests.length&&markers.every(line=>line==="NTSS_TEST:PASS");
+     return finish({runtimeError:false,passed,message:markers.length+"/"+task.tests.length+" cases evaluated · "+markers.filter(x=>x==="NTSS_TEST:PASS").length+" passed"+(passed?" ✓":" · Check your function and edge cases")});
     }
     const got=r.results?.[0]?.values||[];
     const passed=JSON.stringify(got)===JSON.stringify(task.expected);
-    finish({runtimeError:false,passed,message:(passed?"Query passed":"Query result differs from the expected rows")+" · "+JSON.stringify(got).slice(0,230)});
+    finish({runtimeError:false,passed,message:(passed?"Query passed":"Query result differs from expected rows")+" · "+JSON.stringify(got).slice(0,230)});
    };
-   worker.postMessage({code});
+   if(kind==="python"){
+    const checks=q.codeTask.tests.map(([expr,expected])=>"try:\\n    _ntss_value = "+expr+"\\n    print('NTSS_TEST:PASS' if _ntss_value == "+JSON.stringify(expected)+" else 'NTSS_TEST:FAIL')\\nexcept Exception:\\n    print('NTSS_TEST:ERROR')").join("\\n");
+    worker.postMessage({code:code+"\\n"+checks.replace(/\\\\n/g,"\\n")});
+   }else worker.postMessage({code});
   }catch(err){finish({runtimeError:true,message:String(err?.message||err)})}
   return ()=>finish({runtimeError:true,message:"Cancelled"});
  }
