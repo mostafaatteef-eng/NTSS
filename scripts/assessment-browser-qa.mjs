@@ -82,6 +82,25 @@ try{
  assert.equal(readyLazy.cases,true,"Case labs should initialize");
  assert.equal(readyLazy.visual,true,"Visualizer should initialize");
  await lazyPage.close();
+
+ // Each curriculum must request a student name before rendering its 50-question activity.
+ const subjectChecks=[
+  ["mathOpen",1],["englishOpen",1],["physicsOpen",1],["businessOpen",1],
+  ["germanOpen",1],["arabicOpen",1],["civicsOpen",1],["socialOpen",2],["economicsOpen",3]
+ ];
+ const subjectPage=await browser.newPage({viewport:{width:430,height:850},serviceWorkers:"block"});
+ await subjectPage.goto(url,{waitUntil:"load"});
+ for(const [open,grade] of subjectChecks){
+  await subjectPage.evaluate(([fn,g])=>{window.chooseGrade(g);window[fn](0)},[open,grade]);
+  await subjectPage.locator("#ebda-lesson-student-name").waitFor({timeout:20000});
+  assert.ok(await subjectPage.locator(".ebda-name-gate").count(),open+" requires name gate");
+  await subjectPage.locator("#ebda-lesson-student-name").fill("QA Student");
+  await subjectPage.getByRole("button",{name:/Start lesson|ابدأ الدرس/i}).click();
+  await subjectPage.locator("#ebda-lesson-student-name").waitFor({state:"detached",timeout:15000});
+  assert.ok(await subjectPage.locator(".practice-focus").count(),open+" opens student lesson");
+ }
+ await subjectPage.close();
+
  // Verify a first answer survives a real page reload in local browser storage.
  const study=await browser.newPage({viewport:{width:430,height:850},serviceWorkers:"block"});
  await study.goto(url,{waitUntil:"load"});
