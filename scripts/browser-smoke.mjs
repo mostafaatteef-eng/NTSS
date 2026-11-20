@@ -100,7 +100,10 @@ try{
  const current=await page.evaluate(()=>window.EBDAA_PRACTICE.questionOrder());
  if(prior.length!==50||new Set(prior).size!==50||prior.join("|")===current.join("|"))throw Error("New attempt did not reshuffle its 50 unique questions");
  const q=await page.evaluate(()=>window.EBDAA_PRACTICE.currentQuestion());
- if(q.mode==="order"){
+ if(q.mode==="live-code"){
+   // Code execution is covered separately; this checks navigation and grading integration.
+   await page.evaluate(()=>window.EBDAA_PRACTICE.answer("pass"));
+ }else if(q.mode==="order"){
    for(const value of q.answer.split("|"))await page.locator("#ebdaa-practice-stage button.choice").filter({hasText:value}).click();
  }else if(q.mode==="number"){
    await page.locator("#ebdaa-answer").fill(String(q.answer));
@@ -108,7 +111,7 @@ try{
    await page.locator("#ebdaa-practice-stage button.choice").filter({hasText:String(q.answer)}).first().click();
  }
  await page.locator("#ebdaa-practice-stage").getByRole("button",{name:"Check answer",exact:true}).click();
- if(!await page.locator("#ebdaa-practice-stage").getByText(/Correct!|Not quite yet/).count())throw Error("Practice feedback missing");
+ if(!await page.locator("#ebdaa-practice-stage").getByText(/Correct — well done|Not quite — here is why/).count())throw Error("Practice feedback missing");
  await page.locator("#ebdaa-practice-stage").getByRole("button",{name:/Next question/i}).click();
  if((await page.locator("#focus-counter").textContent())!=="Question 2 / 50")throw Error("Next practice question missing");
  await page.locator("#ebdaa-practice-stage").getByRole("button",{name:/Previous/i}).click();
@@ -137,6 +140,10 @@ try{
  await page.locator(".advanced-stage-content button.choice").nth(yearThreeAnswer).click();
  await page.getByRole("button",{name:"Check answer",exact:true}).click();
  await page.locator(".stage .stepfooter .btn.teal").click();
+ if(await page.locator("#ebda-lesson-student-name").count()){
+   await page.locator("#ebda-lesson-student-name").fill("QA Student");
+   await page.getByRole("button",{name:/Start lesson/i}).click();
+ }
  if((await page.locator("#focus-counter").textContent())!=="Question 1 / 50")throw Error("Year 3 integrated practice missing");
  if(await page.evaluate(()=>window.EBDAA_PRACTICE.questionOrder().length)!==50)throw Error("Year 3 full question bank missing");
  // Verify the actual question-only UI at laptop, tablet and phone widths.
