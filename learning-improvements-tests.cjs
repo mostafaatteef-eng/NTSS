@@ -67,7 +67,8 @@ test('Adaptive AI sprint reprioritizes only the next ten unanswered items',()=>{
  EBDAA_CONTEXT_GAMES:{reset(){},ai(){return''},report(){return''}},
  EBDA_MISTAKES:{clear(){},html(){return''}},
  EBDAA_DATA:{sessions:[{unit:1,title:'Programming practice'}]},
- NTSS_LEARNING:{reset(){},record(){},decorate(){}}
+ NTSS_LEARNING:{reset(){},record(){},decorate(){}},
+ NTSS_ASSESSMENT:{questionView(q){return '<h3 class="practice-question">'+q.question+'</h3>'},visual(){return ''} }
  };
  const practice=moduleFrom('practice-workshop.js',stubs).EBDAA_PRACTICE;
  practice.begin(1,0,0);
@@ -89,7 +90,7 @@ test('Adaptive AI sprint reprioritizes only the next ten unanswered items',()=>{
 });
 test('Production HTML loads new learning modules before app entrypoint',()=>{
  const html=read('index.html');
- const scripts=[...html.matchAll(/<script src="([^"]+)"/g)].map(x=>x[1]);
+ const scripts=[...html.matchAll(/<script\b[^>]*\bsrc="([^"]+)"[^>]*>/g)].map(x=>x[1]);
  const indexOf=name=>scripts.findIndex(v=>v.startsWith(name));
  for(const name of ['learning-support.js','learning-concepts.js'])assert.ok(indexOf(name)>0&&indexOf(name)<indexOf('app-main.js'),name);
  assert.match(html,/learning-ux\.css/);
