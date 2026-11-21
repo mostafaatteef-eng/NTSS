@@ -19,3 +19,6 @@
 .ntss-restore{margin:12px 0;display:block;min-height:42px;padding:10px 14px;border:1px solid #1ca29a;background:#effaf5;color:#146c60;border-radius:12px;font-weight:800}
 #ntss-checkpoint-status{font-size:11px;color:#59786c}
 @media(max-width:520px){.ntss-journey-nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.ntss-journey-nav button{font-size:10px}.ntss-journey-test h3{font-size:16px}}
+.ntss-stage-gate{background:#f6fbfa;border:1px solid #d7ebe7;border-radius:16px;padding:22px;margin:4px 0 16px}
+.ntss-stage-gate .practice-question{margin:8px 0 12px}
+.ntss-stage-gate .feedback{margin:10px 0}
