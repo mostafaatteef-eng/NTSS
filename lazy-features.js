@@ -16,6 +16,19 @@ window.NTSS_LAZY=(function(){
   businessPractice:"business-english-practice.js",germanPractice:"german-practice.js",arabicPractice:"arabic-practice.js",
   socialPractice:"social-studies-practice.js",civicsPractice:"civics-practice.js",economicsPractice:"economics-practice.js"
  };
+ // Subject curricula (unit titles and session lists) download only when a student opens
+ // that subject or searches across subjects; the landing page no longer downloads all of them.
+ const curriculumFiles={
+  "mathematics":["math-curriculum.js?v=20261115"],
+  "advanced-english":["english-curriculum.js?v=20261115-review","english-grammar-extensions.js?v=20261115-review"],
+  "arabic-language":["arabic-curriculum.js?v=20261115-books","arabic-source-questions.js?v=20261115-source","arabic-grammar-items.js?v=20261115-targeted"],
+  "german-language":["german-curriculum.js?v=20261115","german-question-data.js?v=20261115","german-audio-dialogues.js?v=20261115"],
+  "social-studies":["social-studies-curriculum.js?v=20261116-v1"],
+  "civics":["civics-curriculum.js?v=20261116-v1"],
+  "economics":["economics-curriculum.js?v=20261116-v1"],
+  "business-english":["business-english-curriculum.js?v=20261116-verified"],
+  "physics-stem":["physics-curriculum.js?v=20261116","physics-special-sims.js?v=20261116-1","physics-visual-lab.js?v=20261116"]
+ };
  const ready=new Set(),loading=new Map();
  let pending=null;
  function request(file){
@@ -44,5 +57,15 @@ window.NTSS_LAZY=(function(){
   return file?request(file):Promise.reject(Error("Unknown subject module"));
  }
  function isSubjectReady(mode){return !!subjectFiles[mode]&&ready.has(subjectFiles[mode])}
- return {ensureStudio,isReady:()=>studioFiles.every(file=>ready.has(file)),ensureSubject,isSubjectReady,subjectFiles:{...subjectFiles},files:studioFiles.slice()};
+ function ensureCurriculum(subject){
+  const files=curriculumFiles[subject];
+  if(!files)return Promise.reject(Error("Unknown subject curriculum"));
+  return Promise.all(files.filter(file=>!ready.has(file)).map(request)).then(()=>undefined);
+ }
+ function isCurriculumReady(subject){const files=curriculumFiles[subject];return !!files&&files.every(file=>ready.has(file))}
+ function ensureAllCurricula(){
+  const files=[...new Set(Object.values(curriculumFiles).flat())];
+  return Promise.all(files.filter(file=>!ready.has(file)).map(request)).then(()=>undefined);
+ }
+ return {ensureStudio,isReady:()=>studioFiles.every(file=>ready.has(file)),ensureSubject,isSubjectReady,ensureCurriculum,isCurriculumReady,ensureAllCurricula,subjectFiles:{...subjectFiles},files:studioFiles.slice()};
 })();

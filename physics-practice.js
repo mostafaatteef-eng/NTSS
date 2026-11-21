@@ -91,7 +91,7 @@ function setInput(v){input=String(v).slice(0,60)}
 function setSlider(v){input=String(v);redraw()}
 function choose(j){input=String(state.items[state.cursor].options[j]);redraw()}
 function check(){const q=state.items[state.cursor];if(state.answers[state.cursor]?.checked||input.trim()==="")return;const num=Number(input);const ok=Number.isFinite(num)&&Math.abs(num-q.value)<Math.max(.011,Math.abs(q.value)*.001);state.answers[state.cursor]={checked:true,correct:ok,value:input};window.NTSS_LEARNING?.record("physicsPractice",state.cursor,ok,q);feedback=ok?"Correct — excellent prediction!":"Try the worked model and review the units.";redraw()}
-function next(){window.EBDAA_PHYSICS_SPECIAL?.stop();if(!state.answers[state.cursor]?.checked)return;if(state.cursor===49)state.done=true;else state.cursor++;input=state.answers[state.cursor]?.value||"";feedback="";redraw()}
+function next(){window.EBDAA_PHYSICS_SPECIAL?.stop();if(!state.answers[state.cursor]?.checked)return;if(state.cursor===49){state.done=true;window.EBDA_PROGRESS?.mark("physics",state.g,state.u,state.i,Math.round(100*Object.values(state.answers).filter(a=>a&&a.correct).length/Math.max(1,(state.items).length)));}else state.cursor++;input=state.answers[state.cursor]?.value||"";feedback="";redraw()}
 function previous(){window.EBDAA_PHYSICS_SPECIAL?.stop();if(state.cursor>0){state.cursor--;input=state.answers[state.cursor]?.value||"";feedback="";redraw()}}
 function restart(){start(state.g,state.u,state.i)}
 function render(){
