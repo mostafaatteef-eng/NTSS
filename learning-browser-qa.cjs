@@ -31,7 +31,7 @@ let activePage=null,activeDevice='startup',activeCase='startup';
 process.on('unhandledRejection',e=>{console.error('Unhandled QA rejection:',e)})
 function check(condition,msg){assert.ok(condition,msg)}
 (async()=>{
- const browser=await browserType.launch(engineName==='chromium'?{headless:true,args:['--no-sandbox']}:{headless:true});
+ const browser=await browserType.launch(engineName==='chromium'?{headless:true,args:['--no-sandbox','--ignore-certificate-errors']}:{headless:true});
  try{
   for(const device of viewports){
    const context=await browser.newContext({viewport:{width:device.width,height:device.height},deviceScaleFactor:1,ignoreHTTPSErrors:true});
