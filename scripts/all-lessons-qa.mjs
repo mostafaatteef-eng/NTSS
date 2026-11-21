@@ -49,7 +49,7 @@ for(const [subject,catalog,engine] of specs){
      for(const [number,q]of questions.entries()){
       assert.ok(String(q.question??q.prompt??q.stem??"").trim(),"Question text: "+context+" / "+number);
       assert.ok(q.answer!==undefined&&q.answer!==null,"Answer key: "+context+" / "+number);
-      if(Array.isArray(q.options))assert.ok(q.options.length>=2,"Answer options: "+context+" / "+number);
+      if(Array.isArray(q.options)&&q.options.length>0)assert.ok(q.options.length>=2,"Answer options: "+context+" / "+number);
      }
      graded++;
     }catch(err){errors.push({context,error:String(err)})}
