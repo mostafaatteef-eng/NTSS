@@ -23,7 +23,7 @@ assert.match(main,/getName\(studentKey\)/,"AI questions require name");
 for(const [subject,label,fn,file] of subjects){
  const practice=read(file);
  if(fn){
-  const opener=new RegExp("function "+fn+"\\(i\\)\\{registerNamedLesson\\(\\\""+subject+"\\\"");
+  const opener=new RegExp("function "+fn+"\\(i\\)\\{[\\s\\S]{0,260}?registerNamedLesson\\(\\\""+subject+"\\\"");
   assert.match(main,opener,subject+" name entry must be registered");
  }
  if(subject==="ai")assert.match(practice,/EBDA_COMPLETION\.render\(/);

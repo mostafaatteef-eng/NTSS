@@ -4,7 +4,7 @@ import vm from "node:vm";
 const html=readFileSync("index.html","utf8");
 const sw=readFileSync("sw.js","utf8");
 const scriptTags=[...html.matchAll(/<script\b[^>]*\bsrc="[^"]+"[^>]*><\/script>/gi)].map(m=>m[0]);
-assert.ok(scriptTags.length>=45,"Application scripts should still be linked");
+assert.ok(scriptTags.length>=30,"Core application scripts should still be linked");
 assert.ok(scriptTags.every(tag=>/\bdefer\b/.test(tag)),"All classic app scripts should be deferred, not parser blocking");
 assert.ok(!scriptTags.some(tag=>/\basync\b/.test(tag)),"Async would break ordered module dependencies");
 const lazyModules=["case-labs.js","scenario-labs.js","visual-playground.js","code-challenges.js","concept-visualizer.js","theory-studio.js","lab-studio.js"];
@@ -16,10 +16,14 @@ const subjectModules=["math-practice.js","physics-practice.js","english-practice
  "german-practice.js","arabic-practice.js","social-studies-practice.js","civics-practice.js","economics-practice.js"];
 for(const name of subjectModules)assert.ok(!scriptTags.some(tag=>tag.includes('src="'+name)),"Subject practice must load on demand: "+name);
 
+const curriculumModules=["math-curriculum.js","english-curriculum.js","english-grammar-extensions.js","arabic-curriculum.js","arabic-source-questions.js","arabic-grammar-items.js","german-curriculum.js","german-question-data.js","german-audio-dialogues.js","social-studies-curriculum.js","civics-curriculum.js","economics-curriculum.js","business-english-curriculum.js","physics-curriculum.js","physics-special-sims.js","physics-visual-lab.js"];
+for(const name of curriculumModules)assert.ok(!scriptTags.some(tag=>tag.includes('src="'+name)),"Curriculum data must load on demand: "+name);
+
 const lazy=readFileSync("lazy-features.js","utf8");
 assert.doesNotThrow(()=>new vm.Script(lazy));
 assert.ok(lazyModules.every(name=>lazy.includes('"'+name+'"')),"Every optional module must be available on demand");
 assert.ok(subjectModules.every(name=>lazy.includes('"'+name+'"')),"Every subject module must be configured for lazy loading");
+assert.ok(curriculumModules.every(name=>lazy.includes('"'+name)),"Every curriculum module must be configured for lazy loading");
 
 assert.doesNotThrow(()=>new vm.Script(sw));
 assert.ok(!sw.includes("html.matchAll("),"Do not eagerly fetch every linked asset during service worker install");

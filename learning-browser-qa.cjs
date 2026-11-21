@@ -45,9 +45,9 @@ function check(condition,msg){assert.ok(condition,msg)}
    check(await page.locator('#app').count()===1,'Missing app element');
    for(const testCase of cases){
     activeCase=testCase.name;
-    const routingError=await page.evaluate(({grade,subject,unit,lesson})=>{
+    const routingError=await page.evaluate(async({grade,subject,unit,lesson})=>{
       chooseGrade(grade);
-      chooseSubject(subject);
+      await chooseSubject(subject);
       if(typeof window[unit]!=='function'||typeof window[lesson]!=='function')return 'missing navigation handler '+unit+' '+lesson;
       window[unit](0);
       window[lesson](0);
@@ -84,7 +84,7 @@ function check(condition,msg){assert.ok(condition,msg)}
    }
    activeCase='math-answer-flow';
    // Exercise the real grading/Next buttons in the mathematics UI.
-   await page.evaluate(()=>{chooseGrade(1);chooseSubject('mathematics');mathChooseUnit(0);mathOpen(0)});
+   await page.evaluate(async()=>{chooseGrade(1);await chooseSubject('mathematics');mathChooseUnit(0);mathOpen(0)});
    if(await page.locator('#math-answer').count()){
      await page.locator('#math-answer').fill('1');
    }else{
