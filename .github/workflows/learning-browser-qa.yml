@@ -7,7 +7,7 @@ permissions:
   contents: read
 jobs:
   learning-browser-qa:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 25
     strategy:
       fail-fast: false
@@ -24,14 +24,17 @@ jobs:
         run: npm install --no-save --no-package-lock playwright@1.56.1
       - name: Install Chromium
         run: npx playwright install --with-deps ${{ matrix.browser }}
-      - name: Start local server
+      - name: Start local HTTPS server
         run: |
-          python3 -m http.server 8765 --bind 127.0.0.1 > /tmp/ntss-server.log 2>&1 &
+          openssl req -x509 -newkey rsa:2048 -sha256 -nodes -days 1 -keyout /tmp/ntss-test-key.pem -out /tmp/ntss-test-cert.pem -subj "/CN=127.0.0.1" -addext "subjectAltName=IP:127.0.0.1,DNS:localhost" >/dev/null 2>&1
+          sudo cp /tmp/ntss-test-cert.pem /usr/local/share/ca-certificates/ntss-test.crt
+          sudo update-ca-certificates >/dev/null
+          node scripts/qa-https-server.mjs > /tmp/ntss-server.log 2>&1 &
           echo $! > /tmp/ntss-server.pid
       - name: Wait for local server
         run: |
           for i in {1..20}; do
-            if curl --silent --fail http://127.0.0.1:8765/ >/dev/null; then exit 0; fi
+            if curl --insecure --silent --fail https://127.0.0.1:8765/ >/dev/null; then exit 0; fi
             sleep 1
           done
           cat /tmp/ntss-server.log

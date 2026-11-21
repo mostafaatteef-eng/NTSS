@@ -68,6 +68,7 @@ test('Opt-in 50-item checkpoint survives refresh, preserves scored order, and cl
   EBDA_MISTAKES:{clear(){},html(){return''}},
   EBDAA_DATA:{sessions:[{unit:1,title:'AI programming'}]},
   NTSS_LEARNING:{reset(){},record(){},decorate(){}},
+  NTSS_ASSESSMENT:{questionView(q){return '<h3 class="practice-question">'+q.question+'</h3>'},visual(){return ''}},
   EBDA_APP_RENDER(){}
  });
  const a=load('practice-workshop.js',mocks(),{localStorage}).EBDAA_PRACTICE;
@@ -86,8 +87,8 @@ test('Opt-in 50-item checkpoint survives refresh, preserves scored order, and cl
 });
 test('Offline support does not cache foreign CDN code, and teacher preview is labeled honestly',()=>{
  const sw=read('sw.js'),app=read('app-main.js'),page=read('index.html');
- assert.match(sw,/url.origin===self.location.origin/);
- assert.match(sw,/same-origin assets only/);
+ assert.match(sw,/url\.origin\s*!==\s*self\.location\.origin/);
+ assert.match(sw,/if\(url\.origin!==self\.location\.origin/,"Service Worker must block off-origin requests");
  assert.doesNotMatch(sw,/cdn\.jsdelivr\.net/);
  assert.match(app,/Public teacher preview/);
  assert.match(app,/not an authenticated teacher account/);

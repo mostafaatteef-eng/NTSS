@@ -188,7 +188,7 @@ function namedLessonGate(d){
  '<p>'+(ar?"اكتب اسمك كما تريد ظهوره على شهادة إتمام الدرس.":"Enter your name as you want it printed on your certificate.")+'</p>'+
  '<form onsubmit="submitNamedLesson();return false">'+
  '<label for="ebda-lesson-student-name">'+(ar?"اسم الطالب بالكامل":"Student full name")+'</label>'+
- '<input id="ebda-lesson-student-name" type="text" dir="auto" minlength="3" maxlength="80" autocomplete="name" required placeholder="'+(ar?"اسم الطالب":"Your full name")+'" aria-describedby="ebda-name-error ebda-name-privacy">'+
+ '<input id="ebda-lesson-student-name" type="text" dir="auto" minlength="3" maxlength="80" autocomplete="off" required placeholder="'+(ar?"اسم الطالب":"Your full name")+'" aria-describedby="ebda-name-error ebda-name-privacy">'+
  '<p id="ebda-name-error" class="ebda-name-gate__error" role="alert"></p>'+
  '<button class="btn teal" type="submit">'+(ar?"ابدأ الدرس":"Start lesson →")+'</button></form>'+
  '<p id="ebda-name-privacy" class="ebda-name-gate__privacy">'+(ar?"الاسم يستخدم داخل الجلسة فقط دون إرساله إلى خادم.":"Name is used only in this browser session and is not sent to a server.")+'</p></div></div></section>';
@@ -235,7 +235,7 @@ function focusPractice(){
    '<p>Enter your name as you want it printed on your completion certificate.</p>'+
    '<form onsubmit="startNamedPractice('+g+','+u+','+i+');return false">'+
    '<label for="ebda-lesson-student-name">Student full name</label>'+
-   '<input id="ebda-lesson-student-name" name="studentName" type="text" dir="auto" minlength="3" maxlength="80" autocomplete="name" required placeholder="Your full name" aria-describedby="ebda-name-privacy ebda-name-error">'+
+   '<input id="ebda-lesson-student-name" name="studentName" type="text" dir="auto" minlength="3" maxlength="80" autocomplete="off" required placeholder="Your full name" aria-describedby="ebda-name-privacy ebda-name-error">'+
    '<p id="ebda-name-error" role="alert" class="ebda-name-gate__error"></p>'+
    '<button class="btn teal" type="submit">Start lesson →</button></form>'+
    '<p id="ebda-name-privacy" class="ebda-name-gate__privacy">Your name is only used for this certificate in the current browser session. It is not sent to a school server.</p>'+

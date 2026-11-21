@@ -9,7 +9,7 @@ const browserType=engines[engineName];
 if(!['chromium','webkit'].includes(engineName)||!browserType)throw Error('Unsupported test browser');
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
-const ROOT=process.env.NTSS_TEST_URL||'http://127.0.0.1:8765/';
+const ROOT=process.env.NTSS_TEST_URL||'https://127.0.0.1:8765/';
 const viewports=[
  {name:'phone-compact',width:360,height:780},
  {name:'phone-large',width:430,height:932},
@@ -31,10 +31,10 @@ let activePage=null,activeDevice='startup',activeCase='startup';
 process.on('unhandledRejection',e=>{console.error('Unhandled QA rejection:',e)})
 function check(condition,msg){assert.ok(condition,msg)}
 (async()=>{
- const browser=await browserType.launch(engineName==='chromium'?{headless:true,args:['--no-sandbox']}:{headless:true});
+ const browser=await browserType.launch(engineName==='chromium'?{headless:true,args:['--no-sandbox','--ignore-certificate-errors']}:{headless:true});
  try{
   for(const device of viewports){
-   const context=await browser.newContext({viewport:{width:device.width,height:device.height},deviceScaleFactor:1});
+   const context=await browser.newContext({viewport:{width:device.width,height:device.height},deviceScaleFactor:1,ignoreHTTPSErrors:true});
    const page=await context.newPage();
    activePage=page;activeDevice=device.name;
    const exceptions=[],violations=[];
@@ -45,13 +45,24 @@ function check(condition,msg){assert.ok(condition,msg)}
    check(await page.locator('#app').count()===1,'Missing app element');
    for(const testCase of cases){
     activeCase=testCase.name;
-    const result=await page.evaluate(({grade,subject,unit,lesson})=>{
+    const routingError=await page.evaluate(({grade,subject,unit,lesson})=>{
       chooseGrade(grade);
       chooseSubject(subject);
-      if(typeof window[unit]!=='function'||typeof window[lesson]!=='function')return {error:'missing navigation handler '+unit+' '+lesson};
+      if(typeof window[unit]!=='function'||typeof window[lesson]!=='function')return 'missing navigation handler '+unit+' '+lesson;
       window[unit](0);
       window[lesson](0);
-      return {
+      return null;
+    },testCase);
+    check(!routingError,device.name+' '+testCase.name+': '+routingError);
+    // New privacy/name requirement: wait for the on-demand module, enter a synthetic name,
+    // then check the actual lesson rather than assuming immediate question rendering.
+    await page.locator('.ebda-name-gate').waitFor({timeout:20000});
+    check((await page.locator('.ebda-name-gate__lesson').innerText()).trim().length>0,
+      device.name+' '+testCase.name+' name gate missing lesson title');
+    await page.locator('#ebda-lesson-student-name').fill('QA Student');
+    await page.getByRole('button',{name:/Start lesson|ابدأ الدرس/i}).click();
+    await page.locator('.practice-question').first().waitFor({timeout:20000});
+    const result=await page.evaluate(()=>({
        lesson:document.querySelector('.practice-focus__lesson')?.textContent||'',
        counter:document.querySelector('.practice-focus__counter')?.textContent||'',
        progress:!!document.querySelector('.practice-focus__track'),
@@ -59,8 +70,7 @@ function check(condition,msg){assert.ok(condition,msg)}
        tools:document.querySelectorAll('.ntss-learning-tools').length,
        expanded:document.querySelector('.ntss-learning-tools')?.open||false,
        duplicate:document.querySelectorAll('.ntss-learning-tools .ntss-learning-tools').length
-      };
-    },testCase);
+    }));
     check(!result.error,device.name+' '+testCase.name+': '+result.error);
     check(result.lesson.length>0,device.name+' '+testCase.name+' lesson title not rendered');
     check(result.question,device.name+' '+testCase.name+' question missing');
@@ -122,11 +132,21 @@ function check(condition,msg){assert.ok(condition,msg)}
      ]);
      if(!navigator.serviceWorker.controller){await new Promise(resolve=>{navigator.serviceWorker.addEventListener('controllerchange',resolve,{once:true});setTimeout(resolve,3500)})}
    });
-   await page.waitForTimeout(700);
+   await page.waitForFunction(()=>document.documentElement.dataset.offlineReady==="true",{timeout:30000});
    await context.setOffline(true);
-   await page.reload({waitUntil:'domcontentloaded',timeout:15000});
-   await page.waitForFunction(()=>typeof window.EBDA_APP_RENDER==='function',{timeout:10000});
-   check((await page.locator('#app').innerText()).length>10,device.name+' offline app shell missing');
+   if(engineName==='webkit'){
+     // WebKit on Linux can hit an engine-internal error on reload under SW interception.
+     // A fresh tab in the same offline browser context tests the same cached-shell contract.
+     const offlinePage=await context.newPage();
+     await offlinePage.goto(ROOT,{waitUntil:'domcontentloaded',timeout:15000});
+     await offlinePage.waitForFunction(()=>typeof window.EBDA_APP_RENDER==='function',{timeout:10000});
+     check((await offlinePage.locator('#app').innerText()).length>10,device.name+' offline app shell missing in new tab');
+     await offlinePage.close();
+   }else{
+     await page.reload({waitUntil:'domcontentloaded',timeout:15000});
+     await page.waitForFunction(()=>typeof window.EBDA_APP_RENDER==='function',{timeout:10000});
+     check((await page.locator('#app').innerText()).length>10,device.name+' offline app shell missing');
+   }
    await context.setOffline(false);
    await page.screenshot({path:artifactDir+'/'+engineName+'-'+device.name+'-last-subject.png',fullPage:true});
    await context.close();activePage=null;

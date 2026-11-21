@@ -97,10 +97,13 @@ function probe(value){
  const q=currentQuestion();if(!q?.visual)return;
  const n=Number(value);if(!Number.isFinite(n))return;
  visualProbe=n;
- const chart=document.querySelector(".ntss-data-card");if(chart){
-   const fresh=document.createElement("div");fresh.innerHTML=window.NTSS_ASSESSMENT.visual(q,n);
-   chart.replaceWith(fresh.firstElementChild);
- }
+ const chart=document.querySelector(".ntss-data-card");
+ if(!chart)return;
+ const output=chart.querySelector(".ntss-probe-label output");
+ if(output)output.textContent=String(n);
+ chart.querySelectorAll(".ntss-chart-bar").forEach((bar,index)=>{
+  bar.classList.toggle("is-high",q.visual.readings[index]>n);
+ });
 }
 function runCode(){
  const q=currentQuestion();if(graded||codeRunning||q?.mode!=="live-code")return;

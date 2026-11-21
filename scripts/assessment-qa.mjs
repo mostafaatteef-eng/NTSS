@@ -44,7 +44,17 @@ assert.ok(read("index.html").includes("assessment-enhancements.js"),"Assessment 
   setItem:(key,value)=>memory.set(key,value),
   removeItem:key=>memory.delete(key)
  };
- const mockDocument={getElementById:()=>null,querySelector:()=>null};
+ const visualOutput={textContent:""};
+ const barFlags=Array(4).fill(false);
+ const mockBars=barFlags.map((_,index)=>({classList:{toggle(name,value){if(name==="is-high")barFlags[index]=value}}}));
+ const mockChart={
+  querySelector(selector){return selector===".ntss-probe-label output"?visualOutput:null},
+  querySelectorAll(selector){return selector===".ntss-chart-bar"?mockBars:[]}
+ };
+ const mockDocument={
+  getElementById:()=>null,
+  querySelector(selector){return selector===".ntss-data-card"?mockChart:null}
+ };
  const site={
   EBDA_APP_RENDER(){},NTSS_ORIGINAL_LOGO:"",
   EBDAA_GAME:{resetLesson(){},render(){return ""}},
@@ -78,5 +88,22 @@ assert.ok(read("index.html").includes("assessment-enhancements.js"),"Assessment 
  assert.equal(practice.hasCheckpoint(),false,"Completed assessment clears saved draft");
  const certificate=site.EBDA_COMPLETION.render({subject:"ai",grade:1,unit:0,index:0,lesson:"QA Lesson",correct:50,total:50});
  assert.ok(certificate.includes("QA Student")&&certificate.includes('id="ebda-certificate-sheet"'));
+ // Regression: native slider DOM must stay mounted while its bar state updates.
+ practice.begin(1,0,0);
+ let displayed=null;
+ for(let step=0;step<50;step++){
+  const current=practice.currentQuestion();
+  if(current.mode==="visual-data"&&current.display==="bars"){displayed=current;break}
+  practice.answer(current.mode==="order"?current.answer.split("|"):current.mode==="live-code"?"pass":current.answer);
+  practice.check();
+  practice.next();
+ }
+ assert.ok(displayed,"A bar-chart question must exist in the question bank");
+ const originalBars=mockChart.querySelectorAll(".ntss-chart-bar");
+ practice.probe(17);
+ assert.equal(visualOutput.textContent,"17");
+ assert.deepEqual(barFlags,displayed.visual.readings.map(v=>v>17));
+ assert.equal(mockChart.querySelectorAll(".ntss-chart-bar"),originalBars,"Chart DOM is not rebuilt");
+
 }
 console.log("Assessment QA passed: syntax, all 116 lessons, 50-question contract, six layouts, multi-case coding, recovery and resume.");
