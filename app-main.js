@@ -163,86 +163,52 @@ function sourceFor(s){if(s.unit===1)return "First Term Teacher Guide, pp. 5–8 
  }
  return '<div class="topmeta"><span class="eyebrow">'+t("unit_word")+' '+unit+' / '+esc(D.names[unit-1])+'</span><span class="pill">'+t("concept_word")+' '+(lessonIndex+1)+' / '+sessions.length+'</span></div><div class="lesson-layout"><div class="side-list">'+sessions.map((x,i)=>'<button class="'+(x.id===selectedId?'active':'')+'" onclick="choose(\''+x.id+'\')"><span class="stepnum">'+(i+1)+'</span><span>'+esc(x.title)+'</span>'+progressBadge("ai",1,unit-1,i)+'</button>').join('')+'</div><section class="stage"><nav class="lesson-steps" aria-label="'+t("stages_aria")+'">'+stages.map((name,i)=>'<span class="lesson-step '+(i===step?'current':i<step?'done':'')+'"><span class="lesson-step__num">'+(i<step?'\u2713':(i+1))+'</span>'+esc(name)+'</span>').join('')+'</nav>'+(step<4?'<div class="lesson-shortcut"><button class="lesson-jump" onclick="jumpToPractice()">'+t("go_practice")+'</button></div>':'')+main+(hint?'<div class="hint"><b>'+t("hint_label")+'</b> '+esc(step===1?'Change the input and compare two outcomes. Explain the pattern you observe.':step===2?'Connect the model to the lesson title. Which variable is changing?':'Eliminate choices that conflict with the definition. Use the experiment before choosing.')+'</div>':'')+'<div class="stepfooter"><button class="btn light" onclick="back()">'+t("back_btn")+'</button><div style="display:flex;gap:8px">'+(step===0||step===3?(!checked?'<button class="btn teal" '+(answer===null?'disabled':'')+' onclick="verify()">'+t("check_btn")+'</button>':'<button class="btn teal" onclick="next()">'+t("continue_btn")+'</button>'):'<button class="btn teal" onclick="next()">'+t("continue_btn")+'</button>')+'</div></div>'+(step===4?'':'<button class="btn light" onclick="hint=true;render()">'+t("hint_btn")+'</button>')+'<div class="source">'+t("source_line")+' '+esc(sourceFor(s))+'. '+t("source_extra")+'</div></section></div>';
 }
-function germanUnits(){
- const units=window.EBDAA_GERMAN_UNITS[grade];
- return '<div class="eyebrow"><a href="#" onclick="nav(\'browse\');return false">Year '+grade+'</a> / Deutsch</div><h1>Deutsch · Dabei! A1.'+grade+'</h1><p>German course organized by modules and lessons from the supplied Dabei! Kursbuch. Each lesson opens focused practice.</p><div class="unit-strip"><button onclick="nav(\'browse\')">← Subjects</button></div><div class="cards">'+units.map((u,i)=>'<article class="course"><div class="course-art"><i>DE</i></div><div class="course-body"><small>MODUL '+(grade===1?i+1:grade===2?i+4:i+7)+' · A1.'+grade+'</small><h3>'+esc(u.title)+'</h3><p>'+u.sessions.length+' Lektionen</p><button onclick="germanChooseUnit('+i+')">Lektionen anzeigen →</button></div></article>').join('')+'</div>';
-}
+function germanUnits(){return catalogUnits("de")}
 function germanChooseUnit(i){year2Unit=i;nav("unitPreview")}
-function germanPreview(){
- const u=window.EBDAA_GERMAN_UNITS[grade][year2Unit];
- return '<div class="eyebrow"><a href="#" onclick="nav(\'subject\');return false">Deutsch A1.'+grade+'</a> / '+esc(u.title)+'</div><h1>'+esc(u.title)+'</h1><p>'+esc(u.source)+' · Vocabulary and grammar: '+esc(u.focus.join(", "))+'</p><p>50 interactive tasks covering vocabulary, grammar, reading, listening, speaking and dialogue. Audio uses browser speech synthesis and microphone transcription is optional, not a pronunciation grade.</p><div class="grid" style="display:grid;gap:12px;margin-top:20px">'+u.sessions.map((name,i)=>'<button class="card" style="background:white;border:1px solid #e6e3de;border-radius:15px;padding:20px;text-align:left;cursor:pointer" onclick="germanOpen('+i+')"><span class="eyebrow">LEKTION '+(i+1)+' · KURSBUCH S. '+u.pages[i]+'</span><h3>'+esc(name)+'</h3>'+progressBadge("de",grade,year2Unit,i)+'<p>50 Aufgaben starten →</p></button>').join('')+'</div><button class="btn light" onclick="nav(\'subject\')">← Alle Module</button>';
-}
+function germanPreview(){return catalogPreview("de")}
 function germanOpen(i){if(!window.NTSS_LAZY.isCurriculumReady("german-language"))return queueSubjectCurriculum("german-language",()=>germanOpen(i));registerNamedLesson("de",grade,year2Unit,i,window.EBDAA_GERMAN_UNITS[grade][year2Unit].sessions[i],"germanPractice");if(!window.NTSS_LAZY.isSubjectReady("germanPractice"))return queueSubjectLesson("germanPractice",()=>germanOpen(i));mode="germanPractice";window.EBDAA_GERMAN_PRACTICE.start(grade,year2Unit,i)}
 function germanBackToUnit(){nav("unitPreview")}
-function arabicUnits(){const units=window.EBDAA_ARABIC_UNITS[grade];return '<section dir="rtl" lang="ar"><div class="eyebrow"><a href="#" onclick="nav(\'browse\');return false">الصف '+grade+'</a> / اللغة العربية</div><h1>اللغة العربية</h1><p>دروس وفروع اللغة العربية وفق فهارس كتب التعليم الثانوي الفني المرفوعة (طبعة 2023/2024). الأسئلة الحالية مراجعة تأسيسية عامة وتحتاج إعدادًا خاصًا بكل نص ومراجعة المعلم.</p><button class="btn light" onclick="nav(\'browse\')">العودة للمواد</button>'+[1,2].map(term=>'<div class="section-title"><h2>الفصل الدراسي '+(term===1?'الأول':'الثاني')+'</h2></div><div class="cards">'+units.map((u,i)=>u.term!==term?'':'<article class="course"><div class="course-art"><i>ع</i></div><div class="course-body"><small>من فهرس الكتاب المرفوع</small><h3>'+esc(u.title)+'</h3><p>'+u.sessions.length+' دروس من الكتاب</p><button onclick="arabicChooseUnit('+i+')">عرض التدريبات</button></div></article>').join('')+'</div>').join('')+'</section>'}
+function arabicUnits(){return catalogUnits("ar")}
 function arabicChooseUnit(i){year2Unit=i;nav("unitPreview")}
-function arabicPreview(){const u=window.EBDAA_ARABIC_UNITS[grade][year2Unit];return '<section dir="rtl" lang="ar"><div class="eyebrow"><a href="#" onclick="nav(\'subject\');return false">اللغة العربية</a> / '+esc(u.title)+'</div><h1>'+esc(u.title)+'</h1><p>'+esc(u.source)+'</p><p>العناوين من الكتب المرفوعة. أُضيفت أسئلة فهم من مضمون نصوص القراءة وتدريبات نحوية مرتبطة بقواعد بعض الدروس. الأسئلة الأخرى مراجعات عامة متكررة، ولا تمثل 50 سؤالًا مستقلًا لكل درس.</p><div class="grid" style="display:grid;gap:12px">'+u.sessions.map((name,i)=>'<button class="card" style="background:white;border:1px solid #e6e3de;border-radius:15px;padding:20px;text-align:right" onclick="arabicOpen('+i+')"><h3>'+esc(name)+'</h3>'+progressBadge("ar",grade,year2Unit,i)+'<p>ابدأ التدريب ←</p></button>').join('')+'</div></section>'}
+function arabicPreview(){return catalogPreview("ar")}
 function arabicOpen(i){if(!window.NTSS_LAZY.isCurriculumReady("arabic-language"))return queueSubjectCurriculum("arabic-language",()=>arabicOpen(i));registerNamedLesson("ar",grade,year2Unit,i,window.EBDAA_ARABIC_UNITS[grade][year2Unit].sessions[i],"arabicPractice");if(!window.NTSS_LAZY.isSubjectReady("arabicPractice"))return queueSubjectLesson("arabicPractice",()=>arabicOpen(i));mode="arabicPractice";window.EBDAA_ARABIC_PRACTICE.start(grade,year2Unit,i)}
 function arabicBackToUnit(){nav("unitPreview")}
 
 
 
-function economicsUnits(){
- const units=window.EBDAA_ECONOMICS_UNITS[3];
- return '<section dir="rtl" lang="ar"><div class="eyebrow"><a href="#" onclick="nav(\'browse\');return false">الصف الثالث</a> / الاقتصاد</div><h1>📈 الاقتصاد</h1><p>من دليل مادة الاقتصاد للصف الثالث الثانوي الفني، إصدار الملف المرفوع 2022–2023. لم يحدد المصدر توزيع الوحدات على الفصلين الدراسيين.</p><p>أربع وحدات أصلية، 20 درسًا، ومسائل حسابية ومراجعات تفاعلية إضافية.</p><div class="cards">'+units.map((u,i)=>'<article class="course"><div class="course-art"><i>📈</i></div><div class="course-body"><small>الوحدة '+u.unitNo+' · 5 دروس</small><h3>'+esc(u.title)+'</h3><button onclick="economicsChooseUnit('+i+')">استكشف الدروس ←</button></div></article>').join('')+'</div></section>';
-}
+function economicsUnits(){return catalogUnits("economics")}
 function economicsChooseUnit(i){year2Unit=i;nav("unitPreview")}
-function economicsPreview(){
- const u=window.EBDAA_ECONOMICS_UNITS[3][year2Unit];
- return '<section dir="rtl" lang="ar"><div class="eyebrow"><a href="#" onclick="nav(\'subject\');return false">الاقتصاد</a> / الوحدة '+u.unitNo+'</div><h1>'+esc(u.title)+'</h1><p>خمس دروس وفق عناوين الدليل، وكل درس يضم 50 تفاعلًا تدريبيًا متنوعًا. أسئلة المراجعة والمسائل الحسابية إضافات تعليمية وليست نقلًا حرفيًا من الكتاب.</p><div class="grid" style="display:grid;gap:12px">'+u.sessions.map((l,i)=>'<button class="card" style="background:white;border:1px solid #e6e3de;border-radius:15px;padding:20px;text-align:right;cursor:pointer" onclick="economicsOpen('+i+')"><span class="eyebrow">الدرس '+(i+1)+'</span><h3>'+esc(l.title)+'</h3>'+progressBadge("economics",3,year2Unit,i)+'<p>ابدأ 50 تفاعلًا ←</p></button>').join('')+'</div></section>';
-}
+function economicsPreview(){return catalogPreview("economics")}
 function economicsOpen(i){if(!window.NTSS_LAZY.isCurriculumReady("economics"))return queueSubjectCurriculum("economics",()=>economicsOpen(i));registerNamedLesson("economics",3,year2Unit,i,window.EBDAA_ECONOMICS_UNITS[3][year2Unit].sessions[i],"economicsPractice");if(!window.NTSS_LAZY.isSubjectReady("economicsPractice"))return queueSubjectLesson("economicsPractice",()=>economicsOpen(i));mode="economicsPractice";window.EBDAA_ECONOMICS_PRACTICE.start(3,year2Unit,i);scrollTo(0,0)}
 function economicsBackToUnit(){nav("unitPreview")}
-function civicsUnits(){
- const units=window.EBDAA_CIVICS_UNITS[1];
- return '<section dir="rtl" lang="ar"><div class="eyebrow"><a href="#" onclick="nav(\'browse\');return false">الصف الأول</a> / التربية الوطنية</div><h1>🇪🇬 التربية الوطنية</h1><p>من كتاب «أنا المصري» للفصلين الدراسيين؛ إصدار الملف المرفوع 2023–2024.</p><p>الأنشطة مساندة لتثبيت المفاهيم وليست نسخة من أسئلة التقييم الرسمي.</p>'+[1,2].map(term=>'<div class="section-title"><h2>الفصل الدراسي '+(term===1?"الأول":"الثاني")+'</h2></div><div class="cards">'+units.map((u,i)=>u.term!==term?'':'<article class="course"><div class="course-art"><i>🇪🇬</i></div><div class="course-body"><small>الفصل '+u.unitNo+' · '+u.sessions.length+' موضوعات</small><h3>'+esc(u.title)+'</h3><button onclick="civicsChooseUnit('+i+')">استكشف الموضوعات ←</button></div></article>').join('')+'</div>').join('')+'</section>';
-}
+function civicsUnits(){return catalogUnits("civics")}
 function civicsChooseUnit(i){year2Unit=i;nav("unitPreview")}
-function civicsPreview(){const u=window.EBDAA_CIVICS_UNITS[1][year2Unit];return '<section dir="rtl" lang="ar"><div class="eyebrow"><a href="#" onclick="nav(\'subject\');return false">التربية الوطنية</a> / الفصل '+u.unitNo+'</div><h1>'+esc(u.title)+'</h1><p>موضوعات من فهرس الكتاب وأقسامه، مع تدريبات مراجعة متعددة الأنماط. المعلومات الأساسية مستندة إلى الكتاب؛ الأسئلة مولّدة وتحتاج مراجعة المعلم.</p><div class="grid" style="display:grid;gap:12px">'+u.sessions.map((l,i)=>'<button class="card" style="background:white;border:1px solid #e6e3de;border-radius:15px;padding:20px;text-align:right;cursor:pointer" onclick="civicsOpen('+i+')"><span class="eyebrow">موضوع '+(i+1)+'</span><h3>'+esc(l.title)+'</h3>'+progressBadge("civics",1,year2Unit,i)+'<p>ابدأ تدريب 50 سؤالًا وتفاعلًا ←</p></button>').join('')+'</div></section>'}
+function civicsPreview(){return catalogPreview("civics")}
 function civicsOpen(i){if(!window.NTSS_LAZY.isCurriculumReady("civics"))return queueSubjectCurriculum("civics",()=>civicsOpen(i));registerNamedLesson("civics",1,year2Unit,i,window.EBDAA_CIVICS_UNITS[1][year2Unit].sessions[i],"civicsPractice");if(!window.NTSS_LAZY.isSubjectReady("civicsPractice"))return queueSubjectLesson("civicsPractice",()=>civicsOpen(i));mode="civicsPractice";window.EBDAA_CIVICS_PRACTICE.start(1,year2Unit,i);scrollTo(0,0)}
 function civicsBackToUnit(){nav("unitPreview")}
-function socialUnits(){
- const units=window.EBDAA_SOCIAL_STUDIES_UNITS[grade]||[];
- const warning=grade===3?'دليل الصف الثالث المرفوع إصدار أقدم؛ لم يثبت من الملفات أنه إصدار 2026–2027.':'الصف الثاني · الفصل الدراسي الأول 2026–2027. لم يرفق الفصل الثاني.';
- return '<section lang="ar" dir="rtl"><div class="eyebrow"><a href="#" onclick="nav(\'browse\');return false">المواد الدراسية</a> / الصف '+grade+'</div><h1>🌍 الدراسات الاجتماعية</h1><p>'+esc(warning)+'</p><p>اختر الوحدة ثم الدرس. تدريبات متنوعة في المفاهيم والاستنتاج وتصحيح الأخطاء والكتابة المباشرة.</p><div class="cards">'+units.map((u,i)=>'<article class="course"><div class="course-art"><i>🌍</i></div><div class="course-body" dir="rtl"><small>الوحدة '+u.unitNo+' · '+u.sessions.length+' دروس</small><h3>'+esc(u.title)+'</h3><p>'+esc(u.source)+'</p><button onclick="socialChooseUnit('+i+')">استكشف الدروس ←</button></div></article>').join('')+'</div></section>';
-}
+function socialUnits(){return catalogUnits("social")}
 function socialChooseUnit(i){year2Unit=i;nav("unitPreview")}
-function socialPreview(){
- const u=window.EBDAA_SOCIAL_STUDIES_UNITS[grade][year2Unit];
- return '<section dir="rtl" lang="ar"><div class="eyebrow"><a href="#" onclick="nav(\'subject\');return false">الدراسات الاجتماعية</a> / الوحدة '+u.unitNo+'</div><h1>'+esc(u.title)+'</h1><p>'+esc(u.source)+'</p><p>50 تدريبًا لكل درس بأساليب مختلفة. الأسئلة مساندة ومولدة من المفاهيم الأساسية وليست نقلًا حرفيًا من أسئلة الكتاب.</p><div class="grid" style="display:grid;gap:12px">'+u.sessions.map((l,i)=>'<button class="card" style="background:white;border:1px solid #e6e3de;border-radius:15px;padding:20px;text-align:right;cursor:pointer" onclick="socialOpen('+i+')"><span class="eyebrow">الدرس '+(i+1)+'</span><h3>'+esc(l.title)+'</h3>'+progressBadge("social",grade,year2Unit,i)+'<p>ابدأ التدريب التفاعلي ←</p></button>').join('')+'</div></section>';
-}
+function socialPreview(){return catalogPreview("social")}
 function socialOpen(i){if(!window.NTSS_LAZY.isCurriculumReady("social-studies"))return queueSubjectCurriculum("social-studies",()=>socialOpen(i));registerNamedLesson("social",grade,year2Unit,i,window.EBDAA_SOCIAL_STUDIES_UNITS[grade][year2Unit].sessions[i],"socialPractice");if(!window.NTSS_LAZY.isSubjectReady("socialPractice"))return queueSubjectLesson("socialPractice",()=>socialOpen(i));mode="socialPractice";window.EBDAA_SOCIAL_STUDIES_PRACTICE.start(grade,year2Unit,i);scrollTo(0,0)}
 function socialBackToUnit(){nav("unitPreview")}
-function businessUnits(){
- const units=window.EBDAA_BUSINESS_ENGLISH_UNITS[grade];const group=(title,arr)=>arr.length?'<div class="section-title"><h2>'+title+'</h2><span class="count">'+arr.length+' UNITS</span></div><div class="cards">'+arr.map(({u,i})=>'<article class="course"><div class="course-art"><i>💼</i></div><div class="course-body"><small>'+(u.unitNo===0?'FOUNDATION':'UNIT '+u.unitNo)+' · '+u.sessions.length+' ITEMS</small><h3>'+esc(u.title)+'</h3><p>'+esc(u.source.split(" · ")[0])+'</p><button onclick="businessChooseUnit('+i+')">Explore lessons →</button></div></article>').join("")+'</div>':'';
- return '<div class="eyebrow"><a href="#" onclick="nav(\'browse\');return false">Year '+grade+'</a> / Business English · AI</div><h1>💼 Business English · AI</h1><p>English for Artificial Intelligence — exact supplied textbook unit and lesson order. Project evaluation and exams are separate from lesson practice.</p><div class="unit-strip"><button onclick="nav(\'browse\')">← Subjects</button></div>'+(grade===1?group("Foundation · Unit 0",units.map((u,i)=>({u,i})).filter(x=>x.u.term===0))+group("First term · Units 1–2",units.map((u,i)=>({u,i})).filter(x=>x.u.term===1))+group("Second term · Units 3–4",units.map((u,i)=>({u,i})).filter(x=>x.u.term===2)):group("Provided Units · Term not specified in supplied book",units.map((u,i)=>({u,i}))));
-}
+function businessUnits(){return catalogUnits("be")}
 function businessChooseUnit(i){year2Unit=i;nav("unitPreview")}
-function businessPreview(){
- const u=window.EBDAA_BUSINESS_ENGLISH_UNITS[grade][year2Unit];
- return '<div class="eyebrow"><a href="#" onclick="nav(\'subject\');return false">Business English · AI</a> / '+(u.unitNo===0?'Foundation':'Unit '+u.unitNo)+'</div><h1>'+esc(u.title)+'</h1><p>'+esc(u.source)+'</p><p>'+esc(u.project||"Foundational English and classroom communication")+'</p><div style="display:grid;gap:12px;margin-top:20px">'+u.sessions.map((l,i)=>'<button class="card" style="background:white;border:1px solid #e6e3de;border-radius:16px;padding:20px;text-align:left;cursor:pointer" onclick="businessOpen('+i+')"><span class="eyebrow">'+(l.kind==="project"?"🗣 UNIT PROJECT":l.kind==="revision"?"🔁 REVISION":l.kind==="exam"?"📝 PRACTICE EXAM":"📚 LESSON "+(i+1))+'</span><h3>'+esc(l.title)+'</h3>'+progressBadge("be",grade,year2Unit,i)+'<p>'+esc(l.focus)+'</p></button>').join("")+'</div><p class="muted">Lesson questions are original supplementary drills using the book topics. The included exam is practice, not the official exam. Projects require teacher assessment.</p>';
-}
+function businessPreview(){return catalogPreview("be")}
 function businessOpen(i){if(!window.NTSS_LAZY.isCurriculumReady("business-english"))return queueSubjectCurriculum("business-english",()=>businessOpen(i));registerNamedLesson("be",grade,year2Unit,i,window.EBDAA_BUSINESS_ENGLISH_UNITS[grade][year2Unit].sessions[i],"businessPractice");if(!window.NTSS_LAZY.isSubjectReady("businessPractice"))return queueSubjectLesson("businessPractice",()=>businessOpen(i));mode="businessPractice";window.EBDAA_BUSINESS_PRACTICE.start(grade,year2Unit,i);scrollTo(0,0)}
 function businessBackToUnit(){nav("unitPreview")}
-function englishUnits(){const units=window.EBDAA_ENGLISH_UNITS[grade];return '<div class="eyebrow"><a href="#" onclick="nav(\'browse\');return false">Year '+grade+'</a> / Advanced English</div><h1>Advanced English</h1><p>English curriculum organized by term and unit.</p><div class="unit-strip"><button onclick="nav(\'browse\')">← Subjects</button></div>'+[1,2].map(t=>{const arr=units.map((u,i)=>({u,i})).filter(x=>x.u.term===t);return arr.length?'<div class="section-title"><h2>Term '+t+'</h2><span class="count">'+arr.length+' UNITS</span></div><div class="cards">'+arr.map(({u,i})=>'<article class="course"><div class="course-art"><i>Aa</i></div><div class="course-body"><small>UNIT '+(i+1)+'</small><h3>'+esc(u.title)+'</h3><p>'+u.sessions.length+' lessons · '+esc(u.focus)+'</p><button onclick="englishChooseUnit('+i+')">View lessons →</button></div></article>').join('')+'</div>':(grade!==2?'<p class="muted">Term 2 English guide has not been supplied for this year.</p>':'')}).join('')}
+function englishUnits(){return catalogUnits("en")}
 function englishChooseUnit(i){year2Unit=i;nav("unitPreview")}
-function englishPreview(){const u=window.EBDAA_ENGLISH_UNITS[grade][year2Unit];return '<div class="eyebrow"><a href="#" onclick="nav(\'subject\');return false">Advanced English</a> / Unit '+(year2Unit+1)+'</div><span class="pill">TERM '+u.term+'</span><h1>'+esc(u.title)+'</h1><p>'+esc(u.focus)+' · '+esc(u.source)+'</p><p>Choose a lesson to start 50 formative questions covering Grammar, Vocabulary, Reading, Listening and guided Writing and Speaking. Audio playback uses browser text-to-speech; drafts and pronunciation are not automatically graded.</p><div class="grid" style="display:grid;gap:12px;margin-top:20px">'+u.sessions.map((title,i)=>'<button class="card" style="background:white;border:1px solid #e6e3de;border-radius:15px;padding:20px;text-align:left;cursor:pointer" onclick="englishOpen('+i+')"><span class="eyebrow">LESSON '+(i+1)+'</span><h3>'+esc(title)+'</h3>'+progressBadge("en",grade,year2Unit,i)+'<p style="font-size:13px">Start 50 questions →</p></button>').join('')+'</div><button class="btn light" onclick="nav(\'subject\')">← All English units</button>'}
+function englishPreview(){return catalogPreview("en")}
 function englishOpen(i){if(!window.NTSS_LAZY.isCurriculumReady("advanced-english"))return queueSubjectCurriculum("advanced-english",()=>englishOpen(i));registerNamedLesson("en",grade,year2Unit,i,window.EBDAA_ENGLISH_UNITS[grade][year2Unit].sessions[i],"englishPractice");if(!window.NTSS_LAZY.isSubjectReady("englishPractice"))return queueSubjectLesson("englishPractice",()=>englishOpen(i));mode="englishPractice";window.EBDAA_ENGLISH_PRACTICE.start(grade,year2Unit,i)}
 function englishBackToUnit(){nav("unitPreview")}
-function physicsUnits(){
- const units=window.EBDAA_PHYSICS_UNITS[grade];
- return '<div class="eyebrow"><a href="#" onclick="nav(\'browse\');return false">Year '+grade+'</a> / Physics STEM</div><h1>⚛ Physics Discovery Lab</h1><p>Physics in action: predict results, change values and solve experiments, directly from the topics in your 2024 STEM Physics Student Guide.</p>'+[1,2].map(t=>'<div class="section-title"><h2>Term '+t+'</h2></div><div class="cards">'+units.map((u,i)=>u.term!==t?'':'<article class="course"><div class="course-art"><i>⚛</i></div><div class="course-body"><small>STEM LAB · '+u.sessions.length+' LESSONS</small><h3>'+esc(u.title)+'</h3><p>Discover, predict and solve physics challenges.</p><button onclick="physicsChooseUnit('+i+')">Explore experiments →</button></div></article>').join("")+'</div>').join("");
-}
+function physicsUnits(){return catalogUnits("physics")}
 function physicsChooseUnit(i){year2Unit=i;nav("unitPreview")}
-function physicsPreview(){
- const u=window.EBDAA_PHYSICS_UNITS[grade][year2Unit];
- return '<div class="eyebrow"><a href="#" onclick="nav(\'subject\');return false">Physics</a> / '+esc(u.title)+'</div><h1>'+esc(u.title)+'</h1><p>Explore '+u.sessions.length+' lessons from the supplied 2024 STEM Physics guides. Each lesson offers 50 parameter-based numerical and prediction missions, with immediate calculation feedback.</p><div class="grid" style="display:grid;gap:12px;margin-top:20px">'+u.sessions.map((name,i)=>'<button class="card" style="background:white;border:1px solid #e6e3de;border-radius:16px;padding:20px;text-align:left;cursor:pointer" onclick="physicsOpen('+i+')"><span class="eyebrow">🔬 EXPERIMENT '+(i+1)+'</span><h3>'+esc(name)+'</h3>'+progressBadge("physics",grade,year2Unit,i)+'<p>Start physics mission →</p></button>').join("")+'</div><p class="muted">These are generated educational simulation exercises, not verbatim assessment questions from the study guides. Physics teacher review required.</p>';
-}
+function physicsPreview(){return catalogPreview("physics")}
 function physicsOpen(i){if(!window.NTSS_LAZY.isCurriculumReady("physics-stem"))return queueSubjectCurriculum("physics-stem",()=>physicsOpen(i));registerNamedLesson("physics",grade,year2Unit,i,window.EBDAA_PHYSICS_UNITS[grade][year2Unit].sessions[i],"physicsPractice");if(!window.NTSS_LAZY.isSubjectReady("physicsPractice"))return queueSubjectLesson("physicsPractice",()=>physicsOpen(i));window.EBDAA_PHYSICS_PRACTICE.start(grade,year2Unit,i);nav("physicsPractice")}
 function physicsBack(){nav("unitPreview")}
-function mathUnits(){const units=window.EBDAA_MATH_UNITS[grade];return '<div class="eyebrow"><a href="#" onclick="nav(\'browse\');return false">Year '+grade+'</a> / Mathematics</div><h1>Mathematics</h1><p>Officially listed lessons from the supplied mathematics study guides. Choose a unit to begin practicing.</p><div class="unit-strip"><button onclick="nav(\'browse\')">← Subjects</button></div>'+[1,2].map(t=>{const arr=units.map((u,i)=>({u,i})).filter(x=>x.u.term===t);return arr.length?'<div class="section-title"><h2>Term '+t+'</h2><span class="count">'+arr.length+' UNITS</span></div><div class="cards">'+arr.map(({u,i})=>'<article class="course"><div class="course-art"><i>∑</i></div><div class="course-body"><small>UNIT '+(i+1)+'</small><h3>'+esc(u.title)+'</h3><p>'+u.sessions.length+' lessons</p><button onclick="mathChooseUnit('+i+')">View lessons →</button></div></article>').join('')+'</div>':(grade===1&&t===2?'<p class="muted">First-year Term 2 mathematics guide was not supplied.</p>':'')}).join('')}
+function mathUnits(){return catalogUnits("math")}
 function mathChooseUnit(n){year2Unit=n;nav("unitPreview")}
-function mathPreview(){const u=window.EBDAA_MATH_UNITS[grade][year2Unit];return '<div class="eyebrow"><a href="#" onclick="nav(\'browse\');return false">Year '+grade+'</a> / <a href="#" onclick="nav(\'subject\');return false">Mathematics</a></div><span class="pill">TERM '+u.term+'</span><h1>'+esc(u.title)+'</h1><p class="muted">'+esc(u.source)+'</p><p>Choose a lesson to start a focused concept check. Extended exercises are under development.</p><div class="grid" style="display:grid;gap:12px;margin-top:20px">'+u.sessions.map((title,i)=>'<button class="card" style="background:white;border:1px solid #e6e3de;border-radius:15px;padding:20px;text-align:left;cursor:pointer" onclick="mathOpen('+i+')"><span class="eyebrow">LESSON '+(i+1)+'</span><h3>'+esc(title)+'</h3>'+progressBadge("math",grade,year2Unit,i)+'<p style="font-size:13px">Start question →</p></button>').join('')+'</div><div class="actions"><button class="btn light" onclick="nav(\'subject\')">← All math units</button></div>'}
+function mathPreview(){return catalogPreview("math")}
 function mathOpen(i){if(!window.NTSS_LAZY.isCurriculumReady("mathematics"))return queueSubjectCurriculum("mathematics",()=>mathOpen(i));registerNamedLesson("math",grade,year2Unit,i,window.EBDAA_MATH_UNITS[grade][year2Unit].sessions[i],"mathPractice");if(!window.NTSS_LAZY.isSubjectReady("mathPractice"))return queueSubjectLesson("mathPractice",()=>mathOpen(i));window.EBDAA_MATH_PRACTICE.start(grade,year2Unit,i);nav("mathPractice")}
 function mathBackToUnit(){nav("unitPreview")}
 function about(){return '<section class="ntss-review-entry"><h2>Teacher Mode · Curriculum Review</h2><p>Open a public, local question-audit workspace. No teacher login, school authorization, or publishing privilege is implied.</p><button class="btn teal" onclick="teacherOpen()">Open Teacher Preview</button></section>'+label()+'<h1>For learners, not profiles.</h1><div class="cards"><div class="course-body" style="background:white;border-radius:20px;padding:25px"><h3>✓ No student registration</h3><p>Only your name is requested locally for the completion certificate; no account or email is required.</p></div><div class="course-body" style="background:white;border-radius:20px;padding:25px"><h3>✓ No student analytics</h3><p>Answers are used to give immediate feedback in the current browser session. They are not sent to a server.</p></div><div class="course-body" style="background:white;border-radius:20px;padding:25px"><h3>✓ Admin-only editing</h3><p>Content edits are secured by repository permissions and GitHub authentication, not an unsafe login form in a static website.</p></div></div><div class="hint" style="margin-top:24px">Site editing requires an authorized GitHub contributor account. Manage <a href="https://github.com/mostafaatteef-eng/NTSS/edit/main/curriculum-data.js" target="_blank" rel="noopener">curriculum</a>, <a href="https://github.com/mostafaatteef-eng/NTSS/edit/main/question-factory.js" target="_blank" rel="noopener">question templates</a>, and <a href="https://github.com/mostafaatteef-eng/NTSS/blob/main/ASSESSMENT_AUDIT.md" target="_blank" rel="noopener">assessment review</a>. A public JavaScript password is not secure; a custom admin CMS would require backend authentication.</div>'}function practiceActive(){return mode==="learn"&&step===4||mode==="advancedLab"&&advancedStep===4}
@@ -391,3 +357,125 @@ document.addEventListener?.("keydown",function(event){
  else if(key==="Enter"){event.preventDefault();eng.check?.();eng.next?eng.next():eng.move?.(1)}
 });
 document.querySelectorAll(".nav button[data-nav]").forEach(b=>b.addEventListener("click",()=>nav(b.dataset.nav)));render();
+
+/* Unified catalog screens: one renderer for every subject's unit list and unit preview.
+   Per-subject config keeps its own copy, locale, icon and handlers; the structure is shared. */
+const CATALOG={
+ math:{icon:"∑",dir:"ltr",progress:"math",choose:"mathChooseUnit",open:"mathOpen",
+  data:()=>window.EBDAA_MATH_UNITS[grade],name:()=>"Mathematics",crumb:()=>"Year "+grade,
+  intro:()=>'<p>Officially listed lessons from the supplied mathematics study guides. Choose a unit to begin practicing.</p>',
+  grouping:"term",termLabel:x=>"Term "+x,
+  unitKicker:(u,i)=>"UNIT "+(i+1)+" · "+u.sessions.length+" lessons",unitDesc:null,unitCta:"View lessons →",
+  previewHead:u=>'<p class="muted">'+esc(u.source)+'</p><p>Choose a lesson to start a focused concept check. Extended exercises are under development.</p>',
+  termPill:true,sessionKicker:(l,i)=>"LESSON "+(i+1),sessionCta:"Start 50 questions →",
+  backSubject:"← Back to subjects",backUnits:"← All units",
+  missingTerm:x=>x===2&&grade===1?'<p class="muted">First-year Term 2 mathematics guide was not supplied.</p>':""},
+ en:{icon:"Aa",dir:"ltr",progress:"en",choose:"englishChooseUnit",open:"englishOpen",
+  data:()=>window.EBDAA_ENGLISH_UNITS[grade],name:()=>"Advanced English",crumb:()=>"Year "+grade,
+  intro:()=>'<p>English curriculum organized by term and unit.</p>',
+  grouping:"term",termLabel:x=>"Term "+x,
+  unitKicker:(u,i)=>"UNIT "+(i+1)+" · "+u.sessions.length+" lessons",unitDesc:u=>u.focus,unitCta:"View lessons →",
+  previewHead:u=>'<p>'+esc(u.focus)+' · '+esc(u.source)+'</p><p>Choose a lesson to start 50 formative questions covering Grammar, Vocabulary, Reading, Listening and guided Writing and Speaking. Audio playback uses browser text-to-speech; drafts and pronunciation are not automatically graded.</p>',
+  termPill:true,sessionKicker:(l,i)=>"LESSON "+(i+1),sessionCta:"Start 50 questions →",
+  backSubject:"← Back to subjects",backUnits:"← All units",
+  missingTerm:x=>x===2&&grade!==2?'<p class="muted">Term 2 English guide has not been supplied for this year.</p>':""},
+ de:{icon:"DE",dir:"ltr",progress:"de",choose:"germanChooseUnit",open:"germanOpen",
+  data:()=>window.EBDAA_GERMAN_UNITS[grade],name:()=>"Deutsch · Dabei! A1."+grade,shortName:()=>"Deutsch",crumb:()=>"Year "+grade,
+  intro:()=>'<p>German course organized by modules and lessons from the supplied Dabei! Kursbuch. Each lesson opens focused practice.</p>',
+  grouping:"term",termLabel:x=>"Term "+x,
+  unitKicker:(u,i)=>"MODUL "+(grade===1?i+1:grade===2?i+4:i+7)+" · A1."+grade+" · "+u.sessions.length+" Lektionen",unitDesc:null,unitCta:"Lektionen anzeigen →",
+  previewHead:u=>'<p>'+esc(u.source)+' · Vocabulary and grammar: '+esc(u.focus.join(", "))+'</p><p>50 interactive tasks covering vocabulary, grammar, reading, listening, speaking and dialogue. Audio uses browser speech synthesis and microphone transcription is optional, not a pronunciation grade.</p>',
+  termPill:false,sessionKicker:(l,i,u)=>"LEKTION "+(i+1)+(u.pages&&u.pages[i]?" · KURSBUCH S. "+u.pages[i]:""),sessionCta:"50 Aufgaben starten →",
+  backSubject:"← Subjects",backUnits:"← Alle Module"},
+ physics:{icon:"⚛",dir:"ltr",progress:"physics",choose:"physicsChooseUnit",open:"physicsOpen",
+  data:()=>window.EBDAA_PHYSICS_UNITS[grade],name:()=>"Physics Discovery Lab",shortName:()=>"Physics",crumb:()=>"Year "+grade,
+  intro:()=>'<p>Physics in action: predict results, change values and solve experiments, directly from the topics in your 2024 STEM Physics Student Guide.</p>',
+  grouping:"term",termLabel:x=>"Term "+x,
+  unitKicker:(u,i)=>"UNIT "+(i+1)+" · "+u.sessions.length+" lessons",unitDesc:()=>"Discover, predict and solve physics challenges.",unitCta:"View lessons →",
+  previewHead:u=>'<p>Explore '+u.sessions.length+' lessons from the supplied 2024 STEM Physics guides. Each lesson offers 50 parameter-based numerical and prediction missions, with immediate calculation feedback.</p>',
+  termPill:false,sessionKicker:(l,i)=>"LESSON "+(i+1),sessionCta:"Start 50 questions →",
+  disclaimer:"These are generated educational simulation exercises, not verbatim assessment questions from the study guides. Physics teacher review required.",
+  backSubject:"← Back to subjects",backUnits:"← All units"},
+ be:{icon:"💼",dir:"ltr",progress:"be",choose:"businessChooseUnit",open:"businessOpen",
+  data:()=>window.EBDAA_BUSINESS_ENGLISH_UNITS[grade],name:()=>"Business English · AI",crumb:()=>"Year "+grade,
+  intro:()=>'<p>English for Artificial Intelligence — exact supplied textbook unit and lesson order. Project evaluation and exams are separate from lesson practice.</p>',
+  groups:units=>grade===1?[
+   {label:"Foundation · Unit 0",items:units.map((u,i)=>({u,i})).filter(x=>x.u.term===0)},
+   {label:"First term · Units 1–2",items:units.map((u,i)=>({u,i})).filter(x=>x.u.term===1)},
+   {label:"Second term · Units 3–4",items:units.map((u,i)=>({u,i})).filter(x=>x.u.term===2)}
+  ]:[{label:"Provided Units · Term not specified in supplied book",items:units.map((u,i)=>({u,i}))}],
+  unitKicker:(u,i)=>(u.unitNo===0?"FOUNDATION":"UNIT "+u.unitNo)+" · "+u.sessions.length+" items",unitDesc:u=>u.source.split(" · ")[0],unitCta:"View lessons →",
+  unitCrumb:u=>u.unitNo===0?"Foundation":"Unit "+u.unitNo,
+  previewHead:u=>'<p>'+esc(u.source)+'</p><p>'+esc(u.project||"Foundational English and classroom communication")+'</p>',
+  termPill:false,
+  sessionKicker:(l,i)=>l.kind==="project"?"🗣 UNIT PROJECT":l.kind==="revision"?"🔁 REVISION":l.kind==="exam"?"📝 PRACTICE EXAM":"📚 LESSON "+(i+1),
+  sessionLine:l=>'<p>'+esc(l.focus)+'</p>',
+  disclaimer:"Lesson questions are original supplementary drills using the book topics. The included exam is practice, not the official exam. Projects require teacher assessment.",
+  backSubject:"← Back to subjects",backUnits:"← All units"},
+ ar:{icon:"ع",dir:"rtl",progress:"ar",choose:"arabicChooseUnit",open:"arabicOpen",
+  data:()=>window.EBDAA_ARABIC_UNITS[grade],name:()=>"اللغة العربية",crumb:()=>"الصف "+grade,
+  intro:()=>'<p>دروس وفروع اللغة العربية وفق فهارس كتب التعليم الثانوي الفني المرفوعة (طبعة 2023/2024). الأسئلة الحالية مراجعة تأسيسية عامة وتحتاج إعدادًا خاصًا بكل نص ومراجعة المعلم.</p>',
+  grouping:"term",termLabel:x=>"الفصل الدراسي "+(x===1?"الأول":"الثاني"),
+  unitKicker:(u,i)=>"الوحدة "+(i+1)+" · "+u.sessions.length+" دروس",unitDesc:null,unitCta:"استكشف الدروس ←",
+  previewHead:u=>'<p>'+esc(u.source)+'</p><p>العناوين من الكتب المرفوعة. أُضيفت أسئلة فهم من مضمون نصوص القراءة وتدريبات نحوية مرتبطة بقواعد بعض الدروس. الأسئلة الأخرى مراجعات عامة متكررة، ولا تمثل 50 سؤالًا مستقلًا لكل درس.</p>',
+  termPill:false,sessionKicker:(l,i)=>"الدرس "+(i+1),sessionCta:"ابدأ التدريب ←",
+  backSubject:"← العودة إلى المواد",backUnits:"← العودة إلى الوحدات"},
+ civics:{icon:"🇪🇬",dir:"rtl",progress:"civics",choose:"civicsChooseUnit",open:"civicsOpen",
+  data:()=>window.EBDAA_CIVICS_UNITS[1],name:()=>"التربية الوطنية",crumb:()=>"الصف الأول",
+  intro:()=>'<p>من كتاب «أنا المصري» للفصلين الدراسيين؛ إصدار الملف المرفوع 2023–2024.</p><p>الأنشطة مساندة لتثبيت المفاهيم وليست نسخة من أسئلة التقييم الرسمي.</p>',
+  grouping:"term",termLabel:x=>"الفصل الدراسي "+(x===1?"الأول":"الثاني"),
+  unitKicker:(u,i)=>"الوحدة "+u.unitNo+" · "+u.sessions.length+" موضوعات",unitDesc:null,unitCta:"استكشف الدروس ←",
+  unitCrumb:u=>"الفصل "+u.unitNo,
+  previewHead:u=>'<p>موضوعات من فهرس الكتاب وأقسامه، مع تدريبات مراجعة متعددة الأنماط. المعلومات الأساسية مستندة إلى الكتاب؛ الأسئلة مولّدة وتحتاج مراجعة المعلم.</p>',
+  termPill:false,sessionKicker:(l,i)=>"موضوع "+(i+1),sessionCta:"ابدأ التدريب ←",
+  backSubject:"← العودة إلى المواد",backUnits:"← العودة إلى الوحدات"},
+ economics:{icon:"📈",dir:"rtl",progress:"economics",choose:"economicsChooseUnit",open:"economicsOpen",
+  data:()=>window.EBDAA_ECONOMICS_UNITS[3],name:()=>"الاقتصاد",crumb:()=>"الصف الثالث",
+  intro:()=>'<p>من دليل مادة الاقتصاد للصف الثالث الثانوي الفني، إصدار الملف المرفوع 2022–2023. لم يحدد المصدر توزيع الوحدات على الفصلين الدراسيين.</p><p>أربع وحدات أصلية، 20 درسًا، ومسائل حسابية ومراجعات تفاعلية إضافية.</p>',
+  grouping:"none",
+  unitKicker:(u,i)=>"الوحدة "+u.unitNo+" · "+u.sessions.length+" دروس",unitDesc:null,unitCta:"استكشف الدروس ←",
+  unitCrumb:u=>"الوحدة "+u.unitNo,
+  previewHead:u=>'<p>خمس دروس وفق عناوين الدليل، وكل درس يضم 50 تفاعلًا تدريبيًا متنوعًا. أسئلة المراجعة والمسائل الحسابية إضافات تعليمية وليست نقلًا حرفيًا من الكتاب.</p>',
+  termPill:false,sessionKicker:(l,i)=>"الدرس "+(i+1),sessionCta:"ابدأ التدريب ←",
+  backSubject:"← العودة إلى المواد",backUnits:"← العودة إلى الوحدات"},
+ social:{icon:"🌍",dir:"rtl",progress:"social",choose:"socialChooseUnit",open:"socialOpen",
+  data:()=>window.EBDAA_SOCIAL_STUDIES_UNITS[grade]||[],name:()=>"الدراسات الاجتماعية",crumb:()=>"الصف "+grade,
+  intro:()=>'<p>'+esc(grade===3?"دليل الصف الثالث المرفوع إصدار أقدم؛ لم يثبت من الملفات أنه إصدار 2026–2027.":"الصف الثاني · الفصل الدراسي الأول 2026–2027. لم يرفق الفصل الثاني.")+'</p><p>اختر الوحدة ثم الدرس. تدريبات متنوعة في المفاهيم والاستنتاج وتصحيح الأخطاء والكتابة المباشرة.</p>',
+  grouping:"none",
+  unitKicker:(u,i)=>"الوحدة "+u.unitNo+" · "+u.sessions.length+" دروس",unitDesc:u=>u.source,unitCta:"استكشف الدروس ←",
+  unitCrumb:u=>"الوحدة "+u.unitNo,
+  previewHead:u=>'<p>'+esc(u.source)+'</p><p>50 تدريبًا لكل درس بأساليب مختلفة. الأسئلة مساندة ومولدة من المفاهيم الأساسية وليست نقلًا حرفيًا من أسئلة الكتاب.</p>',
+  termPill:false,sessionKicker:(l,i)=>"الدرس "+(i+1),sessionCta:"ابدأ التدريب ←",
+  backSubject:"← العودة إلى المواد",backUnits:"← العودة إلى الوحدات"}
+};
+function catalogUnitCard(c,u,i){
+ const desc=c.unitDesc?c.unitDesc(u):null;
+ return '<article class="course"><div class="course-art"><i>'+c.icon+'</i></div><div class="course-body"><small>'+esc(c.unitKicker(u,i))+'</small><h3>'+esc(u.title)+'</h3>'+(desc?'<p>'+esc(desc)+'</p>':"")+'<button onclick="'+c.choose+'('+i+')">'+esc(c.unitCta)+'</button></div></article>';
+}
+function catalogUnits(key){
+ const c=CATALOG[key],units=c.data(),rtl=c.dir==="rtl";
+ let groups;
+ if(c.groups)groups=c.groups(units);
+ else if(c.grouping==="term"){const terms=[...new Set([1,2,...units.map(u=>u.term)])].sort((a,b)=>a-b);groups=terms.map(x=>({term:x,label:c.termLabel(x),items:units.map((u,i)=>({u,i})).filter(y=>y.u.term===x)}))}
+ else groups=[{label:null,items:units.map((u,i)=>({u,i}))}];
+ const body=groups.map(gp=>gp.items.length?(gp.label?'<div class="section-title"><h2>'+esc(gp.label)+'</h2><span class="count">'+gp.items.length+" "+(rtl?"وحدات":"UNITS")+'</span></div>':"")+'<div class="cards">'+gp.items.map(({u,i})=>catalogUnitCard(c,u,i)).join("")+'</div>':(c.missingTerm?c.missingTerm(gp.term):"")).join("");
+ return '<section dir="'+c.dir+'" lang="'+(rtl?"ar":key==="de"?"de":"en")+'">'+
+  '<div class="eyebrow"><a href="#" onclick="nav(\'browse\');return false">'+esc(c.crumb())+'</a> / '+esc((c.shortName||c.name)())+'</div>'+
+  '<h1>'+c.icon+" "+esc(c.name())+'</h1>'+c.intro()+
+  '<div class="unit-strip"><button onclick="nav(\'browse\')">'+esc(c.backSubject)+'</button></div>'+body+'</section>';
+}
+function catalogSessionCard(c,u,l,i){
+ const title=typeof l==="string"?l:l.title;
+ const line=c.sessionLine?c.sessionLine(l,i):'<p>'+esc(c.sessionCta)+'</p>';
+ return '<button class="card" style="background:white;border:1px solid #e6e3de;border-radius:15px;padding:20px;text-align:'+(c.dir==="rtl"?"right":"left")+';cursor:pointer" onclick="'+c.open+'('+i+')"><span class="eyebrow">'+esc(c.sessionKicker(l,i,u))+'</span><h3>'+esc(title)+'</h3>'+progressBadge(c.progress,grade,year2Unit,i)+line+'</button>';
+}
+function catalogPreview(key){
+ const c=CATALOG[key],u=c.data()[year2Unit],rtl=c.dir==="rtl";
+ const pill=c.termPill&&u.term?'<span class="pill">'+(rtl?"الفصل "+u.term:"TERM "+u.term)+'</span>':"";
+ return '<section dir="'+c.dir+'" lang="'+(rtl?"ar":key==="de"?"de":"en")+'">'+
+  '<div class="eyebrow"><a href="#" onclick="nav(\'subject\');return false">'+esc((c.shortName||c.name)())+'</a> / '+esc(c.unitCrumb?c.unitCrumb(u):u.title)+'</div>'+
+  pill+'<h1>'+esc(u.title)+'</h1>'+c.previewHead(u)+
+  '<div class="grid" style="display:grid;gap:12px;margin-top:20px">'+u.sessions.map((l,i)=>catalogSessionCard(c,u,l,i)).join("")+'</div>'+
+  (c.disclaimer?'<p class="muted">'+c.disclaimer+'</p>':"")+
+  '<div class="actions"><button class="btn light" onclick="nav(\'subject\')">'+esc(c.backUnits)+'</button></div></section>';
+}
