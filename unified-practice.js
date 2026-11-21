@@ -6,9 +6,9 @@
 window.EBDA_PRACTICE_FRAMEWORK=(function(){
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const STR={
- en:{question:"Question",answered:"Answered",streak:"in a row",check:"Check answer",next:"Next question →",last:"Show result",prev:"← Previous",hintBtn:"💡 Need a hint?",hintTitle:"Thinking hint:",correct:"✓ Correct — well done.",wrong:"Not quite — here is why.",wrongSub:"Review the reasoning, then try a new question testing the same concept.",mistake:"Review this mistake",resume:"Continue saved practice on this device",saved:"Saved on this device for up to 7 days. Clear it on shared devices.",saveFail:"Could not save. Your browser may block storage.",cleared:"Saved session cleared.",yourAnswer:"Your calculated answer",completed:"Completed",mEyebrow:"SMART MISTAKE REVIEW",mTitle:"A wrong answer is useful evidence",mSub:"Review in steps, then apply the same skill to a new item. This extra question does not change your 50-question order.",mSteps:["Get a diagnostic hint","Show worked explanation","Try a similar problem"],mStep1:"<strong>Step 1 · Find the misconception</strong><p>Identify the quantities, operations or prerequisites in the question. Which part of your approach might be different from the definition?</p>",mStep2:"<strong>Step 2 · Worked reasoning</strong>",mExpected:"Expected answer:",mStep3:"<strong>Step 3 · Transfer your understanding</strong>",mNone:"No separate matching practice item is available for this skill.",mCheck:"Check similar problem",mOk:"Correct — you applied the method.",mNo:"Not yet. Revisit the worked reasoning."},
- ar:{question:"سؤال",answered:"أُجيب",streak:"متتالية",check:"تحقق من الإجابة",next:"التالي ←",last:"النتيجة",prev:"السابق",hintBtn:"💡 تحتاج تلميحًا؟",hintTitle:"تلميح للتفكير:",correct:"✓ إجابة صحيحة — أحسنت.",wrong:"ليست الإجابة الصحيحة — إليك السبب.",wrongSub:"راجع طريقة الحل، ثم جرّب سؤالًا جديدًا على الفكرة نفسها.",mistake:"راجع هذا الخطأ",resume:"استئناف التدريب المحفوظ على هذا الجهاز",saved:"محفوظ على هذا الجهاز لمدة تصل إلى 7 أيام. امسحه على الأجهزة المشتركة.",saveFail:"تعذر الحفظ. قد يكون المتصفح يحظر التخزين.",cleared:"تم مسح الجلسة المحفوظة.",yourAnswer:"إجابتك",completed:"مكتمل",mEyebrow:"مراجعة ذكية للخطأ",mTitle:"الإجابة الخاطئة دليل مفيد",mSub:"راجع خطوة بخطوة، ثم طبّق المهارة نفسها على سؤال جديد. هذا السؤال الإضافي لا يغيّر ترتيب أسئلتك الخمسين.",mSteps:["احصل على تلميح تشخيصي","اعرض الشرح خطوة بخطوة","جرّب مسألة مشابهة"],mStep1:"<strong>الخطوة 1 · حدّد موضع الخلل</strong><p>حدّد الكميات أو العمليات أو المتطلبات في السؤال. أي جزء من طريقتك قد يختلف عن القاعدة؟</p>",mStep2:"<strong>الخطوة 2 · الحل خطوة بخطوة</strong>",mExpected:"الإجابة المتوقعة:",mStep3:"<strong>الخطوة 3 · انقل فهمك</strong>",mNone:"لا يوجد سؤال تدريب مطابق لهذه المهارة حاليًا.",mCheck:"تحقق من المسألة المشابهة",mOk:"صحيح — طبقت الطريقة بنجاح.",mNo:"ليس بعد. راجع الحل النموذجي."},
- de:{question:"Frage",answered:"Beantwortet",streak:"in Folge",check:"Antwort prüfen",next:"Weiter →",last:"Ergebnis",prev:"← Zurück",hintBtn:"💡 Hinweis?",hintTitle:"Denkhilfe:",correct:"✓ Richtig — gut gemacht.",wrong:"Noch nicht ganz — hier ist der Grund.",wrongSub:"Lies die Erklärung und versuche danach eine neue Frage zum gleichen Thema.",mistake:"Fehler wiederholen",resume:"Gespeicherte Übung auf diesem Gerät fortsetzen",saved:"Bis zu 7 Tage auf diesem Gerät gespeichert. Auf geteilten Geräten bitte löschen.",saveFail:"Speichern nicht möglich. Der Browser blockiert eventuell den Speicher.",cleared:"Gespeicherte Übung gelöscht.",yourAnswer:"Dein Ergebnis",completed:"Fertig",mEyebrow:"SMARTE FEHLERWIEDERHOLUNG",mTitle:"Eine falsche Antwort ist ein nützlicher Hinweis",mSub:"Wiederhole in Schritten und wende die Fähigkeit auf eine neue Aufgabe an. Diese Zusatzaufgabe ändert die Reihenfolge der 50 Fragen nicht.",mSteps:["Diagnose-Hinweis","Musterlösung anzeigen","Ähnliche Aufgabe versuchen"],mStep1:"<strong>Schritt 1 · Finde das Missverständnis</strong><p>Welche Größen, Rechenschritte oder Voraussetzungen stecken in der Frage? Welcher Teil deines Wegs weicht von der Regel ab?</p>",mStep2:"<strong>Schritt 2 · Musterlösung</strong>",mExpected:"Erwartete Antwort:",mStep3:"<strong>Schritt 3 · Wissen anwenden</strong>",mNone:"Für diese Fähigkeit gibt es gerade keine passende Zusatzaufgabe.",mCheck:"Ähnliche Aufgabe prüfen",mOk:"Richtig — die Methode sitzt.",mNo:"Noch nicht. Schau dir die Musterlösung an."}
+ en:{question:"Question",answered:"Answered",streak:"in a row",check:"Check answer",next:"Next question →",last:"Show result",prev:"← Previous",hintBtn:"💡 Need a hint?",hintTitle:"Thinking hint:",correct:"✓ Correct — well done.",wrong:"Not quite — here is why.",wrongSub:"Review the reasoning, then try a new question testing the same concept.",mistake:"Review this mistake",resume:"Continue saved practice on this device",saved:"Saved on this device for up to 7 days. Clear it on shared devices.",saveFail:"Could not save. Your browser may block storage.",cleared:"Saved session cleared.",yourAnswer:"Your calculated answer",completed:"Completed",mEyebrow:"SMART MISTAKE REVIEW",mTitle:"A wrong answer is useful evidence",mSub:"Review in steps, then apply the same skill to a new item. This extra question does not change your 50-question order.",mSteps:["Get a diagnostic hint","Show worked explanation","Try a similar problem"],mStep1:"<strong>Step 1 · Find the misconception</strong><p>Identify the quantities, operations or prerequisites in the question. Which part of your approach might be different from the definition?</p>",mStep2:"<strong>Step 2 · Worked reasoning</strong>",mExpected:"Expected answer:",mStep3:"<strong>Step 3 · Transfer your understanding</strong>",mNone:"No separate matching practice item is available for this skill.",mCheck:"Check similar problem",mOk:"Correct — you applied the method.",mNo:"Not yet. Revisit the worked reasoning.",sPath:"Learning path",sStages:["Discover","Understand","Apply","Challenge","Master"],sDone:(n,name)=>"Stage "+n+" · "+name+" — complete",sScore:c=>"You answered "+c+" of 10 correctly in this stage.",sNext:(n,name,a,b)=>"Next: Stage "+n+" · "+name+" — questions "+a+"–"+b+".",sGo:"Continue →"},
+ ar:{question:"سؤال",answered:"أُجيب",streak:"متتالية",check:"تحقق من الإجابة",next:"التالي ←",last:"النتيجة",prev:"السابق",hintBtn:"💡 تحتاج تلميحًا؟",hintTitle:"تلميح للتفكير:",correct:"✓ إجابة صحيحة — أحسنت.",wrong:"ليست الإجابة الصحيحة — إليك السبب.",wrongSub:"راجع طريقة الحل، ثم جرّب سؤالًا جديدًا على الفكرة نفسها.",mistake:"راجع هذا الخطأ",resume:"استئناف التدريب المحفوظ على هذا الجهاز",saved:"محفوظ على هذا الجهاز لمدة تصل إلى 7 أيام. امسحه على الأجهزة المشتركة.",saveFail:"تعذر الحفظ. قد يكون المتصفح يحظر التخزين.",cleared:"تم مسح الجلسة المحفوظة.",yourAnswer:"إجابتك",completed:"مكتمل",mEyebrow:"مراجعة ذكية للخطأ",mTitle:"الإجابة الخاطئة دليل مفيد",mSub:"راجع خطوة بخطوة، ثم طبّق المهارة نفسها على سؤال جديد. هذا السؤال الإضافي لا يغيّر ترتيب أسئلتك الخمسين.",mSteps:["احصل على تلميح تشخيصي","اعرض الشرح خطوة بخطوة","جرّب مسألة مشابهة"],mStep1:"<strong>الخطوة 1 · حدّد موضع الخلل</strong><p>حدّد الكميات أو العمليات أو المتطلبات في السؤال. أي جزء من طريقتك قد يختلف عن القاعدة؟</p>",mStep2:"<strong>الخطوة 2 · الحل خطوة بخطوة</strong>",mExpected:"الإجابة المتوقعة:",mStep3:"<strong>الخطوة 3 · انقل فهمك</strong>",mNone:"لا يوجد سؤال تدريب مطابق لهذه المهارة حاليًا.",mCheck:"تحقق من المسألة المشابهة",mOk:"صحيح — طبقت الطريقة بنجاح.",mNo:"ليس بعد. راجع الحل النموذجي.",sPath:"مسار التعلّم",sStages:["اكتشف","افهم","طبّق","تحدَّ","أتقن"],sDone:(n,name)=>"المرحلة "+n+" · "+name+" — اكتملت",sScore:c=>"أجبت إجابة صحيحة على "+c+" من 10 في هذه المرحلة.",sNext:(n,name,a,b)=>"التالية: المرحلة "+n+" · "+name+" — الأسئلة "+a+"–"+b+".",sGo:"متابعة ←"},
+ de:{question:"Frage",answered:"Beantwortet",streak:"in Folge",check:"Antwort prüfen",next:"Weiter →",last:"Ergebnis",prev:"← Zurück",hintBtn:"💡 Hinweis?",hintTitle:"Denkhilfe:",correct:"✓ Richtig — gut gemacht.",wrong:"Noch nicht ganz — hier ist der Grund.",wrongSub:"Lies die Erklärung und versuche danach eine neue Frage zum gleichen Thema.",mistake:"Fehler wiederholen",resume:"Gespeicherte Übung auf diesem Gerät fortsetzen",saved:"Bis zu 7 Tage auf diesem Gerät gespeichert. Auf geteilten Geräten bitte löschen.",saveFail:"Speichern nicht möglich. Der Browser blockiert eventuell den Speicher.",cleared:"Gespeicherte Übung gelöscht.",yourAnswer:"Dein Ergebnis",completed:"Fertig",mEyebrow:"SMARTE FEHLERWIEDERHOLUNG",mTitle:"Eine falsche Antwort ist ein nützlicher Hinweis",mSub:"Wiederhole in Schritten und wende die Fähigkeit auf eine neue Aufgabe an. Diese Zusatzaufgabe ändert die Reihenfolge der 50 Fragen nicht.",mSteps:["Diagnose-Hinweis","Musterlösung anzeigen","Ähnliche Aufgabe versuchen"],mStep1:"<strong>Schritt 1 · Finde das Missverständnis</strong><p>Welche Größen, Rechenschritte oder Voraussetzungen stecken in der Frage? Welcher Teil deines Wegs weicht von der Regel ab?</p>",mStep2:"<strong>Schritt 2 · Musterlösung</strong>",mExpected:"Erwartete Antwort:",mStep3:"<strong>Schritt 3 · Wissen anwenden</strong>",mNone:"Für diese Fähigkeit gibt es gerade keine passende Zusatzaufgabe.",mCheck:"Ähnliche Aufgabe prüfen",mOk:"Richtig — die Methode sitzt.",mNo:"Noch nicht. Schau dir die Musterlösung an.",sPath:"Lernpfad",sStages:["Entdecken","Verstehen","Anwenden","Challenge","Meistern"],sDone:(n,name)=>"Etappe "+n+" · "+name+" — abgeschlossen",sScore:c=>"Du hast "+c+" von 10 in dieser Etappe richtig beantwortet.",sNext:(n,name,a,b)=>"Weiter: Etappe "+n+" · "+name+" — Fragen "+a+"–"+b+".",sGo:"Weiter →"}
 };
 const TTL=7*24*60*60*1000;
 function create(cfg){
@@ -16,7 +16,7 @@ function create(cfg){
  const name=cfg.name;
  const scope=cfg.subject;
  const storeKey="ntss-private-practice-checkpoint-v4-"+scope;
- let g=1,u=0,i=0,items=[],cursor=0,answers={},done=false,hintFlags={},session="";
+ let g=1,u=0,i=0,items=[],cursor=0,answers={},done=false,hintFlags={},session="",pendingStage=null;
  const mistakes=new Map();let mistakeKey="";
  const lessonKey=()=>[g,u,i].join("-");
  const answered=()=>Object.values(answers).filter(a=>a&&a.checked).length;
@@ -32,7 +32,7 @@ function create(cfg){
   if(cfg.contextGames)window.EBDAA_CONTEXT_GAMES?.reset(cfg.gameKey,lessonKey());
   window.EBDAA_GAME?.resetLesson(cfg.gameKey,lessonKey());
   cfg.hooks?.onStart?.();
-  items=normalize(cfg.buildItems(g,u,i));cursor=0;answers={};done=false;hintFlags={};mistakes.clear();mistakeKey="";
+  items=normalize(cfg.buildItems(g,u,i));cursor=0;answers={};done=false;hintFlags={};pendingStage=null;mistakes.clear();mistakeKey="";
   window.EBDA_MASTERY?.begin(g,u,i,scope);
   refresh();
  }
@@ -50,7 +50,7 @@ function create(cfg){
  function tolerance(q){return cfg.tolerance?cfg.tolerance(q):0.005}
  function isCorrect(q,v){
   if(q.mode==="choice")return Number(v)===Number(q.answer);
-  if(q.mode==="fill")return cfg.checkFill?q.checkFill(q,v):String(v).trim().toLowerCase()===String(q.answer).trim().toLowerCase();
+  if(q.mode==="fill")return cfg.checkFill?cfg.checkFill(q,v):String(v).trim().toLowerCase()===String(q.answer).trim().toLowerCase();
   const n=Number(v);return Number.isFinite(n)&&Math.abs(n-Number(q.answer))<=tolerance(q);
  }
  function check(){
@@ -71,11 +71,12 @@ function create(cfg){
    const remaining=items.slice(target,Math.min(target+10,items.length));
    const ordered=window.EBDA_MASTERY?window.EBDA_MASTERY.prioritizeUpcoming(g,u,i,remaining,scope):remaining;
    items.splice(target,remaining.length,...ordered);
+   pendingStage=target/10;
   }
   cursor=target;refresh();scrollTop();
  }
  function prev(){
-  if(cursor>0){cfg.hooks?.onMove?.();cursor--;refresh();scrollTop()}
+  pendingStage=null;if(cursor>0){cfg.hooks?.onMove?.();cursor--;refresh();scrollTop()}
  }
  function move(delta){if(delta>0)next();else prev()}
  function scrollTop(){const h=document.querySelector?.(".practice-focus__header");h?.scrollIntoView?.({behavior:"auto",block:"start"})}
@@ -109,7 +110,7 @@ function create(cfg){
   if(cfg.contextGames)window.EBDAA_CONTEXT_GAMES?.reset(cfg.gameKey,lessonKey());
   window.EBDAA_GAME?.resetLesson(cfg.gameKey,lessonKey());
   window.EBDA_MASTERY?.begin(g,u,i,scope);
-  items=v.order.map(id=>byId.get(id));cursor=v.cursor;done=false;
+  items=v.order.map(id=>byId.get(id));cursor=v.cursor;done=false;pendingStage=null;
   answers={};for(const [k,a]of Object.entries(v.answers||{})){const j=Number(k);if(Number.isInteger(j)&&j>=0&&j<50&&a&&typeof a==="object")answers[j]={value:a.value,checked:!!a.checked,correct:!!a.correct}}
   hintFlags=v.hintFlags&&typeof v.hintFlags==="object"?v.hintFlags:{};
   mistakes.clear();mistakeKey="";
@@ -165,6 +166,13 @@ function create(cfg){
    const ar=cfg.completionArabic===true?true:window.EBDA_I18N?window.EBDA_I18N.current()==="ar":false;
    return window.EBDA_COMPLETION.render({subject:cfg.subject,grade:g,unit:u,index:i,lesson:cfg.title(g,u,i),correct:correctCount(),answers,retry:name+".restart()",back:cfg.back,arabic:ar});
   }
+  if(pendingStage!==null){
+   const stage=pendingStage,from=stage*10,to=stage*10+9;
+   const sprintCorrect=Object.keys(answers).filter(k=>{const j=Number(k);return j>=stage*10-10&&j<stage*10&&answers[j].checked&&answers[j].correct}).length;
+   const h=cfg.header(g,u,i);
+   const gate='<section class="ntss-stage-gate"><div class="eyebrow">'+esc(S.sPath)+'</div><h2 class="practice-question">'+esc(S.sDone(stage,S.sStages[stage-1]))+'</h2><p class="feedback" role="status">'+esc(S.sScore(sprintCorrect))+'</p><p><b>'+esc(S.sNext(stage+1,S.sStages[stage],from+1,to+1))+'</b></p><div class="stepfooter"><button class="btn teal" onclick="'+name+'.continueStage()">'+S.sGo+'</button></div></section>';
+   return '<section class="practice-focus'+(cfg.focusClass?" "+cfg.focusClass:"")+'"'+(h.dir?' dir="'+h.dir+'"':"")+(h.lang?' lang="'+h.lang+'"':"")+'><header class="practice-focus__header"><div class="practice-focus__header-row"><button class="practice-focus__exit" onclick="'+h.exit+'">'+h.exitLabel+'</button><span class="practice-focus__year">'+h.yearLabel+'</span></div><div class="practice-focus__info"><h1 class="practice-focus__lesson">'+esc(cfg.title(g,u,i))+'</h1><span class="practice-focus__counter">'+S.question+" "+(cursor+1)+" / 50"+'</span></div><div class="practice-focus__track" role="progressbar" aria-label="Answered questions" aria-valuemin="0" aria-valuemax="50" aria-valuenow="'+answered()+'"><i style="width:'+(answered()*2)+'%"></i></div></header><div class="practice-focus__content"><div class="guided-question">'+gate+'<p class="muted" style="font-size:12px">'+h.disclaimer+'</p></div></div></section>';
+  }
   const q=current(),a=rec(),done_=answered(),correct=correctCount();
   const streak=(()=>{let n=0;for(let k=cursor;k>=0;k--){if(answers[k]?.checked&&answers[k].correct)n++;else if(answers[k]?.checked)break;else break}return n})();
   const xp=correct*10+Math.min(streak,5)*5;
@@ -182,10 +190,11 @@ function create(cfg){
   return '<section class="practice-focus'+(cfg.focusClass?" "+cfg.focusClass:"")+'"'+(h.dir?' dir="'+h.dir+'"':"")+(h.lang?' lang="'+h.lang+'"':"")+'><header class="practice-focus__header"><div class="practice-focus__header-row"><button class="practice-focus__exit" onclick="'+h.exit+'">'+h.exitLabel+'</button><span class="practice-focus__year">'+h.yearLabel+'</span></div><div class="practice-focus__info"><h1 class="practice-focus__lesson">'+esc(cfg.title(g,u,i))+'</h1><span class="practice-focus__counter">'+(done?S.completed+" · 50 / 50":S.question+" "+(cursor+1)+" / 50")+'</span></div><div class="practice-focus__track" role="progressbar" aria-label="Answered questions" aria-valuemin="0" aria-valuemax="50" aria-valuenow="'+done_+'"><i style="width:'+(done_*2)+'%"></i></div></header><div class="practice-focus__content"><div class="guided-question">'+body+'<p class="muted" style="font-size:12px">'+h.disclaimer+'</p></div></div></section>';
  }
  function submitOrNext(){const a=rec();if(a?.checked)next();else check()}
+ function continueStage(){pendingStage=null;refresh();scrollTop()}
  function progress(){return {position:done?50:cursor+1,answered:answered(),total:50,finished:done}}
  const api={
   start,render,restart,answer,choose:answer,respond:answer,select:answer,write,setInput:write,gameChoose,check,next,prev,previous:prev,move,submitOrNext,showHint,
-  saveCheckpoint,clearCheckpoint,resumeCheckpoint,hasCheckpoint:()=>!!saved(),progress,currentQuestion:current,
+  saveCheckpoint,clearCheckpoint,resumeCheckpoint,hasCheckpoint:()=>!!saved(),progress,currentQuestion:current,continueStage,
   mistakeAdvance,mistakeType,mistakeChoose,mistakeCheck,
   build:(gg,uu,ii)=>cfg.buildItems(gg,uu,ii),
   _state:()=>({g,u,i,cursor,answers,done,items}),_refresh:refresh,_markDone:()=>{done=true;window.EBDA_PROGRESS?.mark(cfg.progressKey||scope,g,u,i,Math.round(100*correctCount()/Math.max(1,items.length)));refresh()},_esc:esc,_S:S
