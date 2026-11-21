@@ -132,7 +132,7 @@ function check(condition,msg){assert.ok(condition,msg)}
      ]);
      if(!navigator.serviceWorker.controller){await new Promise(resolve=>{navigator.serviceWorker.addEventListener('controllerchange',resolve,{once:true});setTimeout(resolve,3500)})}
    });
-   await page.waitForTimeout(700);
+   await page.waitForFunction(()=>document.documentElement.dataset.offlineReady==="true",{timeout:30000});
    await context.setOffline(true);
    await page.reload({waitUntil:'domcontentloaded',timeout:15000});
    await page.waitForFunction(()=>typeof window.EBDA_APP_RENDER==='function',{timeout:10000});
