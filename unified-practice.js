@@ -43,7 +43,7 @@ function create(cfg){
   const a=rec();if(a?.checked)return;
   const q=current();if(!q)return;
   answers[cursor]={value:v,checked:false,correct:false};
-  if(q.mode==="choice")refresh();else{const b=document.getElementById(cfg.checkId);if(b)b.disabled=String(v??"").trim()==="";scheduleSave()}
+  if(q.mode==="choice"||q.mode==="slider")refresh();else{const b=document.getElementById(cfg.checkId);if(b)b.disabled=String(v??"").trim()==="";scheduleSave()}
  }
  function gameChoose(j){answer(j)}
  function write(v){answer(String(v).slice(0,cfg.fillLimit||110))}

@@ -1,6 +1,6 @@
+(function(){
 /* STEM Physics interactive, parameterized conceptual simulations.
    Formula models are idealized educational examples, not measurements or publisher exercises. */
-window.EBDAA_PHYSICS_PRACTICE=(function(){
 const models={
  measurement:["Measured length","m",1,0,"Length readings must include a unit."],
  units:["Area of a rectangle","m²",2,0,"Area = length × width."],
@@ -48,7 +48,6 @@ const models={
  logic:["AND gate output (1/0)","",1,1,"An AND gate outputs 1 only when both inputs are 1."]
 };
 const esc=x=>String(x).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-let state={g:1,u:0,i:0,items:[],cursor:0,answers:{},done:false},input="",feedback="";
 function round(n){return Math.round(n*1000)/1000}
 function task(topic,n){
  const a=2+(n%7),b=2+(Math.floor(n/7)%6),model=models[topic]||models.force;
@@ -85,22 +84,23 @@ function build(g,u,i){
  }
  return out;
 }
-function redraw(){window.EBDA_APP_RENDER?.()}
-function start(g,u,i){window.NTSS_LEARNING?.reset("physicsPractice");window.NTSS_APPLIED.reset("physics",[g,u,i].join("-"));window.EBDAA_CONTEXT_GAMES.reset("physics",[g,u,i].join("-"));window.EBDAA_PHYSICS_SPECIAL?.stop();window.EBDAA_GAME.resetLesson('physics',[g,u,i].join('-'));state={g,u,i,items:build(g,u,i),cursor:0,answers:{},done:false};input="";feedback="";redraw()}
-function setInput(v){input=String(v).slice(0,60)}
-function setSlider(v){input=String(v);redraw()}
-function choose(j){input=String(state.items[state.cursor].options[j]);redraw()}
-function check(){const q=state.items[state.cursor];if(state.answers[state.cursor]?.checked||input.trim()==="")return;const num=Number(input);const ok=Number.isFinite(num)&&Math.abs(num-q.value)<Math.max(.011,Math.abs(q.value)*.001);state.answers[state.cursor]={checked:true,correct:ok,value:input};window.NTSS_LEARNING?.record("physicsPractice",state.cursor,ok,q);feedback=ok?"Correct — excellent prediction!":"Try the worked model and review the units.";redraw()}
-function next(){window.EBDAA_PHYSICS_SPECIAL?.stop();if(!state.answers[state.cursor]?.checked)return;if(state.cursor===49){state.done=true;window.EBDA_PROGRESS?.mark("physics",state.g,state.u,state.i,Math.round(100*Object.values(state.answers).filter(a=>a&&a.correct).length/Math.max(1,(state.items).length)));}else state.cursor++;input=state.answers[state.cursor]?.value||"";feedback="";redraw()}
-function previous(){window.EBDAA_PHYSICS_SPECIAL?.stop();if(state.cursor>0){state.cursor--;input=state.answers[state.cursor]?.value||"";feedback="";redraw()}}
-function restart(){start(state.g,state.u,state.i)}
-function render(){
- if(state.done)return window.EBDA_COMPLETION.render({subject:"physics",grade:state.g,unit:state.u,index:state.i,lesson:window.EBDAA_PHYSICS_UNITS[state.g][state.u].sessions[state.i],correct:Object.values(state.answers).filter(v=>v.checked&&v.correct).length,answers:state.answers,retry:"EBDAA_PHYSICS_PRACTICE.restart()",back:"physicsBack()",arabic:window.EBDA_I18N?window.EBDA_I18N.current()==="ar":false});
+window.EBDAA_PHYSICS_PRACTICE=window.EBDA_PRACTICE_FRAMEWORK.create({
+ name:"EBDAA_PHYSICS_PRACTICE",subject:"physics",gameKey:"physics",learningMode:"physicsPractice",appliedKey:"physics",contextGames:true,
+ locale:"en",inputId:"practice-answer",checkId:"physics-check",back:"physicsBack()",
+ tolerance:q=>Math.max(.011,Math.abs(Number(q.answer))*.001),
+ buildItems:(g,u,i)=>build(g,u,i).map(q=>{
+  const base={...q,pmode:q.mode,explanation:"Result: "+q.value+" "+(q.model[1]||"")+" · "+q.formula,focus:1};
+  if(q.mode==="multiple")return {...base,mode:"choice",options:q.options.map(v=>v+" "+q.model[1])};
+  if(q.mode==="predict")return {...base,mode:"slider",answer:q.value};
+  return {...base,mode:"number",answer:q.value};
+ }),
+ title:(g,u,i)=>window.EBDAA_PHYSICS_UNITS[g][u].sessions[i],
+ header:g=>({exitLabel:"← Physics lessons",exit:"physicsBack()",yearLabel:"YEAR "+g+" · PHYSICS",disclaimer:"These 50 practice prompts are generated variations of simplified models; not 50 independent textbook questions. Models are illustrative, especially for semiconductors and magnetic proportionality. Teacher validation is required."}),
+ eyebrow:q=>"PHYSICS LAB · "+esc((q.pmode||"").toUpperCase()),
+ beforeControls:q=>'<div class="hint" style="margin-bottom:16px"><strong>'+esc(q.model[0])+'</strong><p>Input A = '+q.a+' · Input B = '+q.b+' · Unit: '+esc(q.model[1]||"dimensionless")+'</p><p>'+esc(q.model[4])+'</p></div>',
+ sliderLabel:(q,v)=>"Experiment prediction: "+esc(v||"select a value"),
+ afterControls:(q,{g,u,i,cursor,items})=>(window.EBDAA_CONTEXT_GAMES.physics([g,u,i].join("-"),cursor,q.topic)||window.EBDAA_CONTEXT_GAMES.physicsModel([g,u,i].join("-"),cursor,q))+window.EBDAA_CONTEXT_GAMES.report("physics",[g,u,i].join("-"),false)+window.NTSS_APPLIED.render("physics",[g,u,i].join("-"),cursor,window.EBDAA_PHYSICS_UNITS[g][u].sessions[i])+(window.EBDAA_PHYSICS_SPECIAL.render(q.topic)||window.EBDAA_PHYSICS_VISUAL.render(q.topic)),
+ hooks:{onStart:()=>window.EBDAA_PHYSICS_SPECIAL?.stop(),onMove:()=>window.EBDAA_PHYSICS_SPECIAL?.stop()}
+});
 
- const s=state,q=s.items[s.cursor],u=window.EBDAA_PHYSICS_UNITS[s.g][s.u],count=Object.values(s.answers).filter(v=>v.checked).length,correct=Object.values(s.answers).filter(v=>v.correct).length,a=s.answers[s.cursor],xp=correct*10;
- const slider=q.mode==="predict"?'<label for="physics-slider">Experiment prediction: '+esc(input||"select a value")+'</label><input id="physics-slider" type="range" min="0" max="'+Math.max(20,Math.ceil(Math.abs(q.value)*1.8)+1)+'" step="0.1" value="'+esc(input||"0")+'" '+(a?.checked?"disabled":"")+' oninput="EBDAA_PHYSICS_PRACTICE.setSlider(this.value)" style="display:block;width:100%;margin:18px 0"><div class="game-instruction">Move the slider to your predicted value, then check.</div>':q.mode==="multiple"?'<div class="choices">'+q.options.map((v,j)=>'<button class="choice" '+(a?.checked?"disabled":"")+' onclick="EBDAA_PHYSICS_PRACTICE.choose('+j+')">'+esc(v)+' '+esc(q.model[1])+'</button>').join("")+'</div>':'<div class="game-entry"><input class="game-input" type="number" inputmode="decimal" step="any" placeholder="Your result" value="'+esc(input)+'" '+(a?.checked?"disabled":"")+' oninput="EBDAA_PHYSICS_PRACTICE.setInput(this.value)"><span>'+esc(q.model[1])+'</span></div>';
- const body=s.done?window.EBDAA_GAME.results(s.answers,50,false)+window.EBDAA_CONTEXT_GAMES.report('physics',[s.g,s.u,s.i].join('-'),false)+'<div class="feedback"><h2>Mission complete! 🏆</h2><p>Correct: '+correct+' / 50 · Earned: '+xp+' XP</p><button class="btn teal" onclick="EBDAA_PHYSICS_PRACTICE.restart()">Try again</button></div>':window.EBDAA_GAME.stats(s.answers,50,false)+'<div class="eyebrow">PHYSICS LAB · '+esc(q.mode.toUpperCase())+'</div><h2 class="practice-question">'+esc(q.question)+'</h2><div class="hint" style="margin-bottom:16px"><strong>'+esc(q.model[0])+'</strong><p>Input A = '+q.a+' · Input B = '+q.b+' · Unit: '+esc(q.model[1]||"dimensionless")+'</p><p>'+esc(q.model[4])+'</p></div>'+slider+(window.EBDAA_CONTEXT_GAMES.physics([s.g,s.u,s.i].join('-'),s.cursor,q.topic)||window.EBDAA_CONTEXT_GAMES.physicsModel([s.g,s.u,s.i].join('-'),s.cursor,q))+window.EBDAA_CONTEXT_GAMES.report('physics',[s.g,s.u,s.i].join('-'),false)+window.NTSS_APPLIED.render('physics',[s.g,s.u,s.i].join('-'),s.cursor,u.sessions[s.i])+(a?.checked?'<div role="status" class="feedback '+(a.correct?'':'error')+'"><strong>'+esc(feedback)+'</strong><p>Result: '+esc(q.value)+' '+esc(q.model[1])+' · '+esc(q.formula)+'</p></div>':'')+'<div class="stepfooter"><button class="btn light" '+(!s.cursor?"disabled":"")+' onclick="EBDAA_PHYSICS_PRACTICE.previous()">← Previous</button><button class="btn teal" '+(!a&&!input?"disabled":"")+' onclick="EBDAA_PHYSICS_PRACTICE.'+(a?"next":"check")+'()">'+(a?"Next →":"Check prediction")+'</button></div>';
- return '<section class="practice-focus"><header class="practice-focus__header"><div class="practice-focus__header-row"><button class="practice-focus__exit" onclick="physicsBack()">← Physics lessons</button><span class="practice-focus__year">YEAR '+s.g+' · PHYSICS</span></div><div class="practice-focus__info"><h1 class="practice-focus__lesson">'+esc(u.sessions[s.i])+'</h1><span class="practice-focus__counter">Mission '+(s.cursor+1)+' / 50</span></div><div class="practice-focus__track"><i style="width:'+(count*2)+'%"></i></div></header><div class="practice-focus__content"><div class="guided-question">'+body+(window.EBDAA_PHYSICS_SPECIAL.render(q.topic)||window.EBDAA_PHYSICS_VISUAL.render(q.topic))+'<p class="muted" style="font-size:12px;margin-top:24px">These 50 practice prompts are generated variations of simplified models; not 50 independent textbook questions. Models are illustrative, especially for semiconductors and magnetic proportionality. Teacher validation is required.</p></div></div></section>';
-}
-return {build,start,render,choose,setInput,setSlider,check,next,previous,restart};
 })();

@@ -1,12 +1,9 @@
+(function(){
 /* Supplementary concept practice for source-indexed social studies. 50 interactions per lesson
    recycle five core concepts in multiple formats, not 50 independent textbook questions.
    Designed for practice; teacher review is needed before formal assessment. */
-window.EBDAA_ECONOMICS_PRACTICE=(function(){
  const esc=x=>String(x??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
  const norm=x=>String(x||"").normalize("NFKC").replace(/[أإآٱ]/g,"ا").replace(/ة/g,"ه").replace(/ى/g,"ي").replace(/[\u064B-\u065F\u0670]/g,"").replace(/[.,،؟!\u200f\u200e]/g,"").replace(/\s+/g," ").trim().toLowerCase();
- let s={g:3,u:0,i:0,items:[],cursor:0,answers:{},done:false,typed:""},feedback="";
- const subject=()=>window.EBDAA_ECONOMICS_UNITS[s.g][s.u];
- const lesson=()=>subject().sessions[s.i];
 
  const numericCases={
  "0-4":[["طالب اختار تدريبًا يوفر 800 جنيه بدل وظيفة مؤقتة تحقق 600 جنيه. ما تكلفة الفرصة البديلة (بالجنيه)؟","600"],["مشروع اختار عائدًا 900 جنيه وترك بديلًا يوفر 700 جنيه. ما تكلفة الفرصة البديلة؟","700"]],
@@ -42,34 +39,16 @@ window.EBDAA_ECONOMICS_PRACTICE=(function(){
   for(let n=7;n<50;n+=10)if(cases.length){const ex=cases[Math.floor(n/10)%cases.length];result[n]={type:"fill",prompt:"🧮 مسألة اقتصادية تطبيقية — اكتب الناتج رقمًا فقط:",clue:ex[0],answer:ex[1],explain:"الإجابة الحسابية: "+ex[1]+". هذه مسألة توضيحية مولدة وليست من نص امتحانات الدليل."}}
   return result;
  }
- const draw=()=>window.EBDA_APP_RENDER?.();
- function start(g,u,i){window.NTSS_LEARNING?.reset("economicsPractice");window.NTSS_APPLIED.reset("economics",[g,u,i].join("-"));s={g,u,i,items:build(g,u,i),cursor:0,answers:{},done:false,typed:""};feedback="";draw()}
- function select(v){if(s.answers[s.cursor]?.checked)return;s.answers[s.cursor]={value:v,checked:false,correct:false};draw()}
- function write(v){s.typed=String(v).slice(0,110)}
- function check(){
-  const q=s.items[s.cursor],a=s.answers[s.cursor]||{},v=q.type==="fill"?s.typed:a.value;
-  if(v===undefined||String(v).trim()==="")return;
-  const ok=q.type==="fill"?(String(q.answer).match(/^[0-9]+$/)?Number(String(v).replace(/[٠-٩]/g,x=>"٠١٢٣٤٥٦٧٨٩".indexOf(x)))===Number(q.answer):norm(v)===norm(q.answer)):Number(v)===q.answer;
-  s.answers[s.cursor]={value:v,checked:true,correct:ok};window.NTSS_LEARNING?.record("economicsPractice",s.cursor,ok,q);feedback=ok?"أحسنت! إجابة صحيحة.":"راجع المعلومة وحاول تثبيتها في ذاكرتك.";draw();
- }
- function move(delta){
-  if(delta>0&&!s.answers[s.cursor]?.checked)return;
-  if(delta>0&&s.cursor===s.items.length-1){s.done=true;window.EBDA_PROGRESS?.mark("economics",s.g,s.u,s.i,Math.round(100*Object.values(s.answers).filter(a=>a&&a.correct).length/Math.max(1,(s.items).length)));draw();return}
-  s.cursor=Math.max(0,Math.min(s.items.length-1,s.cursor+delta));s.typed=String(s.answers[s.cursor]?.value||"");feedback="";draw()
- }
- function restart(){start(s.g,s.u,s.i)}
- function render(){
- if(s.done)return window.EBDA_COMPLETION.render({subject:"economics",grade:s.g,unit:s.u,index:s.i,lesson:window.EBDAA_ECONOMICS_UNITS[s.g][s.u].sessions[s.i].title,correct:Object.values(s.answers).filter(v=>v.checked&&v.correct).length,answers:s.answers,retry:"EBDAA_ECONOMICS_PRACTICE.restart()",back:"economicsBackToUnit()",arabic:true});
+window.EBDAA_ECONOMICS_PRACTICE=window.EBDA_PRACTICE_FRAMEWORK.create({
+ name:"EBDAA_ECONOMICS_PRACTICE",subject:"economics",gameKey:"economics",learningMode:"economicsPractice",appliedKey:"economics",
+ locale:"ar",inputId:"practice-answer",checkId:"economics-check",back:"economicsBackToUnit()",completionArabic:true,
+ checkFill:(q,v)=>String(q.answer).match(/^[0-9]+$/)?Number(String(v).replace(/[٠-٩]/g,x=>"٠١٢٣٤٥٦٧٨٩".indexOf(x)))===Number(q.answer):norm(v)===norm(q.answer),
+ buildItems:(g,u,i)=>build(g,u,i).map(q=>q.type==="tf"?{mode:"choice",question:q.prompt,clue:q.clue,options:["صواب","خطأ"],answer:q.answer,explanation:q.explain}:q.type==="fill"?{mode:"fill",question:q.prompt,clue:q.clue,answer:q.answer,explanation:q.explain}:{mode:"choice",question:q.prompt,clue:q.clue,options:q.options,answer:q.answer,explanation:q.explain}),
+ title:(g,u,i)=>window.EBDAA_ECONOMICS_UNITS[g][u].sessions[i].title,
+ header:g=>({dir:"rtl",lang:"ar",exitLabel:"← العودة إلى الدروس",exit:"economicsBackToUnit()",yearLabel:"الصف الثالث · الاقتصاد",disclaimer:"الأنشطة تعليمية مساندة من مفاهيم الدرس، وتتضمن حسابات تدريبية أصلية وتستخدم إعادة صياغة متعددة للمعلومات الأساسية. لا تُمثل 50 سؤالًا أصليًا مستقلاً من الكتاب، وتحتاج مراجعة المعلم قبل التقييم الرسمي."}),
+ eyebrow:(q,{cursor})=>["🗺 اكتشف المعلومة","✏️ أكمل المفهوم","🔎 استنتج","⚖️ صواب أم خطأ","🧠 تحدي الذاكرة"][cursor%5]+" · نقطة معرفة",
+ beforeControls:q=>'<p style="font-size:18px;line-height:1.8;font-weight:600">'+esc(q.clue)+'</p>',
+ afterControls:(q,{g,u,i,cursor})=>window.NTSS_APPLIED.render("economics",[g,u,i].join("-"),cursor,window.EBDAA_ECONOMICS_UNITS[g][u].sessions[i].title)
+});
 
-  const q=s.items[s.cursor],a=s.answers[s.cursor],answered=Object.values(s.answers).filter(x=>x.checked).length,correct=Object.values(s.answers).filter(x=>x.checked&&x.correct).length;
-  const head='<header class="practice-focus__header" dir="rtl"><div class="practice-focus__header-row"><button class="practice-focus__exit" onclick="economicsBackToUnit()">← العودة إلى الدروس</button><span class="practice-focus__year">الصف '+("الثالث")+' · الاقتصاد</span></div><div class="practice-focus__info"><h1 class="practice-focus__lesson">'+esc(lesson().title)+'</h1><span class="practice-focus__counter">'+(s.done?"إنجاز المهمة":"السؤال "+(s.cursor+1)+" من 50")+'</span></div><div class="practice-focus__track"><i style="width:'+(answered*2)+'%"></i></div></header>';
-  if(s.done){const rate=Math.round(100*correct/50);return '<section class="practice-focus" lang="ar" dir="rtl">'+head+'<div class="practice-focus__content"><div class="guided-question"><h2>🏅 انتهت مهمة الاقتصاد!</h2><div class="game-hud"><strong>نتيجتك: '+correct+' / 50</strong><p>معدل الإتقان: '+rate+'%</p><p>هذه أسئلة مراجعة تعليمية مولدة من مفاهيم الدرس، وليست اختبارًا رسميًا.</p></div><button class="btn teal" onclick="EBDAA_ECONOMICS_PRACTICE.restart()">↻ إعادة التدريب</button><button class="btn light" onclick="economicsBackToUnit()">العودة إلى الوحدة</button></div></div></section>';}
-  let controls="";
-  if(q.type==="fill")controls='<label style="display:block;margin:18px 0 8px;font-weight:700" for="social-answer">إجابتك</label><input id="social-answer" class="game-input" dir="rtl" lang="ar" style="width:100%;max-width:480px;padding:16px;border:1px solid #d9e1dd;border-radius:12px" placeholder="اكتب المصطلح هنا" value="'+esc(s.typed)+'" '+(a?.checked?"disabled":"")+' oninput="EBDAA_ECONOMICS_PRACTICE.write(this.value)"/>';
-  else controls='<div style="display:grid;gap:10px;margin:20px 0">'+(q.type==="tf"?["صواب","خطأ"]:q.options).map((o,j)=>'<button class="card" style="width:100%;padding:16px;min-height:54px;border:2px solid '+(a?.value===j?"#1ca29a":"#e5e7eb")+';border-radius:14px;text-align:right;cursor:pointer;background:'+(a?.value===j?"#e9faf5":"white")+'" '+(a?.checked?"disabled":"")+' onclick="EBDAA_ECONOMICS_PRACTICE.select('+j+')">'+esc(o)+'</button>').join("")+'</div>';
-  const fb=a?.checked?'<div class="feedback '+(a.correct?"":"error")+'" role="status"><strong>'+(a.correct?"✓ صحيح":"الإجابة النموذجية: "+esc(q.correct||q.answer))+'</strong><p>'+esc(q.explain)+'</p></div>':"";
-  const key=["🗺 اكتشف المعلومة","✏️ أكمل المفهوم","🔎 استنتج","⚖️ صواب أم خطأ","🧠 تحدي الذاكرة"][s.cursor%5];
-  return '<section class="practice-focus" lang="ar" dir="rtl">'+head+'<div class="practice-focus__content"><div class="guided-question" dir="rtl"><div class="eyebrow">'+key+' · نقطة معرفة</div><h2 class="practice-question">'+esc(q.prompt)+'</h2><p style="font-size:18px;line-height:1.8;font-weight:600">'+esc(q.clue)+'</p>'+controls+window.NTSS_APPLIED.render("economics",[s.g,s.u,s.i].join('-'),s.cursor,lesson().title)+fb+'<div class="stepfooter"><button class="btn light" '+(!s.cursor?"disabled":"")+' onclick="EBDAA_ECONOMICS_PRACTICE.move(-1)">السابق</button><button class="btn teal" '+(a?.checked?"":q.type==="fill"?"":a?.value===undefined?"disabled":"")+' onclick="EBDAA_ECONOMICS_PRACTICE.'+(a?.checked?"move(1)":"check()")+'">'+(a?.checked?(s.cursor===49?"إنهاء المهمة":"التالي ←"):"تحقق من الإجابة")+'</button></div><p class="muted" style="font-size:12px;margin-top:18px">الأنشطة تعليمية مساندة من مفاهيم الدرس، وتتضمن حسابات تدريبية أصلية وتستخدم إعادة صياغة متعددة للمعلومات الأساسية. لا تُمثل 50 سؤالًا أصليًا مستقلاً من الكتاب، وتحتاج مراجعة المعلم قبل التقييم الرسمي.</p></div></div></section>';
- }
- return {start,build,render,select,write,check,move,restart};
 })();
