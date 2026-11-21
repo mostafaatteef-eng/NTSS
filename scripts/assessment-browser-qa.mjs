@@ -1,12 +1,17 @@
 import assert from "node:assert/strict";
 import {chromium,firefox,webkit} from "playwright";
-import {createServer} from "node:http";
-import {createReadStream,existsSync,statSync} from "node:fs";
+import {createServer} from "node:https";
+import {execFileSync} from "node:child_process";
+import {tmpdir} from "node:os";
+import {createReadStream,readFileSync,mkdtempSync,rmSync,existsSync,statSync} from "node:fs";
 import path from "node:path";
 
 const root=process.cwd(),mime={".html":"text/html",".js":"text/javascript",".css":"text/css"};
-const server=createServer((req,res)=>{
- const name=new URL(req.url,"http://localhost").pathname;
+const certDir=mkdtempSync(path.join(tmpdir(),"ebda-qa-tls-"));
+const keyFile=path.join(certDir,"key.pem"),certFile=path.join(certDir,"cert.pem");
+execFileSync("openssl",["req","-x509","-newkey","rsa:2048","-sha256","-nodes","-days","1","-keyout",keyFile,"-out",certFile,"-subj","/CN=127.0.0.1","-addext","subjectAltName=IP:127.0.0.1,DNS:localhost"],{stdio:"ignore"});
+const server=createServer({key:readFileSync(keyFile),cert:readFileSync(certFile)},(req,res)=>{
+ const name=new URL(req.url,"https://localhost").pathname;
  const file=path.resolve(root,"."+(name==="/"?"/index.html":name));
  if(!file.startsWith(root+path.sep)||!existsSync(file)||!statSync(file).isFile()){res.writeHead(404);res.end();return}
  res.writeHead(200,{"Content-Type":mime[path.extname(file)]||"application/octet-stream","Cache-Control":"no-store"});
@@ -19,9 +24,9 @@ try{
  const engines={chromium,firefox,webkit};
  assert.ok(engines[engine],"Supported browser engine");
  browser=await engines[engine].launch(engine==="chromium"?{headless:true,args:["--no-sandbox"]}:{headless:true});
- const url="http://127.0.0.1:"+server.address().port+"/";
+ const url="https://127.0.0.1:"+server.address().port+"/";
  for(const width of [360,430,768,1366]){
-  const page=await browser.newPage({viewport:{width,height:850},serviceWorkers:"block"});
+  const page=await browser.newPage({viewport:{width,height:850},serviceWorkers:"block",ignoreHTTPSErrors:true});
   const errors=[];page.on("pageerror",err=>errors.push(err.message));
   await page.goto(url,{waitUntil:"load"});
   try{
@@ -71,7 +76,7 @@ try{
   await page.close();
  }
  // Verify optional lab modules are absent at startup but available for Year 2/3.
- const lazyPage=await browser.newPage({viewport:{width:820,height:850},serviceWorkers:"block"});
+ const lazyPage=await browser.newPage({viewport:{width:820,height:850},serviceWorkers:"block",ignoreHTTPSErrors:true});
  await lazyPage.goto(url,{waitUntil:"load"});
  const initialLazy=await lazyPage.evaluate(()=>({
   registered:!!window.NTSS_LAZY,
@@ -99,7 +104,7 @@ try{
   ["mathOpen",1],["englishOpen",1],["physicsOpen",1],["businessOpen",1],
   ["germanOpen",1],["arabicOpen",1],["civicsOpen",1],["socialOpen",2],["economicsOpen",3]
  ];
- const subjectPage=await browser.newPage({viewport:{width:430,height:850},serviceWorkers:"block"});
+ const subjectPage=await browser.newPage({viewport:{width:430,height:850},serviceWorkers:"block",ignoreHTTPSErrors:true});
  await subjectPage.goto(url,{waitUntil:"load"});
  for(const [open,grade] of subjectChecks){
   await subjectPage.evaluate(([fn,g])=>{window.chooseGrade(g);window[fn](0)},[open,grade]);
@@ -113,7 +118,7 @@ try{
  await subjectPage.close();
 
  // Verify a first answer survives a real page reload in local browser storage.
- const study=await browser.newPage({viewport:{width:430,height:850},serviceWorkers:"block"});
+ const study=await browser.newPage({viewport:{width:430,height:850},serviceWorkers:"block",ignoreHTTPSErrors:true});
  await study.goto(url,{waitUntil:"load"});
  const before=await study.evaluate(()=>{
   window.EBDAA_PRACTICE.begin(1,0,0);
@@ -146,7 +151,7 @@ try{
  await study.close();
  // Run real Pyodide and SQLite workers in Chromium, not just mocked grading logic.
  if((process.env.NTSS_BROWSER||"chromium")==="chromium"){
- const runtimePage=await browser.newPage({viewport:{width:820,height:900},serviceWorkers:"block"});
+ const runtimePage=await browser.newPage({viewport:{width:820,height:900},serviceWorkers:"block",ignoreHTTPSErrors:true});
  await runtimePage.goto(url,{waitUntil:"load"});
  const runtime=await runtimePage.evaluate(async()=>{
   const py=window.EBDAA_QUESTION_FACTORY.all(3,0,0).find(q=>q.mode==="live-code"&&q.engine==="python"&&q.codeTask.tests?.some(([expr])=>expr.startsWith("average(")));
@@ -164,4 +169,4 @@ try{
  console.log("Assessment browser QA passed on "+(process.env.NTSS_BROWSER||"chromium")+": four sizes, checkpoint, and certificate; live workers verified on Chromium.");
 
 
-}finally{await browser?.close();await new Promise(done=>server.close(done))}
+}finally{await browser?.close();await new Promise(done=>server.close(done));rmSync(certDir,{recursive:true,force:true})}
