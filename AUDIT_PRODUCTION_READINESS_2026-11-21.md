@@ -104,3 +104,15 @@ The learner name is transient browser-session state; switching students on a sha
 - OWASP CSP Cheat Sheet: https://cheatsheetseries.owasp.org/cheatsheets/Content_Security_Policy_Cheat_Sheet
 - Google web.dev performance guidance: https://web.dev/learn/performance/optimize-resource-loading/
 - Playwright: https://playwright.dev/docs/intro
+
+
+## K. Verified GitHub Actions results and merge decision (21 November 2026)
+GitHub Actions **passed** on review branch in the following runs:
+- Assessment QA: [run 44878682853](https://github.com/mostafaatteef-eng/NTSS/actions/runs/44878682853): successful structural test suite, browser checks and Python/SQL exercise runtime checks as performed by the workflow.
+- Security regression: [run 44878682812](https://github.com/mostafaatteef-eng/NTSS/actions/runs/44878682812): success (this is regression testing, not penetration testing).
+- Browser/CSP smoke test: [run 44878682864](https://github.com/mostafaatteef-eng/NTSS/actions/runs/44878682864): success.
+- Learning experience on Chromium: [run 44878682840](https://github.com/mostafaatteef-eng/NTSS/actions/runs/44878682840): success.
+
+**Open exception:** The same learning-experience run's WebKit job failed when attempting to navigate to a cached page while offline. Attempts involving reload and opening a fresh tab encountered `WebKit encountered an internal error` on the Linux Playwright runner. Root cause is not proven. Do **not** claim WebKit offline capability has passed, and do not treat this as proof that physical Safari fails. A follow-up issue and Safari real-device check are needed.
+
+**User-directed merge scope:** The user explicitly requested integration despite this known WebKit offline-test exception. Integration does not mean all production acceptance criteria are satisfied. Academic subject-review, genuine Safari/Android/iOS checks, printed certificate quality, strict CSP and live performance benchmarks remain open work.
