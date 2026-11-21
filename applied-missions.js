@@ -95,17 +95,24 @@ window.NTSS_APPLIED=(function(){
   if(!hits.length)return null; // No inaccurate topic substitution.
   const scenarios=hits[0][1];return scenarios[Math.floor(n/20)%scenarios.length];
  }
+ const LOCALES={
+  en:{aria:"Applied decision mission",trigger:"Real-world decision challenge",openHint:"Optional · tap to open",head:"APPLIED MISSION · OPTIONAL",title:"Make the decision",wrong:"Not the best decision. Reconsider the impact and try again.",neutral:"A separate transfer-of-learning challenge; does not change the lesson score.",first:"First attempt: ",correct:"Correct",review:"Review",pending:"Not submitted",retry:"Try again"},
+  ar:{aria:"تحدي اتخاذ قرار",trigger:"مهمة اتخاذ قرار واقعية",openHint:"اختياري · اضغط للفتح",head:"مهمة تطبيقية · اختيارية",title:"تصرّف في الموقف",wrong:"ليست الإجابة الأنسب. فكّر في أثر القرار ثم حاول مرة أخرى.",neutral:"تطبيق إضافي مستقل لا يغيّر درجة الدرس.",first:"المحاولة الأولى: ",correct:"صحيحة",review:"للمراجعة",pending:"لم تُحسم",retry:"إعادة التدريب"},
+  de:{aria:"Angewandte Entscheidungsmission",trigger:"Praxisnahe Entscheidungsaufgabe",openHint:"Optional · tippen zum Öffnen",head:"PRAXISMISSION · OPTIONAL",title:"Triff die Entscheidung",wrong:"Nicht die beste Entscheidung. Denke über die Auswirkung nach und versuche es erneut.",neutral:"Eine eigenständige Transferaufgabe; ändert die Lektionsnote nicht.",first:"Erster Versuch: ",correct:"Richtig",review:"Wiederholen",pending:"Nicht abgegeben",retry:"Nochmal versuchen"}
+ };
  function render(subject,lesson,n,lessonTitle){
   if(n!==14&&n!==34)return "";
   const mission=select(subject,String(lessonTitle||""),n);if(!mission)return "";
-  const k=key(subject,lesson,n),st=state.get(k)||{selected:null,done:false},arabic=["economics","social","civics"].includes(subject);
+  const loc=["ar","economics","social","civics"].includes(subject)?"ar":subject==="de"?"de":"en";
+  const L=LOCALES[loc];
+  const k=key(subject,lesson,n),st=state.get(k)||{selected:null,done:false},arabic=loc==="ar";
   const [scenario,opts,correct,why]=mission;
   const rotations=[[1,2,0],[0,1,2],[2,0,1]];const seed=String(lesson).split("").reduce((v,c)=>(v*31+c.charCodeAt(0))>>>0,n);const order=rotations[seed%3];
-  return '<details class="ntss-applied" '+(expanded.has(k)?"open":"")+' dir="'+(arabic?"rtl":"ltr")+'" ontoggle="NTSS_APPLIED.expand('+attr(k)+',this.open)" aria-label="'+(arabic?"تحدي اتخاذ قرار":"Applied decision mission")+'"><summary class="ntss-applied-trigger"><span>◈ '+(arabic?"مهمة اتخاذ قرار واقعية":"Real-world decision challenge")+'</span><small>'+(arabic?"اختياري · اضغط للفتح":"Optional · tap to open")+'</small></summary><div class="ntss-applied-inner">'+
-  '<header class="ntss-applied-head"><span class="ntss-applied-symbol">◈</span><div><small>'+(arabic?"مهمة تطبيقية · اختيارية":"APPLIED MISSION · OPTIONAL")+'</small><strong>'+(arabic?"تصرّف في الموقف":"Make the decision")+'</strong></div><span class="ntss-applied-status">'+(st.done?"✓":n===14?"1 / 2":"2 / 2")+'</span></header>'+
+  return '<details class="ntss-applied" '+(expanded.has(k)?"open":"")+' dir="'+(arabic?"rtl":"ltr")+'" ontoggle="NTSS_APPLIED.expand('+attr(k)+',this.open)" aria-label="'+L.aria+'"><summary class="ntss-applied-trigger"><span>◈ '+L.trigger+'</span><small>'+L.openHint+'</small></summary><div class="ntss-applied-inner">'+
+  '<header class="ntss-applied-head"><span class="ntss-applied-symbol">◈</span><div><small>'+L.head+'</small><strong>'+L.title+'</strong></div><span class="ntss-applied-status">'+(st.done?"✓":n===14?"1 / 2":"2 / 2")+'</span></header>'+
   '<p class="ntss-applied-scenario">'+esc(scenario)+'</p><div class="ntss-applied-choices">'+order.map(i=>'<button class="ntss-applied-option '+(st.done&&i===correct?"is-right":"")+'" '+(st.done?"disabled":"")+' onclick="NTSS_APPLIED.choose('+attr(k)+','+i+','+correct+')">'+esc(opts[i])+'</button>').join("")+'</div>'+
-  '<p class="ntss-applied-feedback" role="status">'+(st.done?esc(why):st.selected!==null?(arabic?"ليست الإجابة الأنسب. فكّر في أثر القرار ثم حاول مرة أخرى.":"Not the best decision. Reconsider the impact and try again."):arabic?"تطبيق إضافي مستقل لا يغيّر درجة الدرس.":"A separate transfer-of-learning challenge; does not change the lesson score.")+'</p>'+
-  '<footer class="ntss-applied-foot"><span>'+(arabic?"المحاولة الأولى: ":"First attempt: ")+(first.has(k)?(first.get(k)?(arabic?"صحيحة":"Correct"):(arabic?"للمراجعة":"Review")):(arabic?"لم تُحسم":"Not submitted"))+'</span><button onclick="NTSS_APPLIED.retry('+attr(k)+')">'+(arabic?"إعادة التدريب":"Try again")+'</button></footer></div></details>';
+  '<p class="ntss-applied-feedback" role="status">'+(st.done?esc(why):st.selected!==null?L.wrong:L.neutral)+'</p>'+
+  '<footer class="ntss-applied-foot"><span>'+L.first+(first.has(k)?(first.get(k)?L.correct:L.review):L.pending)+'</span><button onclick="NTSS_APPLIED.retry('+attr(k)+')">'+L.retry+'</button></footer></div></details>';
  }
  function choose(k,i,correct){
   const st=state.get(k)||{selected:null,done:false};

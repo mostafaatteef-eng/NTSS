@@ -12,7 +12,8 @@ function moduleFrom(file,stubs={}){
 }
 test('Every modified lesson engine parses and records first attempts',()=>{
  const engines=['practice-workshop.js','math-practice.js','english-practice.js','arabic-practice.js','german-practice.js','physics-practice.js','business-english-practice.js','economics-practice.js','civics-practice.js','social-studies-practice.js'];
- for(const path of engines){assert.doesNotThrow(()=>new vm.Script(read(path)),path);assert.match(read(path),/NTSS_LEARNING\?\.record/)}
+ for(const path of engines){assert.doesNotThrow(()=>new vm.Script(read(path)),path);const src=read(path);if(/EBDA_PRACTICE_FRAMEWORK\.create\(/.test(src))continue;assert.match(src,/NTSS_LEARNING\?\.record/,path)}
+ assert.match(read('unified-practice.js'),/NTSS_LEARNING\?\.record/,'unified framework records first attempts');
  for(const path of ['learning-support.js','learning-concepts.js','app-main.js'])assert.doesNotThrow(()=>new vm.Script(read(path)),path);
 });
 test('First attempt evidence and weak-skill feedback remain local',()=>{

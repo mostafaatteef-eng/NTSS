@@ -1,7 +1,6 @@
+(function(){
 /* Original A1 German formative practice. 50 generated prompts per lesson, with reusable
    grammar, vocabulary and short reading templates. Teacher review required. */
-window.EBDAA_GERMAN_PRACTICE=(function(){
-let s={grade:1,unit:0,lesson:0,items:[],cursor:0,answers:{},done:false};let speechMessage="",transcriptVisible=false;
 const esc=v=>String(v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const index=(g,u)=>g===1?u:g===2?u+3:u+6;
 function build(g,u,i){
@@ -48,37 +47,37 @@ function build(g,u,i){
  if(items.length!==50)throw Error("German build count "+items.length);
  return items;
 }
-function redraw(){window.EBDA_APP_RENDER?.()}
-function start(g,u,i){window.NTSS_LEARNING?.reset("germanPractice");window.NTSS_APPLIED.reset("de",[g,u,i].join("-"));window.EBDAA_CONTEXT_GAMES.reset("de",[g,u,i].join("-"));window.EBDAA_GERMAN_AUDIO?.stop();window.EBDAA_GAME.resetLesson('de',[g,u,i].join('-'));s={grade:g,unit:u,lesson:i,items:build(g,u,i),cursor:0,answers:{},done:false};speechMessage="";transcriptVisible=false;redraw()}
-function choose(v){if(s.answers[s.cursor]?.checked)return;s.answers[s.cursor]={value:v};redraw()}
-function check(){const a=s.answers[s.cursor];if(!a||a.checked)return;a.checked=true;a.correct=a.value===s.items[s.cursor].answer;window.NTSS_LEARNING?.record("germanPractice",s.cursor,a.correct,s.items[s.cursor]);redraw()}
-function next(){if(!s.answers[s.cursor]?.checked)return;window.EBDAA_GERMAN_AUDIO?.stop();speechMessage="";transcriptVisible=false;if(s.cursor===s.items.length-1){s.done=true;window.EBDA_PROGRESS?.mark("de",s.g,s.u,s.i,Math.round(100*Object.values(s.answers).filter(a=>a&&a.correct).length/Math.max(1,(s.items).length)));}else s.cursor++;redraw()}
-function previous(){window.EBDAA_GERMAN_AUDIO?.stop();speechMessage="";transcriptVisible=false;if(s.cursor>0)s.cursor--;redraw()}
-function restart(){start(s.grade,s.unit,s.lesson)}
-function play(){
- const q=s.items[s.cursor],text=q.audio||q.speech||q.question;
- if(!window.EBDAA_GERMAN_AUDIO.speak(text)){speechMessage="Keine Sprachausgabe verfügbar. Nutze das Transkript.";transcriptVisible=true;redraw()}
-}
-function reveal(){transcriptVisible=!transcriptVisible;redraw()}
-function record(){
- const q=s.items[s.cursor];if(!q.speech)return;
- const ok=window.EBDAA_GERMAN_AUDIO.listen(transcript=>{
-  // Recognition transcribes speech; it does not assess pronunciation or fluency.
-  speechMessage="Erkannt: "+transcript+" — Vergleiche mit dem Beispielsatz: "+q.speech;
-  redraw();
- },err=>{speechMessage="Spracherkennung nicht verfügbar ("+err+"). Du kannst den Satz laut üben.";redraw()});
- if(!ok){speechMessage="Mikrofon-Spracherkennung nicht unterstützt. Sprich den Satz laut nach.";redraw()}
-}
-function render(){
- if(s.done)return window.EBDA_COMPLETION.render({subject:"de",grade:s.grade,unit:s.unit,index:s.lesson,lesson:window.EBDAA_GERMAN_UNITS[s.grade][s.unit].sessions[s.lesson],correct:Object.values(s.answers).filter(v=>v.checked&&v.correct).length,answers:s.answers,retry:"EBDAA_GERMAN_PRACTICE.restart()",back:"germanBackToUnit()",arabic:window.EBDA_I18N?window.EBDA_I18N.current()==="ar":false});
+let speechMessage="",transcriptVisible=false;
+window.EBDAA_GERMAN_PRACTICE=window.EBDA_PRACTICE_FRAMEWORK.create({
+ name:"EBDAA_GERMAN_PRACTICE",subject:"de",gameKey:"de",learningMode:"germanPractice",appliedKey:"de",contextGames:true,
+ locale:"de",inputId:"practice-answer",checkId:"german-check",back:"germanBackToUnit()",
+ buildItems:(g,u,i)=>build(g,u,i).map(q=>({...q,mode:"choice"})),
+ title:(g,u,i)=>window.EBDAA_GERMAN_UNITS[g][u].sessions[i],
+ header:g=>({lang:"de",exitLabel:"← Alle Lektionen",exit:"germanBackToUnit()",yearLabel:"JAHRGANG "+g+" · DEUTSCH",disclaimer:"Originale A1-Übungen: Grammatik, Wortschatz, Lesen, Hören, Sprechen und Dialog. Das Audio wird durch die Browser-Sprachausgabe erzeugt (keine Buchaufnahme). Die Spracherkennung zeigt nur erkannten Text, bewertet aber keine Aussprache. Die Aufgaben nutzen wiederkehrende Vorlagen und benötigen Lehrkraft-Review."}),
+ eyebrow:(q,{g,u})=>esc(q.type)+" · Dabei! "+esc(window.EBDAA_GERMAN_UNITS[g][u].series),
+ beforeControls:q=>{
+  const reading=q.reading?'<div class="hint"><strong>Lesetext</strong><p>'+esc(q.reading)+'</p></div>':"";
+  const isAudio=q.type==="Hören"||q.type==="Sprechen"||q.type==="Dialog";
+  const hearing=isAudio?'<div class="hint" role="group" aria-label="Audio practice"><p>'+(q.type==="Hören"?"Hör genau zu und wähle die Antwort.":q.type==="Dialog"?"Hör die Frage und wähle eine passende Antwort.":"Hör zu, sprich die Antwort nach und wähle die passende Antwort.")+'</p><div class="actions"><button type="button" class="btn light" onclick="EBDAA_GERMAN_PRACTICE.play()">▶ Anhören</button><button type="button" class="btn light" onclick="EBDAA_GERMAN_PRACTICE.reveal()">'+(transcriptVisible?"Transkript verbergen":"Transkript anzeigen")+'</button>'+(q.speech?'<button type="button" class="btn light" onclick="EBDAA_GERMAN_PRACTICE.record()">🎙 Nachsprechen</button>':'')+'</div>'+(transcriptVisible?'<p>'+esc(q.audio||"")+(q.speech?" — "+esc(q.speech):"")+'</p>':'')+(speechMessage?'<p role="status">'+esc(speechMessage)+'</p>':'')+'</div>':"";
+  return reading+hearing;
+ },
+ afterControls:(q,{g,u,i,cursor,items})=>window.EBDAA_CONTEXT_GAMES.matching("de",[g,u,i].join("-"),cursor,items,false)+window.NTSS_APPLIED.render("de",[g,u,i].join("-"),cursor,window.EBDAA_GERMAN_UNITS[g][u].sessions[i]),
+ hooks:{onStart:()=>{window.EBDAA_GERMAN_AUDIO?.stop();speechMessage="";transcriptVisible=false},onMove:()=>{window.EBDAA_GERMAN_AUDIO?.stop();speechMessage="";transcriptVisible=false}},
+ methods:api=>({
+  play(){
+   const q=api._state().items[api._state().cursor],text=q.audio||q.speech||q.question;
+   if(!window.EBDAA_GERMAN_AUDIO.speak(text)){speechMessage="Keine Sprachausgabe verfügbar. Nutze das Transkript.";transcriptVisible=true;api._refresh()}
+  },
+  reveal(){transcriptVisible=!transcriptVisible;api._refresh()},
+  record(){
+   const q=api._state().items[api._state().cursor];if(!q.speech)return;
+   const ok=window.EBDAA_GERMAN_AUDIO.listen(transcript=>{
+    speechMessage="Erkannt: "+transcript+" — Vergleiche mit dem Beispielsatz: "+q.speech;
+    api._refresh();
+   },err=>{speechMessage="Spracherkennung nicht verfügbar ("+err+"). Du kannst den Satz laut üben.";api._refresh()});
+   if(!ok){speechMessage="Mikrofon-Spracherkennung nicht unterstützt. Sprich den Satz laut nach.";api._refresh()}
+  }
+ })
+});
 
- const unit=window.EBDAA_GERMAN_UNITS[s.grade][s.unit],q=s.items[s.cursor],a=s.answers[s.cursor],
- answered=Object.values(s.answers).filter(v=>v.checked).length,correct=Object.values(s.answers).filter(v=>v.correct).length;
- const isAudio=q.type==="Hören"||q.type==="Sprechen"||q.type==="Dialog";
- const hearing=isAudio?'<div class="hint" role="group" aria-label="Audio practice"><p>'+(q.type==="Hören"?"Hör genau zu und wähle die Antwort.":q.type==="Dialog"?"Hör die Frage und wähle eine passende Antwort.":"Hör zu, sprich die Antwort nach und wähle die passende Antwort.")+'</p><div class="actions"><button type="button" class="btn light" onclick="EBDAA_GERMAN_PRACTICE.play()">▶ Anhören</button><button type="button" class="btn light" onclick="EBDAA_GERMAN_PRACTICE.reveal()">'+(transcriptVisible?"Transkript verbergen":"Transkript anzeigen")+'</button>'+(q.speech?'<button type="button" class="btn light" onclick="EBDAA_GERMAN_PRACTICE.record()">🎙 Nachsprechen</button>':'')+'</div>'+(transcriptVisible?'<p>'+esc(q.audio||"")+(q.speech?" — "+esc(q.speech):"")+'</p>':'')+(speechMessage?'<p role="status">'+esc(speechMessage)+'</p>':'')+'</div>':'';
- const content=s.done?window.EBDAA_CONTEXT_GAMES.report('de',[s.grade,s.unit,s.lesson].join('-'),false)+window.EBDAA_GAME.results(s.answers,s.items.length,false)+'<div class="feedback"><h2>Übung abgeschlossen!</h2><p>Richtige Antworten: '+correct+' / 50</p><button class="btn teal" onclick="EBDAA_GERMAN_PRACTICE.restart()">Noch einmal üben</button></div>':
- window.EBDAA_GAME.stats(s.answers,s.items.length,false)+'<div class="eyebrow">'+esc(q.type)+' · Dabei! '+esc(unit.series)+'</div>'+(q.reading?'<div class="hint"><strong>Lesetext</strong><p>'+esc(q.reading)+'</p></div>':'')+hearing+'<h2 class="practice-question">'+esc(q.question)+'</h2>'+window.EBDAA_GAME.render(q,s.cursor,a?.value,a?.checked,"de",[s.grade,s.unit,s.lesson].join("-"),"EBDAA_GERMAN_PRACTICE.choose")+window.EBDAA_CONTEXT_GAMES.matching('de',[s.grade,s.unit,s.lesson].join('-'),s.cursor,s.items,false)+window.NTSS_APPLIED.render("de",[s.grade,s.unit,s.lesson].join("-"),s.cursor,unit.sessions[s.lesson])+(a?.checked?'<div class="feedback '+(a.correct?'':'error')+'"><strong>'+(a.correct?'✓ Richtig!':'Noch einmal ansehen')+'</strong><p>'+esc(q.explanation)+'</p></div>':'')+'<div class="stepfooter"><button class="btn light" '+(s.cursor===0?'disabled':'')+' onclick="EBDAA_GERMAN_PRACTICE.previous()">← Zurück</button><button class="btn teal" '+(!a?'disabled':'')+' onclick="EBDAA_GERMAN_PRACTICE.'+(a?.checked?'next':'check')+'()">'+(a?.checked?'Weiter →':'Antwort prüfen')+'</button></div>';
- return '<section class="practice-focus" lang="de"><header class="practice-focus__header"><div class="practice-focus__header-row"><button class="practice-focus__exit" onclick="germanBackToUnit()">← Alle Lektionen</button><span class="practice-focus__year">JAHRGANG '+s.grade+' · DEUTSCH</span></div><div class="practice-focus__info"><h1 class="practice-focus__lesson">'+esc(unit.sessions[s.lesson])+'</h1><span class="practice-focus__counter">Frage '+(s.done?50:s.cursor+1)+' / 50</span></div><div class="practice-focus__track" role="progressbar" aria-valuemin="0" aria-valuemax="50" aria-valuenow="'+answered+'"><i style="width:'+(answered*2)+'%"></i></div></header><div class="practice-focus__content"><div class="guided-question">'+content+'<p class="muted" style="font-size:12px">Originale A1-Übungen: Grammatik, Wortschatz, Lesen, Hören, Sprechen und Dialog. Das Audio wird durch die Browser-Sprachausgabe erzeugt (keine Buchaufnahme). Die Spracherkennung zeigt nur erkannten Text, bewertet aber keine Aussprache. Die Aufgaben nutzen wiederkehrende Vorlagen und benötigen Lehrkraft-Review.</p></div></div></section>';
-}
-return {build,start,choose,check,next,previous,restart,render,play,reveal,record};
 })();

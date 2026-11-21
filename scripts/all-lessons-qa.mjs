@@ -13,7 +13,7 @@ const curriculum=[
  "german-question-data.js","german-audio-dialogues.js","english-grammar-extensions.js"
 ];
 const engines=[
- "assessment-enhancements.js","question-factory.js",
+ "assessment-enhancements.js","question-factory.js","unified-practice.js",
  "math-practice.js","english-practice.js","physics-practice.js",
  "arabic-practice.js","german-practice.js","social-studies-practice.js",
  "civics-practice.js","economics-practice.js","business-english-practice.js"

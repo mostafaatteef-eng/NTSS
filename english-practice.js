@@ -1,4 +1,4 @@
-window.EBDAA_ENGLISH_PRACTICE=(function(){
+(function(){
 const rules={
 "Present Simple; workplace vocabulary":[["She ___ the safety rules every day.",["follows","follow","following","is follow"]],["An ___ provides jobs to workers.",["employer","employee","workplace","schedule"]]],
 "There is / There are; prepositions of place":[["There ___ three computers in the laboratory.",["are","is","am","be"]],["The tools are ___ the shelf.",["on","to","at","from"]]],
@@ -23,7 +23,6 @@ const rules={
 "Reported questions":[["She asked where I ___.",["lived","did live","do live","living"]],["He asked if I ___ ready.",["was","am I","were I","be"]]]
 };
 const vocabulary=[[["employee","worker at a company"],["employer","provider of jobs"],["supervisor","manager guiding workers"],["teamwork","working together"],["schedule","plan for working hours"]],[["laboratory","place for experiments"],["cabinet","storage unit"],["workplace","place for jobs"],["printer","device for paper documents"],["equipment","tools used for work"]],[["caliper","precision measuring tool"],["wrench","tool for turning bolts"],["multimeter","electric measuring device"],["drill","tool for making holes"],["toolbox","container for tools"]],[["gateway","point of entry"],["partnership","cooperative relationship"],["infrastructure","basic physical systems"],["trade","exchange of goods"],["mutual","shared by both sides"]],[["entrepreneur","person starting a business"],["startup","new business"],["investment","money committed to a project"],["pitch","brief business presentation"],["funding","financial support"]],[["sustainable","able to continue without exhausting resources"],["development","progress or growth"],["equality","equal rights"],["poverty","lack of essential money"],["healthcare","medical services"]],[["earthquake","shaking of the ground"],["flood","water covering dry land"],["evacuation","moving from danger"],["emergency","situation requiring urgent help"],["risk","possibility of harm"]],[["misinformation","incorrect information"],["headline","title of a news report"],["source","origin of information"],["verify","check accuracy"],["evidence","facts supporting a claim"]],[["communication","exchange of information"],["collaboration","working jointly"],["adaptability","ability to adjust"],["empathy","understanding others feelings"],["reliability","dependability"]],[["inclusive","welcoming everyone"],["diversity","human differences"],["fairness","just treatment"],["cooperation","working together"],["gratitude","thankfulness"]],[["volunteer","person offering unpaid service"],["initiative","new plan for action"],["campaign","organized effort"],["recycle","reuse materials through processing"],["community","connected group of people"]],[["mural","large artwork on a wall"],["portrait","picture of a person"],["gallery","place exhibiting art"],["creative","original in ideas"],["heritage","culture passed between generations"]],[["passion","strong enthusiasm"],["hobby","activity in free time"],["motivation","desire to act"],["practice","repeated training"],["achievement","successful result"]],[["hydration","having enough water"],["nutrition","nourishment from food"],["habit","regular action"],["well-being","health and comfort"],["prevention","stopping harm before it happens"]],[["punctuality","being on time"],["deadline","last permitted date"],["priority","important task placed first"],["appointment","scheduled meeting"],["apology","expression of regret"]],[["patient","person receiving care"],["medication","medicine used in treatment"],["shift","period of work"],["emergency","urgent situation"],["recovery","return to health"]],[["automation","machines carrying out tasks"],["robot","programmable machine"],["efficiency","less waste for an output"],["innovation","useful new idea"],["machine","device performing work"]],[["climate","long-term weather patterns"],["pollution","environmental contamination"],["conservation","protection of nature"],["emissions","released gases and particles"],["activism","organized advocacy"]],[["marine","related to the sea"],["habitat","natural home of a species"],["ecosystem","interacting organisms and surroundings"],["species","type of organism"],["coral","small marine animal forming reefs"]],[["mindset","way of thinking"],["workforce","working population"],["resilience","recovery from setbacks"],["adaptability","adjustment to change"],["training","learning professional skills"]],[["invitation","request to attend"],["socialize","spend time with people"],["friendship","supportive relationship"],["confidence","belief in abilities"],["conversation","spoken exchange"]]];
-let state={g:1,u:0,i:0,cursor:0,answers:{},items:[],done:false};
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 function build(g,u,i){
  const unit=window.EBDAA_ENGLISH_UNITS[g][u],pool=rules[unit.focus].concat(window.EBDAA_ENGLISH_GRAMMAR_EXT[unit.focus]||[]),words=vocabulary[(g===1?0:g===2?3:15)+u],arr=[],lesson=unit.sessions[i];
@@ -84,35 +83,31 @@ function build(g,u,i){
  if(arr.length!==50)throw Error("Expected 50 questions, got "+arr.length);
  return arr;
 }
-function draw(){window.EBDA_APP_RENDER?.()}
-function start(g,u,i){window.NTSS_LEARNING?.reset("englishPractice");window.NTSS_APPLIED.reset("en",[g,u,i].join("-"));window.EBDAA_CONTEXT_GAMES.reset("en",[g,u,i].join("-"));window.EBDAA_GAME.resetLesson('en',[g,u,i].join('-'));state={g,u,i,cursor:0,answers:{},items:build(g,u,i),done:false};transcriptOpen=false;drafts={};draw()}
-function choose(j){if(state.answers[state.cursor]?.checked)return;state.answers[state.cursor]={value:j};draw()}
-function check(){let a=state.answers[state.cursor];if(!a||a.checked)return;a.checked=true;a.correct=a.value===state.items[state.cursor].answer;window.NTSS_LEARNING?.record("englishPractice",state.cursor,a.correct,state.items[state.cursor]);draw()}
-function next(){if(!state.answers[state.cursor]?.checked)return;if(state.cursor===state.items.length-1){state.done=true;window.EBDA_PROGRESS?.mark("en",state.g,state.u,state.i,Math.round(100*Object.values(state.answers).filter(a=>a&&a.correct).length/Math.max(1,(state.items).length)));}else state.cursor++;transcriptOpen=false;draw()}
-function previous(){if(state.cursor>0){state.cursor--;transcriptOpen=false;draw()}}
-function restart(){start(state.g,state.u,state.i)}
-let transcriptOpen=false;let drafts={};
-function playAudio(){
- const q=state.items[state.cursor];if(q?.type!=="Listening")return;
- if(typeof window.speechSynthesis==="undefined"){transcriptOpen=true;draw();return}
- try{window.speechSynthesis.cancel();const utterance=new SpeechSynthesisUtterance(q.passage);utterance.lang="en-US";utterance.rate=.88;window.speechSynthesis.speak(utterance)}catch(e){transcriptOpen=true;draw()}
-}
-function showTranscript(){transcriptOpen=!transcriptOpen;draw()}
-function draft(value){drafts[state.cursor]=String(value)}
-function render(){
- if(state.done)return window.EBDA_COMPLETION.render({subject:"en",grade:state.g,unit:state.u,index:state.i,lesson:window.EBDAA_ENGLISH_UNITS[state.g][state.u].sessions[state.i],correct:Object.values(state.answers).filter(v=>v.checked&&v.correct).length,answers:state.answers,retry:"EBDAA_ENGLISH_PRACTICE.restart()",back:"englishBackToUnit()",arabic:window.EBDA_I18N?window.EBDA_I18N.current()==="ar":false});
+let transcriptOpen=false,drafts={};
+window.EBDAA_ENGLISH_PRACTICE=window.EBDA_PRACTICE_FRAMEWORK.create({
+ name:"EBDAA_ENGLISH_PRACTICE",subject:"en",gameKey:"en",learningMode:"englishPractice",appliedKey:"en",contextGames:true,
+ locale:"en",inputId:"practice-answer",checkId:"english-check",back:"englishBackToUnit()",
+ buildItems:(g,u,i)=>build(g,u,i).map(q=>({...q,mode:"choice"})),
+ title:(g,u,i)=>window.EBDAA_ENGLISH_UNITS[g][u].sessions[i],
+ header:g=>({exitLabel:"← All English lessons",exit:"englishBackToUnit()",yearLabel:"YEAR "+g+" · ADVANCED ENGLISH",disclaimer:"Original formative practice aligned to unit themes: grammar, vocabulary, reading, synthesized listening, guided writing and speaking. Writing drafts and spoken pronunciation are not automatically graded. Some question structures recur, and teacher review remains necessary."}),
+ eyebrow:(q,{g,u})=>esc(q.type)+" · "+esc(window.EBDAA_ENGLISH_UNITS[g][u].focus),
+ beforeControls:q=>{
+  const reading=q.type==="Reading"?'<div class="hint"><strong>Read the passage</strong><p>'+esc(q.passage)+'</p></div>':"";
+  const listening=q.type==="Listening"?'<div class="hint"><strong>Listening task</strong><p>Listen to the original short audio, then answer. The transcript can be opened for accessibility.</p><div class="actions"><button type="button" class="btn light" onclick="EBDAA_ENGLISH_PRACTICE.playAudio()">▶ Play / replay</button><button type="button" class="btn light" onclick="EBDAA_ENGLISH_PRACTICE.showTranscript()">'+(transcriptOpen?'Hide transcript':'Show transcript')+'</button></div>'+(transcriptOpen?'<p>'+esc(q.passage)+'</p>':'')+'</div>':"";
+  const practice=q.type==="Writing"?'<div class="hint"><label for="english-draft"><strong>Optional writing practice</strong></label><p>Write your own short sentence. Compare it with the model after checking; your draft is not automatically graded.</p><textarea id="english-draft" style="width:100%;min-height:90px;padding:12px;border:1px solid #ddd;border-radius:10px" oninput="EBDAA_ENGLISH_PRACTICE.draft(this.value)">'+esc(drafts[window.EBDAA_ENGLISH_PRACTICE._state().cursor]||"")+'</textarea></div>':q.type==="Speaking"?'<div class="hint"><strong>Speaking practice</strong><p>Say your response aloud before selecting the most appropriate answer. Voice pronunciation is not scored.</p></div>':"";
+  return reading+listening+practice;
+ },
+ afterControls:(q,{g,u,i,cursor,items})=>window.EBDAA_CONTEXT_GAMES.matching("en",[g,u,i].join("-"),cursor,items,false)+window.NTSS_APPLIED.render("en",[g,u,i].join("-"),cursor,window.EBDAA_ENGLISH_UNITS[g][u].sessions[i]),
+ hooks:{onMove:()=>{transcriptOpen=false}},
+ methods:api=>({
+  playAudio(){
+   const q=api._state().items[api._state().cursor];if(q?.type!=="Listening")return;
+   if(typeof window.speechSynthesis==="undefined"){transcriptOpen=true;api._refresh();return}
+   try{window.speechSynthesis.cancel();const utterance=new SpeechSynthesisUtterance(q.passage);utterance.lang="en-US";utterance.rate=.88;window.speechSynthesis.speak(utterance)}catch(e){transcriptOpen=true;api._refresh()}
+  },
+  showTranscript(){transcriptOpen=!transcriptOpen;api._refresh()},
+  draft(value){drafts[api._state().cursor]=String(value)}
+ })
+});
 
- const s=state,unit=window.EBDAA_ENGLISH_UNITS[s.g][s.u],q=s.items[s.cursor],a=s.answers[s.cursor],answered=Object.values(s.answers).filter(x=>x.checked).length,correct=Object.values(s.answers).filter(x=>x.correct).length;
- const isAudio=q.type==="Listening";
- const reading=q.type==="Reading"?'<div class="hint"><strong>Read the passage</strong><p>'+esc(q.passage)+'</p></div>':'';
- const listening=isAudio?'<div class="hint"><strong>Listening task</strong><p>Listen to the original short audio, then answer. The transcript can be opened for accessibility.</p><div class="actions"><button class="btn light" onclick="EBDAA_ENGLISH_PRACTICE.playAudio()">▶ Play / replay</button><button class="btn light" onclick="EBDAA_ENGLISH_PRACTICE.showTranscript()">'+(transcriptOpen?'Hide transcript':'Show transcript')+'</button></div>'+(transcriptOpen?'<p>'+esc(q.passage)+'</p>':'')+'</div>':'';
- const practice=q.type==="Writing"?'<div class="hint"><label for="english-draft"><strong>Optional writing practice</strong></label><p>Write your own short sentence. Compare it with the model after checking; your draft is not automatically graded.</p><textarea id="english-draft" style="width:100%;min-height:90px;padding:12px;border:1px solid #ddd;border-radius:10px" oninput="EBDAA_ENGLISH_PRACTICE.draft(this.value)">'+esc(drafts[s.cursor]||"")+'</textarea></div>':q.type==="Speaking"?'<div class="hint"><strong>Speaking practice</strong><p>Say your response aloud before selecting the most appropriate answer. Voice pronunciation is not scored.</p></div>':'';
- const choices=window.EBDAA_GAME.render(q,s.cursor,a?.value,a?.checked,"en",[s.g,s.u,s.i].join("-"),"EBDAA_ENGLISH_PRACTICE.choose");
- const body=s.done?window.EBDAA_CONTEXT_GAMES.report('en',[s.g,s.u,s.i].join('-'),false)+window.EBDAA_GAME.results(s.answers,s.items.length,false)+'<div class="feedback"><h2>Session complete</h2><p>Correct: '+correct+' / '+s.items.length+'. Activities are formative, not accredited assessments.</p><button class="btn teal" onclick="EBDAA_ENGLISH_PRACTICE.restart()">Try a fresh attempt</button></div>':
- window.EBDAA_GAME.stats(s.answers,s.items.length,false)+'<div class="eyebrow">'+esc(q.type)+' · '+esc(unit.focus)+'</div>'+reading+listening+'<h2 class="practice-question">'+esc(q.question)+'</h2>'+practice+choices+window.EBDAA_CONTEXT_GAMES.matching('en',[s.g,s.u,s.i].join('-'),s.cursor,s.items,false)+window.NTSS_APPLIED.render("en",[s.g,s.u,s.i].join("-"),s.cursor,unit.sessions[s.i])+
- (a?.checked?'<div class="feedback '+(a.correct?'':'error')+'"><strong>'+(a.correct?'✓ Correct':'Review your answer')+'</strong><p>'+esc(q.explanation)+'</p></div>':'')+
- '<div class="stepfooter"><button class="btn light" '+(s.cursor===0?'disabled':'')+' onclick="EBDAA_ENGLISH_PRACTICE.previous()">← Previous</button><button class="btn teal" '+(!a?'disabled':'')+' onclick="EBDAA_ENGLISH_PRACTICE.'+(a?.checked?'next':'check')+'()">'+(a?.checked?(s.cursor===49?'Show result':'Next question →'):'Check answer')+'</button></div>';
- return '<section class="practice-focus"><header class="practice-focus__header"><div class="practice-focus__header-row"><button class="practice-focus__exit" onclick="englishBackToUnit()">← All English lessons</button><span class="practice-focus__year">YEAR '+s.g+' · ADVANCED ENGLISH</span></div><div class="practice-focus__info"><h1 class="practice-focus__lesson">'+esc(unit.sessions[s.i])+'</h1><span class="practice-focus__counter">Question '+(s.done?s.items.length:s.cursor+1)+' / '+s.items.length+'</span></div><div class="practice-focus__track" role="progressbar" aria-label="Questions answered" aria-valuemin="0" aria-valuemax="50" aria-valuenow="'+answered+'"><i style="width:'+(answered*2)+'%"></i></div></header><div class="practice-focus__content"><div class="guided-question">'+body+'<p class="muted" style="font-size:12px">Original formative practice aligned to unit themes: grammar, vocabulary, reading, synthesized listening, guided writing and speaking. Writing drafts and spoken pronunciation are not automatically graded. Some question structures recur, and teacher review remains necessary.</p></div></div></section>';
-}
-return {start,choose,check,next,previous,restart,render,build,playAudio,showTranscript,draft};
 })();

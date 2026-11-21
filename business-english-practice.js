@@ -1,13 +1,10 @@
+(function(){
 /* Original supplementary Business English (AI) practice.
  * Curriculum titles and objectives are indexed from supplied books; these questions
  * are freshly generated vocabulary/communication drills, NOT transcriptions of tests.
  * No student data is sent or stored.
  */
-window.EBDAA_BUSINESS_PRACTICE=(function(){
 const esc=x=>String(x).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-let state={g:1,u:0,i:0,items:[],answers:{},cursor:0,done:false},note="";
-function unit(){return window.EBDAA_BUSINESS_ENGLISH_UNITS[state.g][state.u]}
-function lesson(){return unit().sessions[state.i]}
 function pool(g,u,i){
  const group=window.EBDAA_BUSINESS_ENGLISH_UNITS[g][u].sessions;
  if(group[i].kind==="lesson")return group[i].terms;
@@ -29,33 +26,35 @@ function build(g,u,i){
  }
  return items;
 }
-function update(){window.EBDA_APP_RENDER?.()}
-function start(g,u,i){window.NTSS_LEARNING?.reset("businessPractice");window.NTSS_APPLIED.reset("business",[g,u,i].join("-"));state={g,u,i,items:build(g,u,i),answers:{},cursor:0,done:false};note="";window.EBDAA_GAME.resetLesson("be",[g,u,i].join("-"));update()}
-function choose(j){const s=state;if(s.answers[s.cursor]?.checked)return;s.answers[s.cursor]={value:Number(j),checked:false,correct:false};update()}
-function check(){const s=state,q=s.items[s.cursor],a=s.answers[s.cursor];if(!a||a.checked)return;a.checked=true;a.correct=a.value===q.answer;window.NTSS_LEARNING?.record("businessPractice",s.cursor,a.correct,q);update()}
-function move(dir){const s=state;if(dir>0&&(!s.answers[s.cursor]?.checked))return;if(dir>0&&s.cursor===49){s.done=true;window.EBDA_PROGRESS?.mark("be",s.g,s.u,s.i,Math.round(100*Object.values(s.answers).filter(a=>a&&a.correct).length/Math.max(1,(s.items).length)));update();return;}s.cursor=Math.min(49,Math.max(0,s.cursor+dir));update()}
-function restart(){start(state.g,state.u,state.i)}
-function listen(){const s=window.speechSynthesis;if(!s||typeof SpeechSynthesisUtterance==="undefined")return;try{s.cancel();const utter=new SpeechSynthesisUtterance(lesson().title);utter.lang="en-GB";utter.rate=.87;s.speak(utter)}catch(_e){}}
-function setNote(v){note=String(v).slice(0,3000)}
-function completeProject(){
- if(lesson().kind!=="project")return;
- note=String(document.getElementById("business-project-notes")?.value||note).trim().slice(0,3000);
- if(note.length<30){const n=document.getElementById("business-project-warning");if(n)n.textContent="Add at least 30 characters to your outline before completing preparation.";return}
- state.done=true;window.EBDA_PROGRESS?.mark("be",state.g,state.u,state.i,Math.round(100*Object.values(state.answers).filter(a=>a&&a.correct).length/Math.max(1,(state.items).length)));update();
-}
-function project(){
- const u=unit(),l=lesson();return '<section class="practice-focus"><header class="practice-focus__header"><div class="practice-focus__header-row"><button class="practice-focus__exit" onclick="businessBackToUnit()">← Back to unit</button><span class="practice-focus__year">YEAR '+state.g+' · BUSINESS ENGLISH</span></div><div class="practice-focus__info"><h1 class="practice-focus__lesson">'+esc(l.title)+'</h1><span class="practice-focus__counter">GROUP PROJECT · PRACTICAL</span></div></header><div class="practice-focus__content"><div class="hint"><h2>🎤 Workplace project challenge</h2><p><strong>'+esc(u.project)+'</strong></p><p>Practice your professional English through a short group presentation, professional report, proposal or role-play as appropriate to the unit project.</p></div><div class="game-hud"><strong>Project preparation checklist</strong><p>□ Identify the workplace situation and intended audience</p><p>□ Organize your key points and use unit-specific language</p><p>□ Prepare an introduction, evidence, conclusion and questions</p><p>□ Rehearse and receive feedback from a teacher or group</p></div><label for="business-project-notes"><strong>Your presentation / proposal outline</strong></label><textarea id="business-project-notes" style="width:100%;box-sizing:border-box;min-height:180px;margin-top:10px;padding:14px;border:1px solid #d9e1dd;border-radius:12px" placeholder="Introduction, problem, proposed solution, benefits, closing..." oninput="EBDAA_BUSINESS_PRACTICE.setNote(this.value)">'+esc(note)+'</textarea><p id="business-project-warning" role="alert" class="muted"></p><button class="btn teal" onclick="EBDAA_BUSINESS_PRACTICE.completeProject()">Complete project preparation →</button><p class="muted">This outline is not saved or automatically graded. Completion creates an ungraded participation record. Speaking and writing require teacher review.</p></div></section>';
-}
-function render(){
- if(state.done&&lesson().kind==="project")return window.EBDA_COMPLETION.participation({subject:"be",grade:state.g,unit:state.u,index:state.i,lesson:lesson().title,back:"businessBackToUnit()"});
- if(state.done&&lesson().kind!=="project")return window.EBDA_COMPLETION.render({subject:"be",grade:state.g,unit:state.u,index:state.i,lesson:lesson().title,correct:Object.values(state.answers).filter(v=>v.checked&&v.correct).length,answers:state.answers,retry:"EBDAA_BUSINESS_PRACTICE.restart()",back:"businessBackToUnit()",arabic:window.EBDA_I18N?window.EBDA_I18N.current()==="ar":false});
+let note="";
+function unitOf(st){return window.EBDAA_BUSINESS_ENGLISH_UNITS[st.g][st.u]}
+function lessonOf(st){return unitOf(st).sessions[st.i]}
+window.EBDAA_BUSINESS_PRACTICE=window.EBDA_PRACTICE_FRAMEWORK.create({
+ name:"EBDAA_BUSINESS_PRACTICE",subject:"be",gameKey:"be",learningMode:"businessPractice",appliedKey:"business",
+ locale:"en",inputId:"practice-answer",checkId:"business-check",back:"businessBackToUnit()",
+ buildItems:(g,u,i)=>build(g,u,i).map(q=>({...q,mode:"choice"})),
+ title:(g,u,i)=>window.EBDAA_BUSINESS_ENGLISH_UNITS[g][u].sessions[i].title,
+ header:(g,u)=>({exitLabel:"← All Business English lessons",exit:"businessBackToUnit()",yearLabel:"YEAR "+g+" · BUSINESS ENGLISH · UNIT "+window.EBDAA_BUSINESS_ENGLISH_UNITS[g][u].unitNo,disclaimer:"Supplementary generated vocabulary and professional-English practice based on lesson topics. It is not the verbatim publisher question bank. Some prompts use the same vocabulary in repeated formats; listening, speaking and free writing require teacher or separate review."}),
+ eyebrow:(q,{g,u,i})=>"💼 "+esc(q.type)+" · "+esc(window.EBDAA_BUSINESS_ENGLISH_UNITS[g][u].sessions[i].focus),
+ topExtras:()=>'<button class="btn light" style="font-size:12px;margin-bottom:14px" onclick="EBDAA_BUSINESS_PRACTICE.listen()">🔊 Hear lesson title</button>',
+ afterControls:(q,{g,u,i,cursor})=>window.NTSS_APPLIED.render("business",[g,u,i].join("-"),cursor,window.EBDAA_BUSINESS_ENGLISH_UNITS[g][u].sessions[i].title),
+ render2:(st,api)=>{
+  const u=unitOf(st),l=lessonOf(st);
+  if(l.kind!=="project")return null;
+  if(st.done)return window.EBDA_COMPLETION.participation({subject:"be",grade:st.g,unit:st.u,index:st.i,lesson:l.title,back:"businessBackToUnit()"});
+  return '<section class="practice-focus"><header class="practice-focus__header"><div class="practice-focus__header-row"><button class="practice-focus__exit" onclick="businessBackToUnit()">← Back to unit</button><span class="practice-focus__year">YEAR '+st.g+' · BUSINESS ENGLISH</span></div><div class="practice-focus__info"><h1 class="practice-focus__lesson">'+esc(l.title)+'</h1><span class="practice-focus__counter">GROUP PROJECT · PRACTICAL</span></div></header><div class="practice-focus__content"><div class="hint"><h2>🎤 Workplace project challenge</h2><p><strong>'+esc(u.project)+'</strong></p><p>Practice your professional English through a short group presentation, professional report, proposal or role-play as appropriate to the unit project.</p></div><div class="game-hud"><strong>Project preparation checklist</strong><p>□ Identify the workplace situation and intended audience</p><p>□ Organize your key points and use unit-specific language</p><p>□ Prepare an introduction, evidence, conclusion and questions</p><p>□ Rehearse and receive feedback from a teacher or group</p></div><label for="business-project-notes"><strong>Your presentation / proposal outline</strong></label><textarea id="business-project-notes" style="width:100%;box-sizing:border-box;min-height:180px;margin-top:10px;padding:14px;border:1px solid #d9e1dd;border-radius:12px" placeholder="Introduction, problem, proposed solution, benefits, closing..." oninput="EBDAA_BUSINESS_PRACTICE.setNote(this.value)">'+esc(note)+'</textarea><p id="business-project-warning" role="alert" class="muted"></p><button class="btn teal" onclick="EBDAA_BUSINESS_PRACTICE.completeProject()">Complete project preparation →</button><p class="muted">This outline is not saved or automatically graded. Completion creates an ungraded participation record. Speaking and writing require teacher review.</p></div></section>';
+ },
+ methods:api=>({
+  listen(){const s=window.speechSynthesis;if(!s||typeof SpeechSynthesisUtterance==="undefined")return;try{s.cancel();const utter=new SpeechSynthesisUtterance(lessonOf(api._state()).title);utter.lang="en-GB";utter.rate=.87;s.speak(utter)}catch(_e){}},
+  setNote(v){note=String(v).slice(0,3000)},
+  completeProject(){
+   const st=api._state(),l=lessonOf(st);
+   if(l.kind!=="project")return;
+   note=String(document.getElementById("business-project-notes")?.value||note).trim().slice(0,3000);
+   if(note.length<30){const n=document.getElementById("business-project-warning");if(n)n.textContent="Add at least 30 characters to your outline before completing preparation.";return}
+   api._markDone();
+  }
+ })
+});
 
- const s=state,u=unit(),l=lesson();if(l.kind==="project")return project();
- const q=s.items[s.cursor],a=s.answers[s.cursor],correct=Object.values(s.answers).filter(x=>x.checked&&x.correct).length,answered=Object.values(s.answers).filter(x=>x.checked).length;
- const lessonKey=[s.g,s.u,s.i].join("-");
- const body=s.done?window.EBDAA_GAME.results(s.answers,50,false)+'<div class="feedback"><h2>🏆 Practice completed</h2><p>'+correct+' / 50 correct. This is supplementary formative practice, not a source-book exam.</p><button class="btn teal" onclick="EBDAA_BUSINESS_PRACTICE.restart()">Try again</button></div>':
- window.EBDAA_GAME.stats(s.answers,50,false)+'<div class="eyebrow">💼 '+esc(q.type)+' · '+esc(l.focus)+'</div><h2 class="practice-question">'+esc(q.question)+'</h2>'+window.EBDAA_GAME.render(q,s.cursor,a?.value,a?.checked,"be",lessonKey,"EBDAA_BUSINESS_PRACTICE.choose")+window.NTSS_APPLIED.render("business",lessonKey,s.cursor,l.title)+(a?.checked?'<div role="status" class="feedback '+(a.correct?'':'error')+'"><strong>'+(a.correct?'✓ Correct':'Review the meaning')+'</strong><p>'+esc(q.explanation)+'</p></div>':'')+'<div class="stepfooter"><button class="btn light" '+(!s.cursor?"disabled":"")+' onclick="EBDAA_BUSINESS_PRACTICE.move(-1)">← Previous</button><button class="btn teal" '+(!a||!a.checked&&a.value===undefined?"disabled":"")+' onclick="EBDAA_BUSINESS_PRACTICE.'+(a?.checked?'move(1)':'check()')+'">'+(a?.checked?(s.cursor===49?'Finish':'Next →'):'Check answer')+'</button></div>';
- return '<section class="practice-focus"><header class="practice-focus__header"><div class="practice-focus__header-row"><button class="practice-focus__exit" onclick="businessBackToUnit()">← All Business English lessons</button><span class="practice-focus__year">YEAR '+s.g+' · BUSINESS ENGLISH · UNIT '+u.unitNo+'</span></div><div class="practice-focus__info"><h1 class="practice-focus__lesson">'+esc(l.title)+'</h1><span class="practice-focus__counter">Mission '+(s.cursor+1)+' / 50</span></div><div class="practice-focus__track"><i style="width:'+(answered*2)+'%"></i></div></header><div class="practice-focus__content"><div class="guided-question"><button class="btn light" style="font-size:12px;margin-bottom:14px" onclick="EBDAA_BUSINESS_PRACTICE.listen()">🔊 Hear lesson title</button>'+body+'<p class="muted" style="font-size:12px;margin-top:22px">Supplementary generated vocabulary and professional-English practice based on lesson topics. It is not the verbatim publisher question bank. Some prompts use the same vocabulary in repeated formats; listening, speaking and free writing require teacher or separate review.</p></div></div></section>';
-}
-return {build,start,render,choose,check,move,restart,listen,setNote,completeProject};
 })();
