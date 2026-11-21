@@ -26,8 +26,8 @@ for(const [subject,label,fn,file] of subjects){
   const opener=new RegExp("function "+fn+"\\(i\\)\\{[\\s\\S]{0,260}?registerNamedLesson\\(\\\""+subject+"\\\"");
   assert.match(main,opener,subject+" name entry must be registered");
  }
- if(subject==="ai")assert.match(practice,/EBDA_COMPLETION\.render\(/);
- else assert.match(practice,/EBDA_COMPLETION\.render\(/,subject+" lesson completion");
+ if(/EBDA_PRACTICE_FRAMEWORK\.create\(/.test(practice)){assert.match(read("unified-practice.js"),/EBDA_COMPLETION\.render\(/,"unified framework lesson completion")}
+ else assert.match(practice,/EBDA_COMPLETION\.(render|participation)\(/,subject+" lesson completion");
  assert.doesNotThrow(()=>new vm.Script(practice,{filename:file}));
 }
 const business=read("business-english-practice.js");
