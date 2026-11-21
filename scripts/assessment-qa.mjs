@@ -63,7 +63,7 @@ assert.ok(read("index.html").includes("assessment-enhancements.js"),"Assessment 
   addEventListener(){}
  };
  for(const path of ["grade-catalog.js","curriculum-data.js","performance-map.js","assessment-enhancements.js","question-factory.js","mastery-engine.js","mistake-review.js","lesson-completion.js","practice-workshop.js"]){
-  new Function("window","document","localStorage","setTimeout","clearTimeout",read(path))(site,mockDocument,local,()=>1,()=>{});
+  new Function("window","document","localStorage","setTimeout","clearTimeout",read(path))(site,mockDocument,local,fn=>{if(typeof fn==="function")fn();return 1},()=>{});
  }
  const practice=site.EBDAA_PRACTICE;
  practice.begin(1,0,0);

@@ -13,8 +13,15 @@ function mark(k,skill,success){if(skillResults.has(k))return;if(success){skillRe
 function assess(subject,lesson){const prefix=subject+":"+lesson+":";const entries=[...skillResults.entries()].filter(([k])=>k.startsWith(prefix)).map(([,v])=>v);const correct=entries.filter(x=>x.success).length;return {attempted:entries.length,correct,rate:entries.length?Math.round(correct/entries.length*100):0,skills:[...new Set(entries.map(x=>x.skill))]}}
 function report(subject,lesson,arabic=false){const a=assess(subject,lesson);if(!a.attempted)return "";return '<details class="context-report" aria-label="Independent practical skill assessment"><summary>🏅 '+(arabic?"التقييم العملي":"Practical skills")+': '+a.correct+'/'+a.attempted+' · '+a.rate+'%</summary><div class="context-report-body"><strong>🧪 '+(arabic?"تقييم المهارات العملية":"Practical skill assessment")+'</strong><div class="context-report-metrics"><span>🏅 '+a.correct+'/'+a.attempted+'</span><span>'+a.rate+'%</span><span>'+(arabic?"أنشطة مكتملة":"completed mini-games")+'</span></div><p>'+(arabic?"تُحتسب المحاولة الأولى فقط. يمكن إعادة الألعاب للتدرب، ولا تتغير درجة أسئلة الدرس.":"First-attempt performance only. Replay is for practice and does not change the 50-question grade.")+'</p></div></details>'}
 function draw(){window.EBDA_APP_RENDER?.()}
+const MATCH_LOCALES={
+ en:{aria:"Matching mini game",title:"Match & Discover",help:"Tap a prompt, then match it to the correct answer.",done:"🏆 Perfect match!",bonus:"Optional bonus — your lesson score is unchanged.",again:"Play again",pick:i=>"✓ "+(i+1)+" selected — choose the matching answer",pairOk:"✓ Correct pair",pairNo:"Try another answer"},
+ ar:{aria:"لعبة توصيل مصغرة",title:"لعبة التوصيل",help:"اختر السؤال ثم وصّله بالإجابة الصحيحة.",done:"🏆 أكملت اللعبة!",bonus:"تحدٍ إضافي اختياري — لا يؤثر على درجة الدرس.",again:"إعادة اللعبة",pick:i=>"✓ "+(i+1)+" محدد — اختر الإجابة المطابقة",pairOk:"✓ زوج صحيح",pairNo:"جرّب إجابة أخرى"},
+ de:{aria:"Zuordnungs-Minispiel",title:"Zuordnen & Entdecken",help:"Tippe auf eine Frage und dann auf die passende Antwort.",done:"🏆 Alles richtig zugeordnet!",bonus:"Optionaler Bonus — deine Lektionsnote bleibt unverändert.",again:"Nochmal spielen",pick:i=>"✓ "+(i+1)+" gewählt — tippe auf die passende Antwort",pairOk:"✓ Richtiges Paar",pairNo:"Versuche eine andere Antwort"}
+};
+const matchLoc=(subject,arFlag)=>arFlag===true||subject==="ar"?"ar":subject==="de"?"de":"en";
 function matching(subject,lesson,n,items,ar){
  if(n%10!==4)return "";
+ const T=MATCH_LOCALES[matchLoc(subject,ar)];
  const k=subject+":"+lesson+":match:"+n,st=record(k),pool=[];
  for(let j=0;j<items.length&&pool.length<3;j++){
   const q=items[(n+j)%items.length],correct=q?.options?.[q.answer];
@@ -27,10 +34,10 @@ function matching(subject,lesson,n,items,ar){
  const arranged=[2,0,1],completed=st.matches.length;
  const buttons=pool.map((p,i)=>'<button class="context-tile '+(st.matches.includes(i)?"context-matched":"")+'" '+(st.matches.includes(i)||st.done?"disabled":"")+' onclick="EBDAA_CONTEXT_GAMES.pick('+attr(k)+','+i+')">'+esc(p[0])+'</button>').join("");
  const answers=arranged.map(i=>'<button class="context-tile '+(st.matches.includes(i)?"context-matched":"")+'" '+(st.matches.includes(i)||st.done?"disabled":"")+' onclick="EBDAA_CONTEXT_GAMES.pair('+attr(k)+','+i+')">'+esc(pool[i][1])+'</button>').join("");
- return '<section class="context-game" aria-label="Matching mini game"><div class="context-head"><strong>🧩 '+(ar?"لعبة التوصيل":"Match & Discover")+'</strong><span>🎯 '+completed+'/3</span></div><p class="context-help">'+(ar?"اختر السؤال ثم وصّله بالإجابة الصحيحة.":"Tap a prompt, then match it to the correct answer.")+'</p><div class="context-columns"><div>'+buttons+'</div><div>'+answers+'</div></div><p role="status" class="context-status">'+esc(st.done?(ar?"🏆 أكملت اللعبة!":"🏆 Perfect match!"):st.message|| (ar?"تحدٍ إضافي اختياري — لا يؤثر على درجة الدرس.":"Optional bonus — your lesson score is unchanged."))+'</p><button class="context-reset" onclick="EBDAA_CONTEXT_GAMES.restart('+attr(k)+')">'+(ar?"إعادة اللعبة":"Play again")+'</button></section>';
+ return '<section class="context-game" aria-label="'+T.aria+'"><div class="context-head"><strong>🧩 '+T.title+'</strong><span>🎯 '+completed+'/3</span></div><p class="context-help">'+T.help+'</p><div class="context-columns"><div>'+buttons+'</div><div>'+answers+'</div></div><p role="status" class="context-status">'+esc(st.done?T.done:st.message||T.bonus)+'</p><button class="context-reset" onclick="EBDAA_CONTEXT_GAMES.restart('+attr(k)+')">'+T.again+'</button></section>';
 }
-function pick(k,i){const s=record(k);if(s.done||s.matches.includes(i))return;s.first=i;s.message="✓ "+(i+1)+" selected — choose the matching answer";draw()}
-function pair(k,i){const s=record(k);if(s.first===null||s.done||s.matches.includes(i))return;if(i===s.first){s.matches.push(i);s.message="✓ Correct pair";s.done=s.matches.length===3;if(s.done)mark(k,"matching",true)}else {s.message="Try another answer";mark(k,"matching",false)}s.first=null;draw()}
+function pick(k,i){const T=MATCH_LOCALES[matchLoc(k.split(":")[0])];const s=record(k);if(s.done||s.matches.includes(i))return;s.first=i;s.message=T.pick(i);draw()}
+function pair(k,i){const T=MATCH_LOCALES[matchLoc(k.split(":")[0])];const s=record(k);if(s.first===null||s.done||s.matches.includes(i))return;if(i===s.first){s.matches.push(i);s.message=T.pairOk;s.done=s.matches.length===3;if(s.done)mark(k,"matching",true)}else {s.message=T.pairNo;mark(k,"matching",false)}s.first=null;draw()}
 function restart(k){state.delete(k);mathDrafts.delete(k);draw()}
 const missions={
  python:[

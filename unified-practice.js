@@ -152,7 +152,7 @@ function create(cfg){
  }
  function controls(q,a){
   const dis=a?.checked?"disabled":"";
-  if(q.mode==="choice")return window.EBDAA_GAME.render({options:q.options,answer:q.answer,type:q.type},cursor,a?.value,a?.checked,cfg.gameKey,lessonKey(),name+".gameChoose");
+  if(q.mode==="choice")return window.EBDAA_GAME.render({options:q.options,answer:q.answer,type:q.type},cursor,a?.value,a?.checked,cfg.gameKey,lessonKey(),name+".gameChoose",cfg.locale);
   if(q.mode==="fill")return '<label for="'+cfg.inputId+'">'+S.yourAnswer+'</label><input id="'+cfg.inputId+'" type="text" dir="auto" value="'+esc(a?.value??"")+'" '+dis+' oninput="'+name+'.write(this.value)" style="display:block;width:100%;max-width:480px;padding:14px;border:1px solid #d9e1dd;border-radius:12px">';
   if(q.mode==="slider"){
    const max=Math.max(20,Math.ceil(Math.abs(Number(q.answer))*1.8)+1);
