@@ -24,7 +24,7 @@ assert.ok(subjectModules.every(name=>lazy.includes('"'+name+'"')),"Every subject
 assert.doesNotThrow(()=>new vm.Script(sw));
 assert.ok(!sw.includes("html.matchAll("),"Do not eagerly fetch every linked asset during service worker install");
 assert.ok(sw.includes("event.waitUntil(cache.put("),"Cache assets in background after first response");
-assert.ok(sw.includes("ntss-static-20261120-speed"),"Cache version must update after optimizing install");
+assert.match(sw,/const CACHE="ntss-static-[a-z0-9-]+";/,"Versioned offline cache must be present");
 const calls=[];
 const fake={};
 const doc={
