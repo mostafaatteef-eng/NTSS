@@ -138,8 +138,9 @@ try{
  const runtimePage=await browser.newPage({viewport:{width:820,height:900},serviceWorkers:"block"});
  await runtimePage.goto(url,{waitUntil:"load"});
  const runtime=await runtimePage.evaluate(async()=>{
-  const py=window.EBDAA_QUESTION_FACTORY.all(3,0,0).find(q=>q.mode==="live-code"&&q.engine==="python");
+  const py=window.EBDAA_QUESTION_FACTORY.all(3,0,0).find(q=>q.mode==="live-code"&&q.engine==="python"&&q.codeTask.tests?.some(([expr])=>expr.startsWith("average(")));
   const sql=window.EBDAA_QUESTION_FACTORY.all(2,2,0).find(q=>q.mode==="live-code"&&q.engine==="sql");
+  if(!py||!sql)throw Error("Missing reference coding challenges for browser QA");
   const execute=(q,code)=>new Promise(resolve=>window.NTSS_ASSESSMENT.run(q,code,resolve));
   const python=await execute(py,"def average(values):\n    return sum(values)/len(values)");
   const sqlite=await execute(sql,sql.codeTask.solution);
