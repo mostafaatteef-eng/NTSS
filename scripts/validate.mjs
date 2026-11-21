@@ -32,6 +32,7 @@ assert.ok(content.innerHTML.includes("Choose your academic year"));
 await vm.runInContext("ensureSearchIndex()",context);
 vm.runInContext("setLessonSearch('Python')",context);
 assert.ok(vm.runInContext("searchCards()",context).includes("search-result"),"Cross-grade search returned no lessons");
+vm.runInContext("window.EBDA_COMPLETION.setName('ai:2:0:0','Test Student')",context);
 vm.runInContext("searchOpen(2,0,0)",context);
 for(let i=0;i<12;i++)await new Promise(r=>setImmediate(r));
 assert.ok(content.innerHTML.includes('class="lesson-layout"'),"Search must open Year 1-style learning layout");
@@ -154,9 +155,9 @@ for(const year of [2,3]){
   vm.runInContext("chooseGrade("+year+");chooseSubject();chooseGradeUnit("+unit+")",context);
   const sessions=grades[year-1].subjects[0].units[unit].sessions;
   for(let i=0;i<sessions.length;i++){
+   vm.runInContext("window.EBDA_COMPLETION.setName('ai:"+year+":"+unit+":"+i+"','Test Student')",context);
    vm.runInContext("openAdvancedSession("+i+")",context);
    const tag=year+"-"+unit+"-"+i;
-   vm.runInContext("window.EBDA_COMPLETION.setName('ai:"+year+":"+unit+":"+i+"','Test Student')",context);
    assert.ok(content.innerHTML.includes("theory-spark"),"Missing Discover theory: "+tag);
    assert.ok(!content.innerHTML.includes("lab-module"),"Old accordion returned: "+tag);
    assert.ok(!content.innerHTML.includes("PRACTICAL BRIEF"),"Removed checklist returned: "+tag);

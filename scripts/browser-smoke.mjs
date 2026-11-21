@@ -49,6 +49,8 @@ try{
  await page.getByRole("button",{name:/Explore subject/i}).first().click();
  await page.getByRole("button",{name:/View session index/i}).first().click();
  await page.getByRole("button",{name:/HANDS-ON LAB/i}).first().click();
+ const fillGate=async()=>{if(await page.locator("#ebda-lesson-student-name").count()){await page.locator("#ebda-lesson-student-name").fill("QA Student");await page.getByRole("button",{name:/Start lesson/i}).click();}};
+ await fillGate();
  if(await page.locator(".lab-module").count())throw Error("Old multi-accordion layout remains");
  if(await page.locator(".lesson-steps .lesson-step").count()!==5)throw Error("Five learning stages missing");
  if(!await page.locator(".side-list button").count())throw Error("Lesson sidebar missing");
@@ -127,7 +129,7 @@ try{
  await page.locator("#ebdaa-practice-stage").getByRole("button",{name:/Previous/i}).click();
  if((await page.locator("#focus-counter").textContent())!=="Question 1 / 50")throw Error("Practice question history missing");
  // Verify the SQL game that now appears in the screenshot's Year 2 modeling unit.
- await page.evaluate(()=>{chooseGrade(2);chooseSubject();chooseGradeUnit(1);openAdvancedSession(0);goAdvancedStep(2)});
+ await page.evaluate(()=>{window.EBDA_COMPLETION.setName("ai:2:1:0","QA Student");chooseGrade(2);chooseSubject();chooseGradeUnit(1);openAdvancedSession(0);goAdvancedStep(2)});
  if(!await page.locator(".ebda-puzzle").getByText("SQL Key Detective").count())throw Error("SQL key-matching game missing");
  if(!await page.locator(".ebda-puzzle").getByText(/INNER JOIN/i).count())throw Error("SQL game prompt missing");
  const sqlAnswer=await page.evaluate(()=>window.EBDA_PUZZLES.task(2,1,0,0).answerIndex);
@@ -139,6 +141,7 @@ try{
  await page.getByRole("button",{name:/Explore subject/i}).first().click();
  await page.getByRole("button",{name:/View session index/i}).last().click();
  await page.getByRole("button",{name:/HANDS-ON LAB/i}).first().click();
+ await fillGate();
  if(await page.locator(".lesson-steps .lesson-step").count()!==5)throw Error("Year 3 learning stages missing");
  await page.locator(".stage .stepfooter .btn.teal").click();
  if(!await page.getByText(/EVIDENCE CHECK/).count())throw Error("Year 3 experiment missing");

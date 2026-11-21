@@ -48,7 +48,7 @@ function project(){
 }
 function render(){
  if(state.done&&lesson().kind==="project")return window.EBDA_COMPLETION.participation({subject:"be",grade:state.g,unit:state.u,index:state.i,lesson:lesson().title,back:"businessBackToUnit()"});
- if(state.done&&lesson().kind!=="project")return window.EBDA_COMPLETION.render({subject:"be",grade:state.g,unit:state.u,index:state.i,lesson:lesson().title,correct:Object.values(state.answers).filter(v=>v.checked&&v.correct).length,answers:state.answers,retry:"EBDAA_BUSINESS_PRACTICE.restart()",back:"businessBackToUnit()"});
+ if(state.done&&lesson().kind!=="project")return window.EBDA_COMPLETION.render({subject:"be",grade:state.g,unit:state.u,index:state.i,lesson:lesson().title,correct:Object.values(state.answers).filter(v=>v.checked&&v.correct).length,answers:state.answers,retry:"EBDAA_BUSINESS_PRACTICE.restart()",back:"businessBackToUnit()",arabic:window.EBDA_I18N?window.EBDA_I18N.current()==="ar":false});
 
  const s=state,u=unit(),l=lesson();if(l.kind==="project")return project();
  const q=s.items[s.cursor],a=s.answers[s.cursor],correct=Object.values(s.answers).filter(x=>x.checked&&x.correct).length,answered=Object.values(s.answers).filter(x=>x.checked).length;
