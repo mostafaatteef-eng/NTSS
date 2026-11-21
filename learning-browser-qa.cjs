@@ -45,13 +45,24 @@ function check(condition,msg){assert.ok(condition,msg)}
    check(await page.locator('#app').count()===1,'Missing app element');
    for(const testCase of cases){
     activeCase=testCase.name;
-    const result=await page.evaluate(({grade,subject,unit,lesson})=>{
+    const routingError=await page.evaluate(({grade,subject,unit,lesson})=>{
       chooseGrade(grade);
       chooseSubject(subject);
-      if(typeof window[unit]!=='function'||typeof window[lesson]!=='function')return {error:'missing navigation handler '+unit+' '+lesson};
+      if(typeof window[unit]!=='function'||typeof window[lesson]!=='function')return 'missing navigation handler '+unit+' '+lesson;
       window[unit](0);
       window[lesson](0);
-      return {
+      return null;
+    },testCase);
+    check(!routingError,device.name+' '+testCase.name+': '+routingError);
+    // New privacy/name requirement: wait for the on-demand module, enter a synthetic name,
+    // then check the actual lesson rather than assuming immediate question rendering.
+    await page.locator('.ebda-name-gate').waitFor({timeout:20000});
+    check((await page.locator('.ebda-name-gate__lesson').innerText()).trim().length>0,
+      device.name+' '+testCase.name+' name gate missing lesson title');
+    await page.locator('#ebda-lesson-student-name').fill('QA Student');
+    await page.getByRole('button',{name:/Start lesson|ابدأ الدرس/i}).click();
+    await page.locator('.practice-question').first().waitFor({timeout:20000});
+    const result=await page.evaluate(()=>({
        lesson:document.querySelector('.practice-focus__lesson')?.textContent||'',
        counter:document.querySelector('.practice-focus__counter')?.textContent||'',
        progress:!!document.querySelector('.practice-focus__track'),
@@ -59,8 +70,7 @@ function check(condition,msg){assert.ok(condition,msg)}
        tools:document.querySelectorAll('.ntss-learning-tools').length,
        expanded:document.querySelector('.ntss-learning-tools')?.open||false,
        duplicate:document.querySelectorAll('.ntss-learning-tools .ntss-learning-tools').length
-      };
-    },testCase);
+    }));
     check(!result.error,device.name+' '+testCase.name+': '+result.error);
     check(result.lesson.length>0,device.name+' '+testCase.name+' lesson title not rendered');
     check(result.question,device.name+' '+testCase.name+' question missing');
