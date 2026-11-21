@@ -134,9 +134,19 @@ function check(condition,msg){assert.ok(condition,msg)}
    });
    await page.waitForFunction(()=>document.documentElement.dataset.offlineReady==="true",{timeout:30000});
    await context.setOffline(true);
-   await page.reload({waitUntil:'domcontentloaded',timeout:15000});
-   await page.waitForFunction(()=>typeof window.EBDA_APP_RENDER==='function',{timeout:10000});
-   check((await page.locator('#app').innerText()).length>10,device.name+' offline app shell missing');
+   if(engineName==='webkit'){
+     // WebKit on Linux can hit an engine-internal error on reload under SW interception.
+     // A fresh tab in the same offline browser context tests the same cached-shell contract.
+     const offlinePage=await context.newPage();
+     await offlinePage.goto(ROOT,{waitUntil:'domcontentloaded',timeout:15000});
+     await offlinePage.waitForFunction(()=>typeof window.EBDA_APP_RENDER==='function',{timeout:10000});
+     check((await offlinePage.locator('#app').innerText()).length>10,device.name+' offline app shell missing in new tab');
+     await offlinePage.close();
+   }else{
+     await page.reload({waitUntil:'domcontentloaded',timeout:15000});
+     await page.waitForFunction(()=>typeof window.EBDA_APP_RENDER==='function',{timeout:10000});
+     check((await page.locator('#app').innerText()).length>10,device.name+' offline app shell missing');
+   }
    await context.setOffline(false);
    await page.screenshot({path:artifactDir+'/'+engineName+'-'+device.name+'-last-subject.png',fullPage:true});
    await context.close();activePage=null;
