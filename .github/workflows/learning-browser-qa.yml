@@ -27,6 +27,8 @@ jobs:
       - name: Start local HTTPS server
         run: |
           openssl req -x509 -newkey rsa:2048 -sha256 -nodes -days 1 -keyout /tmp/ntss-test-key.pem -out /tmp/ntss-test-cert.pem -subj "/CN=127.0.0.1" -addext "subjectAltName=IP:127.0.0.1,DNS:localhost" >/dev/null 2>&1
+          sudo cp /tmp/ntss-test-cert.pem /usr/local/share/ca-certificates/ntss-test.crt
+          sudo update-ca-certificates >/dev/null
           node scripts/qa-https-server.mjs > /tmp/ntss-server.log 2>&1 &
           echo $! > /tmp/ntss-server.pid
       - name: Wait for local server
