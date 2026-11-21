@@ -24,7 +24,18 @@ try{
   const page=await browser.newPage({viewport:{width,height:850},serviceWorkers:"block"});
   const errors=[];page.on("pageerror",err=>errors.push(err.message));
   await page.goto(url,{waitUntil:"load"});
-  await page.waitForFunction(()=>!!window.NTSS_ASSESSMENT&&!!window.EBDAA_QUESTION_FACTORY);
+  try{
+   await page.waitForFunction(()=>!!window.NTSS_ASSESSMENT&&!!window.EBDAA_QUESTION_FACTORY,{timeout:20000});
+  }catch(err){
+   const state=await page.evaluate(()=>({
+    readyState:document.readyState,
+    assessment:!!window.NTSS_ASSESSMENT,
+    factory:!!window.EBDAA_QUESTION_FACTORY,
+    appText:document.querySelector("#app")?.textContent?.slice(0,200),
+    scripts:[...document.scripts].filter(x=>x.src).map(x=>x.src.split("/").at(-1)).slice(-12)
+   })).catch(e=>({error:String(e)}));
+   throw Error("Startup failure "+engine+" "+width+"px: "+JSON.stringify({state,errors})+"; "+err.message);
+  }
   const metrics=await page.evaluate(()=>{
    const nav=performance.getEntriesByType("navigation")[0];
    return {domReadyMs:Math.round(nav?.domContentLoadedEventEnd||0),totalResources:performance.getEntriesByType("resource").length};
