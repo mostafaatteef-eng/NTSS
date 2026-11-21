@@ -16,7 +16,17 @@ const server=createServer((req,res)=>{
 await new Promise(ok=>server.listen(0,"127.0.0.1",ok));
 const address=server.address(),url="http://127.0.0.1:"+address.port+"/";
 const browser=await chromium.launch({headless:true,args:["--no-sandbox"]});
-const page=await browser.newPage({viewport:{width:1440,height:900}});
+{
+ // Arabic RTL is the default student UI; assert it before forcing English for the copy checks below.
+ const arPage=await browser.newPage({viewport:{width:1440,height:900}});
+ await arPage.goto(url,{waitUntil:"load"});await arPage.waitForSelector("#app");
+ if(await arPage.evaluate(()=>document.documentElement.dir)!=="rtl")throw Error("Arabic RTL is not the default student UI");
+ if(!await arPage.evaluate(()=>document.documentElement.lang==="ar"))throw Error("Arabic document language missing");
+ await arPage.close();
+}
+const enContext=await browser.newContext({viewport:{width:1440,height:900}});
+await enContext.addInitScript(()=>{try{localStorage.setItem("ebda-lang","en")}catch(_){}});
+const page=await enContext.newPage();
 const errors=[];
 page.on("pageerror",e=>errors.push(e.message));
 const goHome=async()=>{await page.goto(url,{waitUntil:"load"});await page.waitForSelector("#app");};
@@ -30,13 +40,13 @@ try{
  if(!uiStyle.linked||!uiStyle.hero.includes("gradient"))throw Error("Student-friendly EBDA stylesheet missing or not applied");
  if(await page.locator("a.skip-link").count()!==1)throw Error("Accessibility skip link missing");
  await page.locator("#lesson-search").fill("Python");
- if(await page.locator("#search-results .search-result").count()<1)throw Error("Cross-grade lesson search failed");
+ await page.waitForFunction(()=>document.querySelectorAll("#search-results .search-result").length>0,null,{timeout:60000}).catch(()=>{throw Error("Cross-grade lesson search failed")});
  await page.locator("#lesson-search").fill("");
 
  const years=page.getByRole("button",{name:/View subjects/i});
  if(await years.count()!==3)throw Error("Three academic years missing");
  await years.nth(1).click();
- await page.getByRole("button",{name:/Explore subject/i}).click();
+ await page.getByRole("button",{name:/Explore subject/i}).first().click();
  await page.getByRole("button",{name:/View session index/i}).first().click();
  await page.getByRole("button",{name:/HANDS-ON LAB/i}).first().click();
  if(await page.locator(".lab-module").count())throw Error("Old multi-accordion layout remains");
@@ -126,7 +136,7 @@ try{
  if(!await page.locator(".advanced-stage-content details.lab-support > summary").filter({hasText:/factory mystery/i}).count())throw Error("Factory mystery route missing");
  await goHome();
  await page.getByRole("button",{name:/View subjects/i}).nth(2).click();
- await page.getByRole("button",{name:/Explore subject/i}).click();
+ await page.getByRole("button",{name:/Explore subject/i}).first().click();
  await page.getByRole("button",{name:/View session index/i}).last().click();
  await page.getByRole("button",{name:/HANDS-ON LAB/i}).first().click();
  if(await page.locator(".lesson-steps .lesson-step").count()!==5)throw Error("Year 3 learning stages missing");

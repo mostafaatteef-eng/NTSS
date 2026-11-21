@@ -88,7 +88,7 @@ function draw(){window.EBDA_APP_RENDER?.()}
 function start(g,u,i){window.NTSS_LEARNING?.reset("englishPractice");window.NTSS_APPLIED.reset("en",[g,u,i].join("-"));window.EBDAA_CONTEXT_GAMES.reset("en",[g,u,i].join("-"));window.EBDAA_GAME.resetLesson('en',[g,u,i].join('-'));state={g,u,i,cursor:0,answers:{},items:build(g,u,i),done:false};transcriptOpen=false;drafts={};draw()}
 function choose(j){if(state.answers[state.cursor]?.checked)return;state.answers[state.cursor]={value:j};draw()}
 function check(){let a=state.answers[state.cursor];if(!a||a.checked)return;a.checked=true;a.correct=a.value===state.items[state.cursor].answer;window.NTSS_LEARNING?.record("englishPractice",state.cursor,a.correct,state.items[state.cursor]);draw()}
-function next(){if(!state.answers[state.cursor]?.checked)return;if(state.cursor===state.items.length-1)state.done=true;else state.cursor++;transcriptOpen=false;draw()}
+function next(){if(!state.answers[state.cursor]?.checked)return;if(state.cursor===state.items.length-1){state.done=true;window.EBDA_PROGRESS?.mark("en",state.g,state.u,state.i,Math.round(100*Object.values(state.answers).filter(a=>a&&a.correct).length/Math.max(1,(state.items).length)));}else state.cursor++;transcriptOpen=false;draw()}
 function previous(){if(state.cursor>0){state.cursor--;transcriptOpen=false;draw()}}
 function restart(){start(state.g,state.u,state.i)}
 let transcriptOpen=false;let drafts={};

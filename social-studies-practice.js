@@ -35,7 +35,7 @@ window.EBDAA_SOCIAL_STUDIES_PRACTICE=(function(){
  }
  function move(delta){
   if(delta>0&&!s.answers[s.cursor]?.checked)return;
-  if(delta>0&&s.cursor===s.items.length-1){s.done=true;draw();return}
+  if(delta>0&&s.cursor===s.items.length-1){s.done=true;window.EBDA_PROGRESS?.mark("social",s.g,s.u,s.i,Math.round(100*Object.values(s.answers).filter(a=>a&&a.correct).length/Math.max(1,(s.items).length)));draw();return}
   s.cursor=Math.max(0,Math.min(s.items.length-1,s.cursor+delta));s.typed=String(s.answers[s.cursor]?.value||"");feedback="";draw()
  }
  function restart(){start(s.g,s.u,s.i)}

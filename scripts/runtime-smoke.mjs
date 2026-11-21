@@ -15,7 +15,9 @@ const server=createServer((req,res)=>{
 await new Promise(ok=>server.listen(0,"127.0.0.1",ok));
 const host="http://127.0.0.1:"+server.address().port+"/";
 const browser=await chromium.launch({headless:true,args:["--no-sandbox"]});
-const page=await browser.newPage({viewport:{width:1360,height:900}});
+const enContext=await browser.newContext({viewport:{width:1360,height:900}});
+await enContext.addInitScript(()=>{try{localStorage.setItem("ebda-lang","en")}catch(_){}}); // Flows assert English copy; Arabic is the default UI.
+const page=await enContext.newPage();
 page.setDefaultTimeout(30000);
 const errors=[];page.on("pageerror",e=>errors.push(e.message));
 const stage=async(n,expand)=>{
@@ -32,7 +34,7 @@ const stage=async(n,expand)=>{
 const enter=async(g,u,i)=>{
  await page.goto(host,{waitUntil:"load"});
  await page.getByRole("button",{name:/View subjects/i}).nth(g-1).click();
- await page.getByRole("button",{name:/Explore subject/i}).click();
+ await page.getByRole("button",{name:/Explore subject/i}).first().click();
  await page.getByRole("button",{name:/View session index/i}).nth(u).click();
  await page.getByRole("button",{name:/HANDS-ON LAB/i}).nth(i).click();
  await page.waitForSelector(".advanced-stage-content[data-stage=\"0\"]");

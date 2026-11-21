@@ -90,7 +90,7 @@ function current(){return state.items[state.cursor]}
 function record(){return state.answers[state.cursor]}
 function respond(j){const q=current(),a=record();if(a?.checked)return;state.answers[state.cursor]={value:j,checked:false};if(q.mode==="number"){const button=document.getElementById("math-check");if(button)button.disabled=String(j).trim()==="";return}renderInto()}
 function check(){const q=current(),a=record();if(!a||a.checked||String(a.value).trim()==="")return;const correct=q.mode==="number"?Number.isFinite(Number(a.value))&&Math.abs(Number(a.value)-q.answer)<=0.005:Number(a.value)===q.answer;state.answers[state.cursor]={value:a.value,checked:true,correct};window.NTSS_LEARNING?.record("mathPractice",state.cursor,correct,q);renderInto()}
-function move(delta){if(delta>0&&!record()?.checked)return;const next=state.cursor+delta;if(next<0||next>=state.items.length){if(next>=state.items.length){state.done=true;renderInto()}return}state.cursor=next;renderInto()}
+function move(delta){if(delta>0&&!record()?.checked)return;const next=state.cursor+delta;if(next<0||next>=state.items.length){if(next>=state.items.length){state.done=true;window.EBDA_PROGRESS?.mark("math",state.g,state.u,state.i,Math.round(100*Object.values(state.answers).filter(a=>a&&a.correct).length/Math.max(1,(state.items).length)));renderInto()}return}state.cursor=next;renderInto()}
 function restart(){start(state.g,state.u,state.i)}
 function escapeAttr(s){return escape(s)}
 function render(){

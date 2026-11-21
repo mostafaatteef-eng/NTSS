@@ -2,23 +2,21 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import vm from "node:vm";
 
-const paths=["index.html","curriculum-data.js","grade-catalog.js","experiments.js","challenge.js","advanced-labs.js","microgames.js","missions-data.js","performance-map.js","session-guides.js","lab-specialists.js","numeric-challenges.js","question-factory.js","mastery-engine.js","mistake-review.js","practice-workshop.js","case-labs.js","scenario-labs.js","practical-rubrics.js","visual-playground.js","code-challenges.js","concept-visualizer.js","lesson-puzzles.js","theory-studio.js","lab-studio.js"];
+const paths=["index.html","curriculum-data.js","grade-catalog.js","experiments.js","challenge.js","advanced-labs.js","microgames.js","missions-data.js","performance-map.js","session-guides.js","lab-specialists.js","numeric-challenges.js","question-factory.js","assessment-enhancements.js","mastery-engine.js","mistake-review.js","practice-workshop.js","ntss-original-logo.js","lesson-completion.js","coding-labs.js","question-bank-audit.js","case-labs.js","scenario-labs.js","practical-rubrics.js","visual-playground.js","code-challenges.js","concept-visualizer.js","lesson-puzzles.js","theory-studio.js","lab-studio.js","learning-support.js","learning-concepts.js","applied-missions.js","context-mini-games.js","gamified-questions.js","learning-journey.js","quest-path.js","i18n.js","progress-map.js","lazy-features.js","app-main.js"];
 for(const name of paths)assert.ok(fs.existsSync(name),name+" must exist");
 const html=fs.readFileSync("index.html","utf8");
 const scripts=paths.slice(1).map(x=>fs.readFileSync(x,"utf8"));
-const inline=html.match(/<script>([\s\S]*?)<\/script>/)?.[1];
-assert.ok(inline,"inline app script missing");
-for(const src of [...scripts,inline])new vm.Script(src);
+for(const src of scripts)new vm.Script(src);
 const content={innerHTML:""};const practiceStage={innerHTML:""};const dataPlayground={innerHTML:""};const rubricProgress={innerHTML:""};
-const buttons=["home","browse","missions","about"].map(x=>({dataset:{nav:x},addEventListener(){},classList:{toggle(){}}}));
-const context={window:{},document:{querySelector:()=>content,querySelectorAll:()=>buttons,getElementById:(id)=>id==="ebdaa-practice-stage"?practiceStage:id==="data-playground"?dataPlayground:id==="rubric-progress"?rubricProgress:null},scrollTo(){}};
+const buttons=["home","browse","missions","about"].map(x=>({dataset:{nav:x},addEventListener(){},classList:{toggle(){}},getAttribute:()=>"",textContent:""}));
+const context={window:{},setTimeout,clearTimeout,setImmediate,localStorage:(()=>{const m=new Map([["ebda-lang","en"]]);return{getItem:k=>m.has(k)?m.get(k):null,setItem:(k,v)=>{m.set(k,String(v))},removeItem:k=>{m.delete(k)}}})(),document:{documentElement:{lang:"",dir:"",setAttribute(){}},activeElement:null,body:{classList:{toggle(){}}},createElement:()=>({src:"",async:false,onload:null,onerror:null,remove(){}}),head:{appendChild(el){try{vm.runInContext(fs.readFileSync(el.src.split("?")[0],"utf8"),context);el.onload&&el.onload()}catch(e){el.onerror&&el.onerror(e)}return el}},querySelector:(q)=>q==="#app"?content:null,querySelectorAll:()=>buttons,getElementById:(id)=>id==="ebdaa-practice-stage"?practiceStage:id==="data-playground"?dataPlayground:id==="rubric-progress"?rubricProgress:id==="app"?content:null},scrollTo(){}};
 vm.createContext(context);
 for(const src of scripts)vm.runInContext(src,context);
-vm.runInContext(inline,context);
+const i18nSrc=fs.readFileSync("i18n.js","utf8"),appSrc=fs.readFileSync("app-main.js","utf8");
 assert.ok(html.includes("<title>EBDA Learning"));
-assert.ok(html.includes("EBDA NATIONAL TECHNICAL SCIENCE SCHOOLS"));
+assert.ok(i18nSrc.includes("EBDA NATIONAL TECHNICAL SCIENCE SCHOOLS"),"English school eyebrow missing from i18n strings");
 assert.ok(!html.includes("EBDAA NATIONAL TECHNICAL SCIENCE SCHOOLS"),"Outdated public spelling");
-assert.ok(html.includes('id="lesson-search"'));
+assert.ok(appSrc.includes('id="lesson-search"'),"Lesson search template missing from app script");
 assert.ok(html.includes('class="skip-link"'));
 assert.ok(html.includes("prefers-reduced-motion"));
 assert.ok(/href="ebda-ui\.css(?:\?[^"]*)?"/.test(html),"Minimal design CSS not linked");
@@ -31,9 +29,11 @@ assert.ok(!html.includes('class="feature-tile"'));
 assert.ok(!html.includes(".feature-highlights"));
 assert.ok(content.innerHTML.includes('id="lesson-search"'));
 assert.ok(content.innerHTML.includes("Choose your academic year"));
+await vm.runInContext("ensureSearchIndex()",context);
 vm.runInContext("setLessonSearch('Python')",context);
 assert.ok(vm.runInContext("searchCards()",context).includes("search-result"),"Cross-grade search returned no lessons");
 vm.runInContext("searchOpen(2,0,0)",context);
+for(let i=0;i<12;i++)await new Promise(r=>setImmediate(r));
 assert.ok(content.innerHTML.includes('class="lesson-layout"'),"Search must open Year 1-style learning layout");
 assert.ok(content.innerHTML.includes('class="lesson-steps"'),"Five learning stages missing");
 assert.ok(content.innerHTML.includes("Continue →"),"Direct next-stage action missing");
@@ -44,15 +44,17 @@ const data=context.window.EBDAA_DATA;
 assert.equal(data.names.length,6);
 const grades=context.window.EBDAA_GRADES.grades;
 assert.deepEqual(Array.from(grades.map(g=>g.id)),[1,2,3]);
-assert.equal(grades[0].subjects.length,1);
+assert.equal(grades[0].subjects.length,8);
 assert.equal(grades[1].subjects[0].units.length,6);
 assert.equal(grades[1].subjects[0].units.reduce((n,u)=>n+u.sessions.length,0),41);
-assert.equal(grades[2].subjects.length,1);
+assert.equal(grades[2].subjects.length,9);
 assert.equal(grades[2].subjects[0].units.length,6);
 assert.equal(grades[2].subjects[0].units.reduce((n,u)=>n+u.sessions.length,0),36);
 vm.runInContext("chooseGrade(2);chooseSubject();chooseGradeUnit(0)",context);
 assert.ok(content.innerHTML.includes("HANDs-ON LAB")||content.innerHTML.includes("HANDS-ON LAB"));
 vm.runInContext("chooseGrade(3)",context);
+await vm.runInContext("chooseSubject('ai-data-engineering')",context);
+for(let i=0;i<12;i++)await new Promise(r=>setImmediate(r));
 assert.ok(content.innerHTML.includes("Applied Machine Learning and Analytics"));
 vm.runInContext("chooseSubject();chooseGradeUnit(5)",context);
 assert.ok(content.innerHTML.includes("Agriculture and Environmental Monitoring"));
@@ -63,7 +65,9 @@ assert.equal(data.sessions.length,39);
 assert.equal(new Set(data.sessions.map(s=>s.id)).size,39);
 assert.equal(new Set(data.sessions.map(s=>s.question)).size,39);
 assert.equal(context.window.EBDAA_LAB_CONFIG.length,39);
+vm.runInContext("window.EBDA_COMPLETION.setName('ai:1:0:0','Test Student')",context);
 context.openUnit(1);
+for(let i=0;i<12;i++)await new Promise(r=>setImmediate(r));
 assert.ok(content.innerHTML.includes("Go directly to 50 practice questions"),"Quick practice shortcut missing");
 context.jumpToPractice();
 assert.ok(content.innerHTML.includes("QUESTION 1 / 50"),"Direct practice link did not open question one");
@@ -80,6 +84,7 @@ for(const s of data.sessions){
   assert.ok(s.options.every(x=>typeof x==="string"&&x.trim()));
   context.openUnit(s.unit);
   context.choose(s.id);
+  vm.runInContext("window.EBDA_COMPLETION.setName('ai:1:"+(s.unit-1)+":"+data.sessions.filter(x=>x.unit===s.unit).findIndex(x=>x.id===s.id)+"','Test Student')",context);
   context.chooseAnswer(s.answer);
   context.verify();
   assert.ok(content.innerHTML.includes("feedback"),"Diagnostic feedback: "+s.id);
@@ -151,6 +156,7 @@ for(const year of [2,3]){
   for(let i=0;i<sessions.length;i++){
    vm.runInContext("openAdvancedSession("+i+")",context);
    const tag=year+"-"+unit+"-"+i;
+   vm.runInContext("window.EBDA_COMPLETION.setName('ai:"+year+":"+unit+":"+i+"','Test Student')",context);
    assert.ok(content.innerHTML.includes("theory-spark"),"Missing Discover theory: "+tag);
    assert.ok(!content.innerHTML.includes("lab-module"),"Old accordion returned: "+tag);
    assert.ok(!content.innerHTML.includes("PRACTICAL BRIEF"),"Removed checklist returned: "+tag);
@@ -238,7 +244,7 @@ for(const grade of [1,2,3]){
    for(const question of bank){
     assert.ok(question.explanation.length>10);
     formatCounts[question.mode]=(formatCounts[question.mode]||0)+1;
-    assert.ok(["choice","number","truefalse","order"].includes(question.mode));
+    assert.ok(["choice","number","truefalse","order","live-code","visual-data"].includes(question.mode));
     if(question.mode==="choice"){
       assert.equal(question.options.length,4);
       assert.ok(question.options.includes(String(question.answer)));
@@ -249,6 +255,8 @@ for(const grade of [1,2,3]){
     }
     if(question.mode==="number")assert.ok(Number.isFinite(Number(question.answer)));
     if(question.mode==="truefalse")assert.equal(typeof question.answer,"boolean");
+    if(question.mode==="live-code")assert.ok(question.codeTask&&question.codeTask.starter,"Live-code task missing");
+    if(question.mode==="visual-data"){assert.equal(question.options.length,4);assert.ok(question.options.includes(String(question.answer)));assert.ok(question.visual&&question.visual.readings.length===4);}
    }
    lessonCount++;practiceCount+=bank.length;
   }
@@ -257,16 +265,20 @@ for(const grade of [1,2,3]){
 assert.equal(lessonCount,116);
 assert.equal(practiceCount,5800);
 assert.equal(formatCounts.order,580);
-assert.equal(formatCounts.truefalse,1160);
+assert.equal(formatCounts.choice,2320);
+assert.equal(formatCounts.number,1160);
+assert.equal(formatCounts["visual-data"],1160);
+assert.equal(formatCounts["live-code"],580);
 
 // Evidence-driven educational story checks.
 assert.equal(Object.keys(context.window.EBDAA_STORIES.storyNames).length,18);
 assert.equal(context.window.EBDAA_CASE.clues.length,4);
 assert.equal(context.window.EBDAA_CASE.tables.machines.length,3);
 assert.equal(context.window.EBDAA_CASE.tables.inspections.reduce((n,r)=>n+(r.machine_id===1?r.defects:0),0),7);
-vm.runInContext("chooseGrade(2);chooseSubject();chooseGradeUnit(1);openAdvancedSession(0);jumpAdvancedPractice()",context);
+vm.runInContext("chooseGrade(2);chooseSubject();chooseGradeUnit(1);openAdvancedSession(0);goAdvancedStep(2)",context);
 assert.ok(content.innerHTML.includes("INDUSTRIAL SQL MYSTERY"));
 assert.ok(content.innerHTML.includes("UNIT CASEFILE"));
+vm.runInContext("window.EBDA_COMPLETION.setName('ai:2:1:0','Test Student');jumpAdvancedPractice()",context);
 assert.ok(content.innerHTML.includes("50 QUESTIONS"));
 // Shuffle at the beginning of an attempt and preserve the resulting order throughout.
 vm.runInContext("chooseGrade(2);chooseSubject();chooseGradeUnit(0);openAdvancedSession(0)",context);
@@ -284,12 +296,12 @@ practice.next();
 practice.prev();
 assert.ok(practiceStage.innerHTML.includes("QUESTION 1 / 50"),"Review did not restore first question");
 assert.ok(practiceStage.innerHTML.includes("Thinking hint"),"Question hint disappeared on review");
-assert.ok(practiceStage.innerHTML.includes("Correct!"),"Graded response feedback disappeared on review");
+assert.ok(practiceStage.innerHTML.includes("Correct — well done"),"Graded response feedback disappeared on review");
 practice.begin(2,0,0);
 const attemptOne=Array.from(practice.questionOrder());
 assert.equal(attemptOne.length,50);
 assert.equal(new Set(attemptOne).size,50);
-assert.deepEqual(attemptOne.slice().sort(),originalBank.map(q=>q.id).sort());
+assert.deepEqual(Array.from(attemptOne).sort(),Array.from(originalBank,q=>q.id).sort());
 for(let i=0;i<10;i++){
  const question=practice.currentQuestion();
  assert.equal(question.id,attemptOne[i],"Question order changed mid-attempt");
@@ -300,15 +312,15 @@ for(let i=0;i<10;i++){
  practice.next();
 }
 assert.ok(practiceStage.innerHTML.includes("QUESTION 11 / 50"),"Practice must advance directly from Q10 to Q11");
-assert.ok(practiceStage.innerHTML.includes("practice-milestone"),"Skill reflection should be optional");
-assert.ok(practiceStage.innerHTML.includes("SKILL MASTERY MAP"));
-assert.ok(practiceStage.innerHTML.includes("Order of operations"));
-assert.equal(practice.currentQuestion().id,attemptOne[10]);
-assert.deepEqual(Array.from(practice.questionOrder()),attemptOne,"Question order changed during uninterrupted practice");
+assert.ok(!practiceStage.innerHTML.includes("practice-milestone"),"Ten-question checkpoint barrier returned");
+const afterSprint=Array.from(practice.questionOrder());
+assert.equal(practice.currentQuestion().id,afterSprint[10]);
+assert.deepEqual(afterSprint.slice(0,10),attemptOne.slice(0,10),"Answered questions must not be reordered");
+assert.deepEqual(Array.from(afterSprint).sort(),Array.from(attemptOne).sort(),"Adaptive sprint reprioritization must keep the same 50 questions");
 practice.begin(2,0,0);
 const attemptTwo=Array.from(practice.questionOrder());
 assert.equal(attemptTwo.length,50);
-assert.deepEqual(attemptTwo.slice().sort(),attemptOne.slice().sort());
+assert.deepEqual(Array.from(attemptTwo).sort(),Array.from(attemptOne).sort());
 assert.notDeepEqual(attemptTwo,attemptOne,"A new attempt repeated the previous question order");
 // Validate four added learning mechanisms.
 const codeTest=context.window.EBDA_CODE_TESTS;

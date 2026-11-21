@@ -31,7 +31,8 @@ window.NTSS_ASSESSMENT=(function(){
     const steps=/sql|database|relational/i.test(family)?["Inspect schema","Write SELECT query","Run read-only query","Interpret resulting rows"]:
       /python|program|script|algorithm/i.test(family)?["Understand input","Write the algorithm","Execute the program","Verify output"]:
       ["Inspect source data","Choose a suitable method","Apply the method","Validate the result"];
-    return {...base,mode:"order",question:"🧩 Put these four steps in the correct order for this lesson.",
+    const scenario=["a factory sensor report","a school records analysis","a production line audit","a weather station dataset","an inventory tracker"][(cycle+i+u)%5];
+    return {...base,mode:"order",question:"🧩 Put these four steps in the correct order for this lesson's work on "+scenario+".",
       options:[steps[2],steps[0],steps[3],steps[1]],answer:steps.join("|"),
       explanation:"A sound workflow follows "+steps.join(" → ")+".",sourceStatus:"Original sequence-building question aligned with the lesson's general workflow."};
    }
@@ -45,7 +46,7 @@ window.NTSS_ASSESSMENT=(function(){
     const task=exercise===0?"How many sensor readings are strictly above "+threshold+"?":exercise===1?"What is the range (highest minus lowest) of the readings?":exercise===2?"What is the total of all four readings?":"What is the highest recorded reading?";
     const answers=[result,result+1,result+2,Math.max(0,result-1)].map(String);
     const options=answers.slice((index+i)%4).concat(answers.slice(0,(index+i)%4));
-    return {...base,mode:"visual-data",display:["bars","table","dots"][(cycle+u+i+slot)%3],question:"📊 Data Detective — "+task,visual:{readings,threshold},options,answer:String(result),
+    return {...base,mode:"visual-data",display:["bars","table","dots"][(cycle+u+i+slot)%3],question:"📊 Data Detective — "+task+" Readings: "+readings.join(", ")+".",visual:{readings,threshold},options,answer:String(result),
       explanation:"Values: "+readings.join(", ")+". "+(exercise===0?"Count only values greater than "+threshold:exercise===1?"Subtract the minimum from the maximum":exercise===2?"Add all four readings":"Find the maximum")+". Correct result: "+result+".",
       sourceStatus:"Original visual quantitative-reasoning question using synthetic factory sensor readings."};
    }

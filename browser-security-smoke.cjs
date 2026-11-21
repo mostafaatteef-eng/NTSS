@@ -19,7 +19,7 @@ const ROOT=process.env.NTSS_TEST_URL||'http://127.0.0.1:8765/';
   await page.waitForTimeout(120);
   assert.ok(await page.locator('#app').innerText(),'Grade page is empty '+g);
  }
- await page.evaluate(()=>{chooseGrade(3);chooseSubject('economics')});
+ await page.evaluate(async()=>{chooseGrade(3);await chooseSubject('economics')});
  assert.match(await page.locator('#app').innerText(),/الاقتصاد|اقتصاد/);
  await page.evaluate(()=>economicsChooseUnit(0));
  assert.match(await page.locator('#app').innerText(),/الدرس|اقتصاد/);

@@ -756,3 +756,12 @@ body.practice-focus-active{background:#f8faf9}
  .lesson-shortcut .lesson-jump{width:100%;justify-content:center}
 }
 @media(prefers-reduced-motion:reduce){.puzzle-meter i{transition:none}}
+
+/* EBDA fixes branch: bundled Cairo font for Arabic UI + completion badges */
+@font-face{font-family:"Cairo";font-style:normal;font-weight:400 700;font-display:swap;src:url("fonts/cairo-arabic.woff2") format("woff2");unicode-range:U+0600-06FF,U+0750-077F,U+08A0-08FF,U+FB50-FDFF,U+FE70-FEFF,U+0660-0669}
+@font-face{font-family:"Cairo";font-style:normal;font-weight:400 700;font-display:swap;src:url("fonts/cairo-latin.woff2") format("woff2");unicode-range:U+0000-00FF,U+2000-206F}
+html[lang="ar"] body,html[lang="ar"] button,html[lang="ar"] input,html[lang="ar"] select,html[lang="ar"] textarea{font-family:"Cairo","Segoe UI",Tahoma,Arial,sans-serif}
+.progress-badge{display:inline-block;margin-inline-start:8px;padding:2px 9px;border-radius:999px;background:#d5f2e8;color:#0f7f78;font-size:12px;font-weight:800}
+.practice-hud__xp,.practice-hud__streak{background:#fff3c4;color:#6b5300;border-color:#eadf9e}
+#lang-toggle{border:2px solid var(--teal,#1ca29a);background:#fff;color:#0f7f78;border-radius:999px;padding:8px 14px;font-weight:800;min-height:44px}
+#lang-toggle:hover{background:#edf7f3}

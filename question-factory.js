@@ -38,7 +38,7 @@ v=>A("The x-axis has "+v+" monthly marks and 2 are missing. How many observed ma
 v=>A("Revenue grows from "+v+" to "+(v+5)+". What is absolute growth?",5,"New minus old."),
 v=>A("There are "+v+" categories with two measures each. How many bars in a grouped bar chart?",2*v,"Two bars per category."),
 v=>A("A dataset has "+v+" observations and 1 invalid row. How many valid rows remain?",v-1,"Remove only the invalid observation in this hypothetical example."),
-v=>A("The maximum is "+(v+5)+" and minimum "+v+". What axis span covers both?",5,"max−min."),
+v=>A("The maximum is "+(v+5)+" and minimum "+v+". What axis span covers both?",5,"Span = maximum − minimum = "+(v+5)+" − "+v+" = 5, so the axis must cover a range of 5."),
 v=>A("A plot labels the first "+v+" observations of a 10-row table. How many are unlabeled?",10-v,"Total minus labeled.")
 ],
 ai:[
@@ -59,7 +59,7 @@ v=>A("Confusion matrix TP="+v+", FP=2. What is precision to 3 decimal places?",N
 v=>A("With TP="+v+" and FN=2, recall to 3 decimal places?",Number((v/(v+2)).toFixed(3)),"Recall=TP/(TP+FN)."),
 v=>A("A one-dimensional query is at "+v+" and training points at "+(v-1)+" and "+(v+3)+". What is nearest distance?",1,"Use absolute difference."),
 v=>A("A K-Means cluster contains "+v+" and "+(v+2)+". What is its mean centroid?",v+1,"Centroid is the arithmetic mean."),
-v=>A("A neuron has input="+v+", weight=2 and bias=1. What is preactivation z?",2*v+1,"z=wx+b."),
+v=>A("A neuron has input="+v+", weight=2 and bias=1. What is preactivation z?",2*v+1,"Preactivation z = weight × input + bias = 2 × "+v+" + 1 = "+(2*v+1)+"."),
 v=>A("How many samples are in a train/test split with "+v+" training and 3 test cases?",v+3,"Add training and test counts."),
 v=>A("A model makes "+v+" true positives and 1 false negative. How many actual positives?",v+1,"Actual positives=TP+FN."),
 v=>A("A dataset has "+v+" features and a model adds two. New feature count?",v+2,"Count original plus engineered features."),
@@ -215,9 +215,10 @@ function all(g,u,i){
         sourceStatus:"Original scored SQL-clause-building activity. Uses fictional data and does not execute SQL.",parameter:value,focus:skill+1});
     }else{
       const t=py[(variant+i+u)%py.length];
+      const bugLabel=["averaging scores","an eligibility check","a counting loop","list indexing","a missing return value"][(variant+i+u)%py.length];
       const options=[t.others[0],t.fix,t.others[1],"Replace the entire program with pass"];
       questions.push({id,number:no,title,unit:unitName,heading:"🐍 Python Bug Hunt",
-        question:"🐍 PYTHON GAME — Find and repair the bug. Which change fixes the code?",code:t.code.replace(/\\n/g,"\n"),
+        question:"🐍 PYTHON GAME — Repair the bug in "+bugLabel+". Which change fixes the code?",code:t.code.replace(/\\n/g,"\n"),
         answer:t.fix,mode:"choice",options,
         explanation:t.why,sourceStatus:"Original scored code-debugging question; code is inspected, not executed.",parameter:value,focus:skill+1});
     }
