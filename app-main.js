@@ -34,7 +34,7 @@ function ensureTeacherAudit(){
   app.innerHTML='<section role="alert"><h2>Unable to load review questions</h2><button class="btn teal" onclick="ensureTeacherAudit()">Retry</button></section>';
  });
 }
-function nav(n){mode=n;document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("active",b.dataset.nav===n));render();scrollTo(0,0)}function openUnit(n){window.EBDAA_PRACTICE.reset();stageAnswers={};unit=n;selectedId=D.sessions.find(s=>s.unit===n).id;step=0;answer=null;checked=false;hint=false;labValue=2;
+function nav(n){mode=n;document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("active",b.dataset.nav===n));render();scrollTo(0,0)}function openUnit(n){window.EBDAA_PRACTICE.reset();stageAnswers={};unit=n;selectedId=D.sessions.find(s=>s.unit===n).id;step=0;registerNamedLesson("ai",1,n-1,0,D.sessions.find(s=>s.unit===n).title,"learn");answer=null;checked=false;hint=false;labValue=2;
  if(window.NTSS_LAZY.isReady()){nav("learn");return}
  mode="advancedLoading";render();
  window.NTSS_LAZY.ensureStudio().then(()=>{if(mode==="advancedLoading")nav("learn")}).catch(()=>{
@@ -44,7 +44,7 @@ function nav(n){mode=n;document.querySelectorAll(".nav button").forEach(b=>b.cla
  })}let stageAnswers={};
 function rememberStage(){stageAnswers[step]={answer,checked,hint}}
 function restoreStage(n){const saved=stageAnswers[n]||{};step=n;answer=saved.answer??null;checked=!!saved.checked;hint=!!saved.hint}
-function choose(id){window.EBDAA_PRACTICE.reset();selectedId=id;stageAnswers={};step=0;answer=null;checked=false;hint=false;labValue=2;render()}
+function choose(id){window.EBDAA_PRACTICE.reset();selectedId=id;stageAnswers={};const arr=D.sessions.filter(s=>s.unit===unit),sel=arr.find(s=>s.id===id);registerNamedLesson("ai",1,unit-1,arr.findIndex(s=>s.id===id),sel?sel.title:"Lesson","learn");step=0;answer=null;checked=false;hint=false;labValue=2;render()}
 function next(){
  if(step===4&&!window.EBDAA_PRACTICE.isFinished())return;
  if((step===0||step===3)&&!checked)return;
@@ -74,6 +74,7 @@ function backToAIQuestions(){window.EBDAA_CODE_LABS.stop();if(codeLabReturn?.mod
 function chooseGradeUnit(n){if(grade===1){openUnit(n+1)}else{year2Unit=n;nav("unitPreview");window.NTSS_LAZY.ensureStudio().catch(()=>{/* Retry on lesson open. */})}}function openAdvancedSession(i){
  window.EBDAA_PRACTICE.reset();
  advancedSession=i;advancedStep=0;
+ registerNamedLesson("ai",grade,year2Unit,i,window.EBDAA_GRADES.grades[grade-1].subjects[0].units[year2Unit].sessions[i],"advancedLab");
  if(window.NTSS_LAZY.isReady()){window.EBDAA_STUDIO.reset();nav("advancedLab");return}
  mode="advancedLoading";
  render();
@@ -255,9 +256,10 @@ function registerNamedLesson(subject,g,u,i,title,lessonMode){
 }
 function namedLessonKey(d){return [d.subject,d.grade,d.unit,d.index].join(":")}
 function namedLessonGate(d){
- const ar=["ar","social","civics","economics"].includes(d.subject);
+ const ar=window.EBDA_I18N?window.EBDA_I18N.current()==="ar":["ar","social","civics","economics"].includes(d.subject);
+ const exitTarget=d.mode==="learn"?"subject":"unitPreview";
  return '<section class="practice-focus" aria-label="Student name before lesson" dir="'+(ar?"rtl":"ltr")+'">'+
- '<header class="practice-focus__header"><button class="practice-focus__exit" onclick="nav(&quot;unitPreview&quot;)">'+(ar?"العودة للدروس":"← Back to lessons")+'</button></header>'+
+ '<header class="practice-focus__header"><button class="practice-focus__exit" onclick="nav(&quot;'+exitTarget+'&quot;)">'+(ar?"العودة للدروس":"← Back to lessons")+'</button></header>'+
  '<div class="practice-focus__content"><div class="ebda-name-gate"><div class="ebda-name-gate__symbol">✦</div>'+
  '<h1>'+(ar?"أهلًا بك في الدرس":"Welcome to your lesson")+'</h1>'+
  '<p class="ebda-name-gate__lesson">'+esc(d.title)+'</p>'+
@@ -300,6 +302,7 @@ function focusPractice(){
  }
  const studentKey=["ai",g,u,i].join(":");
  if(!window.EBDA_COMPLETION.getName(studentKey).trim()){
+  if(namedLessonContext&&namedLessonContext.mode===mode)return namedLessonGate(namedLessonContext);
   return '<section class="practice-focus" aria-label="Student name before lesson">'+
    '<header class="practice-focus__header"><div class="practice-focus__header-row">'+
    '<button class="practice-focus__exit" onclick="exitPractice()">← All lessons</button>'+
@@ -324,7 +327,7 @@ function focusPractice(){
  const nextLesson=finished?'<button class="btn teal" onclick="'+(g===1?'next()':'nextAdvanced()')+'">Next lesson →</button>':'';
  return '<section class="practice-focus" aria-label="Focused practice session">'+
  '<header class="practice-focus__header"><div class="practice-focus__header-row">'+
- '<button class="practice-focus__exit" onclick="exitPractice()" aria-label="Back to lessons">← All lessons</button>'+
+ '<button class="practice-focus__exit" onclick="exitPractice()" aria-label="Back to lessons">'+(window.EBDA_I18N&&window.EBDA_I18N.current()==="ar"?"العودة للدروس":"← Back to lessons")+'</button>'+
  '<span class="practice-focus__year">YEAR '+g+' · PRACTICE</span></div>'+
  '<div class="practice-focus__info"><h1 class="practice-focus__lesson">'+esc(name)+'</h1>'+
  '<span id="focus-counter" class="practice-focus__counter">'+(finished?'Completed · 50 / 50':'Question '+progress.position+' / '+progress.total)+'</span></div>'+

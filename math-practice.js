@@ -94,7 +94,7 @@ function move(delta){if(delta>0&&!record()?.checked)return;const next=state.curs
 function restart(){start(state.g,state.u,state.i)}
 function escapeAttr(s){return escape(s)}
 function render(){
- if(state.done)return window.EBDA_COMPLETION.render({subject:"math",grade:state.g,unit:state.u,index:state.i,lesson:lesson().title,correct:Object.values(state.answers).filter(v=>v.checked&&v.correct).length,answers:state.answers,retry:"EBDAA_MATH_PRACTICE.restart()",back:"mathBackToUnit()"});
+ if(state.done)return window.EBDA_COMPLETION.render({subject:"math",grade:state.g,unit:state.u,index:state.i,lesson:lesson().title,correct:Object.values(state.answers).filter(v=>v.checked&&v.correct).length,answers:state.answers,retry:"EBDAA_MATH_PRACTICE.restart()",back:"mathBackToUnit()",arabic:window.EBDA_I18N?window.EBDA_I18N.current()==="ar":false});
 
  const {unit,title}=lesson(),q=current(),a=record(),answered=Object.values(state.answers).filter(v=>v.checked).length,correct=Object.values(state.answers).filter(v=>v.checked&&v.correct).length;
  const percentage=Math.round(answered/50*100),s=state;

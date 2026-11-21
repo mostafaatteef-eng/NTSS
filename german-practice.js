@@ -70,7 +70,7 @@ function record(){
  if(!ok){speechMessage="Mikrofon-Spracherkennung nicht unterstützt. Sprich den Satz laut nach.";redraw()}
 }
 function render(){
- if(s.done)return window.EBDA_COMPLETION.render({subject:"de",grade:s.grade,unit:s.unit,index:s.lesson,lesson:window.EBDAA_GERMAN_UNITS[s.grade][s.unit].sessions[s.lesson],correct:Object.values(s.answers).filter(v=>v.checked&&v.correct).length,answers:s.answers,retry:"EBDAA_GERMAN_PRACTICE.restart()",back:"germanBackToUnit()"});
+ if(s.done)return window.EBDA_COMPLETION.render({subject:"de",grade:s.grade,unit:s.unit,index:s.lesson,lesson:window.EBDAA_GERMAN_UNITS[s.grade][s.unit].sessions[s.lesson],correct:Object.values(s.answers).filter(v=>v.checked&&v.correct).length,answers:s.answers,retry:"EBDAA_GERMAN_PRACTICE.restart()",back:"germanBackToUnit()",arabic:window.EBDA_I18N?window.EBDA_I18N.current()==="ar":false});
 
  const unit=window.EBDAA_GERMAN_UNITS[s.grade][s.unit],q=s.items[s.cursor],a=s.answers[s.cursor],
  answered=Object.values(s.answers).filter(v=>v.checked).length,correct=Object.values(s.answers).filter(v=>v.correct).length;

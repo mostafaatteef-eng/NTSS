@@ -70,7 +70,7 @@ function submitOrNext(){if(finished)return;if(graded)next();else check()}
 function scrollToQuestion(){const header=document.querySelector?.(".practice-focus__header");if(header?.scrollIntoView)header.scrollIntoView({behavior:"auto",block:"start"})}
 function completionView(){
  const title=grade===1?(window.EBDAA_DATA.sessions.filter(x=>x.unit===unit+1)[lesson]?.title||"AI lesson"):(window.EBDAA_GRADES.grades[grade-1].subjects[0].units[unit]?.sessions[lesson]||"AI & Data Analysis");
- return window.EBDA_COMPLETION.render({subject:"ai",grade,unit,index:lesson,lesson:title,correct,total:50,retry:"EBDAA_PRACTICE.restart()"});
+ return window.EBDA_COMPLETION.render({subject:"ai",grade,unit,index:lesson,lesson:title,correct,total:50,retry:"EBDAA_PRACTICE.restart()",back:"exitPractice()",answers:Object.fromEntries(Object.entries(reviewed).map(([k,v])=>[k,{checked:true,correct:v}])),arabic:window.EBDA_I18N?window.EBDA_I18N.current()==="ar":false});
 }
 function panel(g,u,i){
  ensure(g,u,i);
