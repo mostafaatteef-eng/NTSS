@@ -9,7 +9,7 @@ const browserType=engines[engineName];
 if(!['chromium','webkit'].includes(engineName)||!browserType)throw Error('Unsupported test browser');
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
-const ROOT=process.env.NTSS_TEST_URL||'http://127.0.0.1:8765/';
+const ROOT=process.env.NTSS_TEST_URL||'https://127.0.0.1:8765/';
 const viewports=[
  {name:'phone-compact',width:360,height:780},
  {name:'phone-large',width:430,height:932},
@@ -34,7 +34,7 @@ function check(condition,msg){assert.ok(condition,msg)}
  const browser=await browserType.launch(engineName==='chromium'?{headless:true,args:['--no-sandbox']}:{headless:true});
  try{
   for(const device of viewports){
-   const context=await browser.newContext({viewport:{width:device.width,height:device.height},deviceScaleFactor:1});
+   const context=await browser.newContext({viewport:{width:device.width,height:device.height},deviceScaleFactor:1,ignoreHTTPSErrors:true});
    const page=await context.newPage();
    activePage=page;activeDevice=device.name;
    const exceptions=[],violations=[];
