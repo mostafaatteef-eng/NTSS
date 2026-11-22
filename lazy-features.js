@@ -24,10 +24,10 @@ window.NTSS_LAZY=(function(){
   "advanced-english":["english-curriculum.js?v=20261115-review","english-grammar-extensions.js?v=20261115-review"],
   "arabic-language":["arabic-curriculum.js?v=20261115-books","arabic-source-questions.js?v=20261115-source","arabic-grammar-items.js?v=20261115-targeted"],
   "german-language":["german-curriculum.js?v=20261115","german-question-data.js?v=20261115","german-audio-dialogues.js?v=20261115"],
-  "social-studies":["social-studies-curriculum.js?v=20261116-v1"],
+  "social-studies":["social-studies-curriculum.js?v=20261122-clarity1"],
   "civics":["civics-curriculum.js?v=20261116-v1"],
   "economics":["economics-curriculum.js?v=20261116-v1"],
-  "business-english":["business-english-curriculum.js?v=20261116-verified"],
+  "business-english":["business-english-curriculum.js?v=20261122-clarity1"],
   "physics-stem":["physics-curriculum.js?v=20261116","physics-special-sims.js?v=20261116-1","physics-visual-lab.js?v=20261116"]
  };
  const ready=new Set(),loading=new Map();

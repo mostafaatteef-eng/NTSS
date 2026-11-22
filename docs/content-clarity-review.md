@@ -16,7 +16,7 @@ This is separate from the math-diversity pilot and the deployed PR18. No upload,
 
 ## Verification
 
--35/35 existing and added Node tests pass, zero skips. Four focused tests added, no test removed or weakened.
+-38/38 existing and added Node tests pass, zero skips. Four focused content tests and three release-scope tests were added, with no test removed or weakened. The existing security-regression workflow now includes both new test files in its explicit command; its permissions and other steps are unchanged.
 -All603 activities still exist:595 graded banks of50 plus8 ungraded projects.
 -Exactly two of the87 Business English/social banks have changed generated output. The other85 are byte-equivalent to091. All87 preserve item counts, order, mode and answer-key structure.
 -The generator and UI code are unchanged. Physics, mathematics, other subjects and the math pilot are untouched.
@@ -24,7 +24,15 @@ This is separate from the math-diversity pilot and the deployed PR18. No upload,
 
 ## Release boundary
 
-This is a review candidate, not ready to claim live. Cache/asset release preparation is intentionally absent. If approved for publication, prepare narrowly versioned changed assets, recheck cache migration and run CI before a distinct push/merge approval. Avoid a broad cache purge merely for two data edits while the user's slowdown report is still being localized.
+The content changes remain exactly those two definitions. Local release preparation changes only their curriculum URL versions, the lazy-loader URL in index.html, and test/CI coverage. The service worker, cache namespace, runtime release suffix and every other module URL stay unchanged. No push, PR, remote CI run, merge or deployment has occurred.
+
+A same-origin browser was genuinely warmed against extracted091, including fonts and the relevant curricula, before the server changed to this candidate. An ordinary reload replaced only cached index.html in place, preserved all58 prior cache entries, and added exactly three new entries: loader, BE curriculum and social curriculum. Server logs showed only HTML plus those three upgrade requests. Math was revisited without refetch. Both corrected definitions survived offline reload; no page errors or CSP violations. This is local migration evidence, not production verification.
+
+The reproducible script is scripts/content-clarity-cache-qa.mjs. Set NTSS_CLARITY_BASE_ROOT to an extracted091 tree before running it; the script validates five baseline asset hashes and fails if that source is wrong. Artifacts default to qa-artifacts/content-clarity-cache or NTSS_CLARITY_ARTIFACTS. Its result is independent of the release-scope unit tests.
+
+Local CI-equivalent checks passed: six assessment structural/grader/performance/certificate/catalog/data-analysis scripts; responsive assessment in Chromium, Firefox and WebKit; actual strict-CSP SQL2/2 and Python3/3;24 bilingual lab cases;112 cross-subject UI cases and all17 data-analysis completions;112 certificate-name cases; browser smoke;20 Chromium learning/device cases. The initial aggregate Chromium run hit the command time limit during the certificate matrix, which was then completed separately. No interrupted matrix was counted as a pass.
+
+The learning WebKit offline-reload check still fails with the same inherited internal engine error at learning-browser-qa.cjs143:24. It was rerun, not skipped or weakened. This candidate does not claim to fix it. Remote CI and a distinct approved push/merge remain required before publication; the final reviewed head must be preserved.
 
 ## Separate decisions
 

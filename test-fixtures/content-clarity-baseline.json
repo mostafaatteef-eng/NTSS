@@ -436,5 +436,56 @@
       "title": "البطالة",
       "keyHash": "fedc0f619b1a73a2faa130e108a2e8824c1df6e88ac46b53d7a8f4574ad93ce8"
     }
+  },
+  "release": {
+    "curriculum": [
+      "data-analysis-curriculum.js?v=20261122-practice-fix1&release=20261122-round2",
+      "math-curriculum.js?v=20261115&release=20261122-round2",
+      "english-curriculum.js?v=20261115-review&release=20261122-round2",
+      "english-grammar-extensions.js?v=20261115-review&release=20261122-round2",
+      "arabic-curriculum.js?v=20261115-books&release=20261122-round2",
+      "arabic-source-questions.js?v=20261115-source&release=20261122-round2",
+      "arabic-grammar-items.js?v=20261115-targeted&release=20261122-round2",
+      "german-curriculum.js?v=20261115&release=20261122-round2",
+      "german-question-data.js?v=20261115&release=20261122-round2",
+      "german-audio-dialogues.js?v=20261115&release=20261122-round2",
+      "social-studies-curriculum.js?v=20261116-v1&release=20261122-round2",
+      "civics-curriculum.js?v=20261116-v1&release=20261122-round2",
+      "economics-curriculum.js?v=20261116-v1&release=20261122-round2",
+      "business-english-curriculum.js?v=20261116-verified&release=20261122-round2",
+      "physics-curriculum.js?v=20261116&release=20261122-round2",
+      "physics-special-sims.js?v=20261116-1&release=20261122-round2",
+      "physics-visual-lab.js?v=20261116&release=20261122-round2"
+    ],
+    "subjects": [
+      "math-practice.js?release=20261122-round2",
+      "physics-practice.js?release=20261122-round2",
+      "english-practice.js?release=20261122-round2",
+      "business-english-practice.js?v=20261122-practice-fix1&release=20261122-round2",
+      "german-practice.js?release=20261122-round2",
+      "arabic-practice.js?release=20261122-round2",
+      "social-studies-practice.js?release=20261122-round2",
+      "civics-practice.js?release=20261122-round2",
+      "economics-practice.js?release=20261122-round2",
+      "data-analysis-practice.js?v=20261122-practice-fix1&release=20261122-round2"
+    ],
+    "studio": [
+      "case-labs.js?release=20261122-round2",
+      "scenario-labs.js?release=20261122-round2",
+      "visual-playground.js?release=20261122-round2",
+      "code-challenges.js?release=20261122-round2",
+      "concept-visualizer.js?release=20261122-round2",
+      "theory-studio.js?release=20261122-round2",
+      "lab-studio.js?release=20261122-round2"
+    ],
+    "indexSha256": "de67f1729e7a5c3d6e148613d98726568d8ac55b637876754c35ef2abd0d150b",
+    "swSha256": "7ef9af6462ecd36fe988168c7295a48ffea8a98dbb6186cd7448e80515772fa5",
+    "baseAssets": {
+      "index.html": "de67f1729e7a5c3d6e148613d98726568d8ac55b637876754c35ef2abd0d150b",
+      "sw.js": "7ef9af6462ecd36fe988168c7295a48ffea8a98dbb6186cd7448e80515772fa5",
+      "lazy-features.js": "b99a87b6534a591fde8b351127e04014d131a670e4566291c232def550c7d7e9",
+      "business-english-curriculum.js": "ba65061e1f81913cb68cf1f14990304848c887bd33d2186ab71d21aa4157f3ab",
+      "social-studies-curriculum.js": "06e6b385ffb1935b36061ca36eda8fc82b24223250c55bbd343426ced7cd6761"
+    }
   }
 }
