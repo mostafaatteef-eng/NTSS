@@ -208,7 +208,13 @@ function physicsOpen(i){if(!window.NTSS_LAZY.isCurriculumReady("physics-stem"))r
 function physicsBack(){nav("unitPreview")}
 function dataAnalysisUnits(){return catalogUnits("da")}
 function dataAnalysisChooseUnit(n){year2Unit=n;nav("unitPreview")}
-function dataAnalysisPreview(){return catalogPreview("da")}
+function dataAnalysisPreview(){
+ const lessons=window.EBDAA_DATA_ANALYSIS_UNITS[grade]?.[0]?.sessions||[];
+ const outline='<section class="ntss-learning-outline" aria-label="Data Analysis study notes"><h2>What you will learn</h2><p class="muted">Key concepts from the supplied slides. Open a lesson summary, then complete its separate 50-question practice.</p>'+
+  lessons.map(lesson=>'<details style="margin:12px 0;padding:15px;border:1px solid #e1e7e5;border-radius:14px;background:white"><summary style="cursor:pointer;font-weight:650">Lesson '+lesson.number+' · '+esc(lesson.title)+'</summary><ul style="line-height:1.75">'+lesson.learningPoints.map(p=>'<li>'+esc(p)+'</li>').join("")+'</ul><p class="muted">Source: '+esc(lesson.source)+'</p></details>').join("")+
+  '</section>';
+ return catalogPreview("da")+outline;
+}
 function dataAnalysisOpen(i){
  if(grade!==1&&grade!==2)return;
  if(!window.NTSS_LAZY.isCurriculumReady("data-analysis"))return queueSubjectCurriculum("data-analysis",()=>dataAnalysisOpen(i));
