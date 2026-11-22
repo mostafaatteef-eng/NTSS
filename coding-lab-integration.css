@@ -6,7 +6,7 @@
 .integrated-lesson-lab .lesson-steps { margin-block:20px; }
 .coding-lab__content { box-sizing:border-box; width:100%; max-width:1000px; margin-inline:auto; }
 .coding-lab--embedded { background:#fff; border:1px solid #dce8e5; border-radius:20px; padding:24px; margin-block:20px; }
-.coding-lab--embedded .coding-lab__content { padding:0; }
+.coding-lab--embedded .coding-lab__content { padding:0; margin:0; border:0; border-radius:0; box-shadow:none; }
 .coding-lab__top, .coding-lab__modes, .coding-lab__tasks, .coding-lab__actions { display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
 .coding-lab__top { justify-content:space-between; }
 .coding-lab__top h2 { font-size:24px; margin:0; }
