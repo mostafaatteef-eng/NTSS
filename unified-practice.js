@@ -12,7 +12,9 @@ const STR={
 };
 const TTL=7*24*60*60*1000;
 function create(cfg){
- const S=STR[cfg.locale]||STR.en;
+ const locale=()=>window.EBDA_I18N?.current?.()||cfg.locale||"en";
+ const S=new Proxy({}, {get:(_target,key)=>(STR[locale()]||STR.en)[key]});
+ function header(){const h=cfg.header(g,u,i),ui=window.NTSS_UI;if(!ui)return h;return {...h,dir:locale()==="ar"?"rtl":"ltr",lang:locale(),exitLabel:ui.back(),yearLabel:ui.year(g)+" · "+ui.subject(cfg.subject)}}
  const name=cfg.name;
  const scope=cfg.subject;
  const storeKey="ntss-private-practice-checkpoint-v4-"+scope;
@@ -149,11 +151,12 @@ function create(cfg){
  }
  function hintText(q){
   if(cfg.hintText)return cfg.hintText(q);
+  if(locale()==="ar")return q.mode==="choice"?"استبعد الاختيارات التي تناقض تعريف الدرس، ثم قارن بين الباقي.":q.mode==="fill"?"استرجع التعريف؛ المصطلح الناقص هو كلمته الأساسية.":"اكتب العملية المناسبة وجرّبها على قيم أبسط قبل استخدام القيم المعروضة.";
   return q.mode==="choice"?"Eliminate the options that contradict the lesson definition first, then compare the remaining pair.":q.mode==="fill"?"Say the definition aloud; the missing term is its key word.":"Write down the relevant operation, then test it on a simpler input before using the displayed values.";
  }
  function controls(q,a){
   const dis=a?.checked?"disabled":"";
-  if(q.mode==="choice")return window.EBDAA_GAME.render({options:q.options,answer:q.answer,type:q.type},cursor,a?.value,a?.checked,cfg.gameKey,lessonKey(),name+".gameChoose",cfg.locale);
+  if(q.mode==="choice")return window.EBDAA_GAME.render({options:q.options,answer:q.answer,type:q.type},cursor,a?.value,a?.checked,cfg.gameKey,lessonKey(),name+".gameChoose",locale());
   if(q.mode==="fill")return '<label for="'+cfg.inputId+'">'+S.yourAnswer+'</label><input id="'+cfg.inputId+'" type="text" dir="auto" value="'+esc(a?.value??"")+'" '+dis+' oninput="'+name+'.write(this.value)" style="display:block;width:100%;max-width:480px;padding:14px;border:1px solid #d9e1dd;border-radius:12px">';
   if(q.mode==="slider"){
    const max=Math.max(20,Math.ceil(Math.abs(Number(q.answer))*1.8)+1);
@@ -163,20 +166,20 @@ function create(cfg){
  }
  function render(){
   if(done){
-   const ar=cfg.completionArabic===true?true:window.EBDA_I18N?window.EBDA_I18N.current()==="ar":false;
+   const ar=window.EBDA_I18N?window.EBDA_I18N.current()==="ar":cfg.completionArabic===true;
    return window.EBDA_COMPLETION.render({subject:cfg.subject,grade:g,unit:u,index:i,lesson:cfg.title(g,u,i),correct:correctCount(),answers,retry:name+".restart()",back:cfg.back,arabic:ar});
   }
   if(pendingStage!==null){
    const stage=pendingStage,from=stage*10,to=stage*10+9;
    const sprintCorrect=Object.keys(answers).filter(k=>{const j=Number(k);return j>=stage*10-10&&j<stage*10&&answers[j].checked&&answers[j].correct}).length;
-   const h=cfg.header(g,u,i);
-   const gate='<section class="ntss-stage-gate"><div class="eyebrow">'+esc(S.sPath)+'</div><h2 class="practice-question">'+esc(S.sDone(stage,S.sStages[stage-1]))+'</h2><p class="feedback" role="status">'+esc(S.sScore(sprintCorrect))+'</p><p><b>'+esc(S.sNext(stage+1,S.sStages[stage],from+1,to+1))+'</b></p><div class="stepfooter"><button class="btn teal" onclick="'+name+'.continueStage()">'+S.sGo+'</button></div></section>';
-   return '<section class="practice-focus'+(cfg.focusClass?" "+cfg.focusClass:"")+'"'+(h.dir?' dir="'+h.dir+'"':"")+(h.lang?' lang="'+h.lang+'"':"")+'><header class="practice-focus__header"><div class="practice-focus__header-row"><button class="practice-focus__exit" onclick="'+h.exit+'">'+h.exitLabel+'</button><span class="practice-focus__year">'+h.yearLabel+'</span></div><div class="practice-focus__info"><h1 class="practice-focus__lesson">'+esc(cfg.title(g,u,i))+'</h1><span class="practice-focus__counter">'+S.question+" "+(cursor+1)+" / 50"+'</span></div><div class="practice-focus__track" role="progressbar" aria-label="Answered questions" aria-valuemin="0" aria-valuemax="50" aria-valuenow="'+answered()+'"><i style="width:'+(answered()*2)+'%"></i></div></header><div class="practice-focus__content"><div class="guided-question">'+gate+'<p class="muted" style="font-size:12px">'+h.disclaimer+'</p></div></div></section>';
+   const h=header();
+   const gate='<section class="ntss-stage-gate"><div class="eyebrow">'+esc(S.sPath)+'</div><h2 class="practice-question" dir="auto" lang="'+(cfg.locale||"en")+'">'+esc(S.sDone(stage,S.sStages[stage-1]))+'</h2><p class="feedback" role="status">'+esc(S.sScore(sprintCorrect))+'</p><p><b>'+esc(S.sNext(stage+1,S.sStages[stage],from+1,to+1))+'</b></p><div class="stepfooter"><button class="btn teal" onclick="'+name+'.continueStage()">'+S.sGo+'</button></div></section>';
+   return '<section class="practice-focus'+(cfg.focusClass?" "+cfg.focusClass:"")+'"'+(h.dir?' dir="'+h.dir+'"':"")+(h.lang?' lang="'+h.lang+'"':"")+'><header class="practice-focus__header"><div class="practice-focus__header-row"><button class="practice-focus__exit" onclick="'+h.exit+'">'+h.exitLabel+'</button><span class="practice-focus__year">'+h.yearLabel+'</span></div><div class="practice-focus__info"><h1 class="practice-focus__lesson">'+esc(cfg.title(g,u,i))+'</h1><span class="practice-focus__counter">'+S.question+" <bdi>"+(cursor+1)+" / 50</bdi>"+'</span></div><div class="practice-focus__track" role="progressbar" aria-label="'+S.answered+'" aria-valuemin="0" aria-valuemax="50" aria-valuenow="'+answered()+'"><i style="width:'+(answered()*2)+'%"></i></div></header><div class="practice-focus__content"><div class="guided-question">'+gate+'<p class="muted" style="font-size:12px">'+h.disclaimer+'</p></div></div></section>';
   }
   const q=current(),a=rec(),done_=answered(),correct=correctCount();
   const streak=(()=>{let n=0;for(let k=cursor;k>=0;k--){if(answers[k]?.checked&&answers[k].correct)n++;else if(answers[k]?.checked)break;else break}return n})();
   const xp=correct*10+Math.min(streak,5)*5;
-  const h=cfg.header(g,u,i);
+  const h=header();
   const hud='<div class="topmeta"><span class="pill">'+S.question+' '+(cursor+1)+' / 50</span><span class="pill">'+S.answered+': '+done_+' / 50</span><span class="pill practice-hud__xp" aria-label="Experience points">⭐ '+xp+' XP</span><span class="pill practice-hud__streak" aria-label="Current streak">🔥 '+streak+' '+S.streak+'</span></div>';
   const eyebrow=cfg.eyebrow?'<div class="eyebrow">'+cfg.eyebrow(q,{g,u,i,cursor,items})+'</div>':"";
   const hint=hintFlags[cursor]?'<div class="hint"><b>'+S.hintTitle+'</b> '+esc(hintText(q))+'</div>':"";
@@ -184,10 +187,10 @@ function create(cfg){
   const mistake=a?.checked&&!a.correct?'<details class="focus-mistake"><summary>'+S.mistake+'</summary><div>'+mistakeHtml(q)+'</div></details>':"";
   const action=a?.checked?'<button id="'+cfg.checkId+'" class="btn teal" onclick="'+name+'.submitOrNext()">'+(cursor===49?S.last:S.next)+'</button>':'<button id="'+cfg.checkId+'" class="btn teal" onclick="'+name+'.submitOrNext()"'+(a===undefined||String(a.value??"").trim()===""?" disabled":"")+'>'+S.check+'</button>';
   const resume=cursor===0&&done_===0&&saved()?.session===session?'<button class="ntss-restore" onclick="'+name+'.resumeCheckpoint()">'+S.resume+'</button>':"";
-  const body=resume+hud+(cfg.topExtras?cfg.topExtras(q,{g,u,i,cursor,items}):"")+eyebrow+'<h2 class="practice-question">'+esc(q.question)+'</h2>'+(cfg.beforeControls?cfg.beforeControls(q,{g,u,i,cursor,items}):"")+controls(q,a)+(cfg.afterControls?cfg.afterControls(q,{g,u,i,cursor,items}):"")+hint+verdict+mistake+
+  const body=resume+hud+(cfg.topExtras?cfg.topExtras(q,{g,u,i,cursor,items}):"")+eyebrow+'<h2 class="practice-question" dir="auto" lang="'+(cfg.locale||"en")+'">'+esc(q.question)+'</h2>'+(cfg.beforeControls?cfg.beforeControls(q,{g,u,i,cursor,items}):"")+controls(q,a)+(cfg.afterControls?cfg.afterControls(q,{g,u,i,cursor,items}):"")+hint+verdict+mistake+
    (!a?.checked&&!hintFlags[cursor]?'<div class="actions"><button class="btn light" onclick="'+name+'.showHint()">'+S.hintBtn+'</button></div>':"")+
    '<div class="stepfooter"><button class="btn light" onclick="'+name+'.prev()"'+(cursor===0?" disabled":"")+'>'+S.prev+'</button>'+action+'</div>';
-  return '<section class="practice-focus'+(cfg.focusClass?" "+cfg.focusClass:"")+'"'+(h.dir?' dir="'+h.dir+'"':"")+(h.lang?' lang="'+h.lang+'"':"")+'><header class="practice-focus__header"><div class="practice-focus__header-row"><button class="practice-focus__exit" onclick="'+h.exit+'">'+h.exitLabel+'</button><span class="practice-focus__year">'+h.yearLabel+'</span></div><div class="practice-focus__info"><h1 class="practice-focus__lesson">'+esc(cfg.title(g,u,i))+'</h1><span class="practice-focus__counter">'+(done?S.completed+" · 50 / 50":S.question+" "+(cursor+1)+" / 50")+'</span></div><div class="practice-focus__track" role="progressbar" aria-label="Answered questions" aria-valuemin="0" aria-valuemax="50" aria-valuenow="'+done_+'"><i style="width:'+(done_*2)+'%"></i></div></header><div class="practice-focus__content"><div class="guided-question">'+body+'<p class="muted" style="font-size:12px">'+h.disclaimer+'</p></div></div></section>';
+  return '<section class="practice-focus'+(cfg.focusClass?" "+cfg.focusClass:"")+'"'+(h.dir?' dir="'+h.dir+'"':"")+(h.lang?' lang="'+h.lang+'"':"")+'><header class="practice-focus__header"><div class="practice-focus__header-row"><button class="practice-focus__exit" onclick="'+h.exit+'">'+h.exitLabel+'</button><span class="practice-focus__year">'+h.yearLabel+'</span></div><div class="practice-focus__info"><h1 class="practice-focus__lesson">'+esc(cfg.title(g,u,i))+'</h1><span class="practice-focus__counter">'+(done?S.completed+" · 50 / 50":S.question+" <bdi>"+(cursor+1)+" / 50</bdi>")+'</span></div><div class="practice-focus__track" role="progressbar" aria-label="'+S.answered+'" aria-valuemin="0" aria-valuemax="50" aria-valuenow="'+done_+'"><i style="width:'+(done_*2)+'%"></i></div></header><div class="practice-focus__content"><div class="guided-question">'+body+'<p class="muted" style="font-size:12px">'+h.disclaimer+'</p></div></div></section>';
  }
  function submitOrNext(){const a=rec();if(a?.checked)next();else check()}
  function continueStage(){pendingStage=null;refresh();scrollTop()}

@@ -84,10 +84,10 @@ window.EBDA_COMPLETION=(function(){
       '<div><span class="ebda-certificate-detail-label">Assessment</span><b>Not graded</b></div>'+
     '</div>'+
     '<p class="ebda-certificate-disclaimer">Self-reported project preparation only · No teacher verification or academic grade · Not an official school certificate</p></article>';
-  return '<section class="ebda-lesson-completed"><div class="ebda-finish-card"><h1 class="ebda-finish-title">Project preparation recorded</h1>'+
+  return '<section class="ebda-lesson-completed"><div class="ebda-finish-card"><h1 class="ebda-finish-title">'+(window.NTSS_UI?.pair("Project preparation recorded","تم تسجيل إعداد المشروع")||"Project preparation recorded")+'</h1>'+
     '<p>Your outline has been prepared. Actual presentation and writing skills require teacher assessment.</p>'+
-    '<div class="ebda-finish-print-actions"><button class="ebda-finish-btn ebda-finish-primary" onclick="EBDA_COMPLETION.print()">Save as PDF / Print</button>'+
-    (back?'<button class="ebda-finish-btn ebda-finish-secondary" onclick="'+back+'">Back to lessons</button>':'')+'</div></div>'+sheet+'</section>';
+    '<div class="ebda-finish-print-actions"><button class="ebda-finish-btn ebda-finish-primary" onclick="EBDA_COMPLETION.print()">'+(window.NTSS_UI?.pair("Save as PDF / Print","حفظ PDF / طباعة")||"Save as PDF / Print")+'</button>'+
+    (back?'<button class="ebda-finish-btn ebda-finish-secondary" onclick="'+back+'">'+(window.NTSS_UI?.back()||'Back to lessons')+'</button>':'')+'</div></div>'+sheet+'</section>';
  }
  return {render,participation,setName,getName,open,edit,forget,print};
 })();

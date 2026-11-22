@@ -35,6 +35,8 @@ function check(condition,msg){assert.ok(condition,msg)}
  try{
   for(const device of viewports){
    const context=await browser.newContext({viewport:{width:device.width,height:device.height},deviceScaleFactor:1,ignoreHTTPSErrors:true});
+   // This legacy flow asserts English copy; bilingual behavior has its own matrix.
+   await context.addInitScript(()=>localStorage.setItem("ebda-lang","en"));
    const page=await context.newPage();
    activePage=page;activeDevice=device.name;
    const exceptions=[],violations=[];

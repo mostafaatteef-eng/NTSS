@@ -2,7 +2,7 @@
 window.NTSS_LEARNING=(function(){
  const attempts=new Map(), opened=new Set(),skills=new Map(),toolsOpened=new Set();
  const escape=x=>String(x??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
- const lang=mode=>/arabic|economics|civics|social/i.test(mode)?"ar":/german/i.test(mode)?"de":"en";
+ const lang=mode=>window.EBDA_I18N?.current?.()||(/arabic|economics|civics|social/i.test(mode)?"ar":/german/i.test(mode)?"de":"en");
  const strings={
   en:["Review the idea","Optional · no impact on score","Understand the question","Explain the reasoning","Apply it again","Identify the given information and the relevant rule. Explain your solution to yourself before continuing.","Optional practice game"],
   ar:["راجع الفكرة","اختياري · لا يؤثر على الدرجة","افهم السؤال","فسر الحل","طبّق الفكرة من جديد","حدد المعطيات والقاعدة المناسبة ثم اشرح لنفسك طريقة الحل.","نشاط تدريبي إضافي — اختياري"],

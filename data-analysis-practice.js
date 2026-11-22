@@ -455,11 +455,11 @@
    const prompt=(contexts[contextIndex][pass%2]+": ")+seed[0];
    const choices=[seed[1],seed[2],seed[3],seed[4]];
    const shift=(k*3+g+i)%4,rotated=choices.slice(shift).concat(choices.slice(0,shift));
-   result.push({mode:"choice",question:prompt,options:rotated,answer:(4-shift)%4,explanation:seed[5],sourceStatus:"Supplementary practice aligned to uploaded topic "+lesson+" · Grade "+g+" lesson "+(i+1)+" · teacher approval pending",focus:1+k%seeds.length});
+   result.push({mode:"choice",question:prompt,options:rotated,answer:(4-shift)%4,explanation:seed[5],sourceStatus:"Supplementary practice aligned to uploaded topic "+lesson+" · Grade "+g+" lesson "+(i+1)+" · teacher approval pending",focus:1+k%seeds.length,focusLabel:seed[0]});
   }
   for(let j=0;j<10;j++){
    const q=numerical[lesson](j);
-   result.push({...q,focus:70+j,sourceStatus:"Original numerical exercise applying concepts from uploaded lesson "+lesson+" · teacher approval pending"});
+   result.push({...q,focus:seeds.length+1+(lesson===6&&j%2?1:0),focusLabel:lesson===6&&j%2?"Calculate the range":({1:"Calculate the arithmetic mean",2:"Identify the sample size",3:"Count survey responses",4:"Calculate attendance percentage",5:"Calculate non-response",6:"Calculate the arithmetic mean"})[lesson],sourceStatus:"Original numerical exercise applying concepts from uploaded lesson "+lesson+" · teacher approval pending"});
   }
   return result;
  }

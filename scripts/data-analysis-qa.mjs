@@ -46,3 +46,6 @@ assert.ok(index.includes('registerNamedLesson("da"')&&index.includes('dataAnalys
 assert.ok(lazy.includes('"data-analysis"')&&lazy.includes("data-analysis-curriculum.js"));
 assert.ok(lazy.includes("data-analysis-practice.js"));
 console.log("Data Analysis QA PASSED: 17 source-grounded lesson instances, 850 interactive questions, name gates and certificates.");
+
+// Exercise the actual shared engine, not bank shape alone.
+await import('./data-analysis-progression-qa.mjs');
