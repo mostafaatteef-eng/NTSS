@@ -18,11 +18,13 @@ const challenges={
  ]
 };
 const esc=x=>String(x).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const text=k=>window.EBDA_I18N.t(k);
+let embedded=false;
 let kind="python",grade=1,unit=0,lesson=0,selection={python:0,sql:0},codes={python:"",sql:""},worker=null,timer=null,busy=false,result=null,feedback="",runId=0;
 function task(){return challenges[kind][selection[kind]]}
 function update(){window.EBDA_APP_RENDER?.()}
 function stop(){runId++;if(timer)clearTimeout(timer);timer=null;if(worker)worker.terminate();worker=null;busy=false}
-function start(g,u,i,type){stop();grade=g;unit=u;lesson=i;kind=type==="sql"?"sql":"python";codes[kind]=task()[2];result=null;feedback="";update()}
+function start(g,u,i,type,options={}){embedded=!!options.embedded;stop();grade=g;unit=u;lesson=i;kind=type==="sql"?"sql":"python";codes[kind]=task()[2];result=null;feedback="";update()}
 function switchTo(type){stop();kind=type;if(!codes[kind])codes[kind]=task()[2];result=null;feedback="";update()}
 function choose(n){stop();selection[kind]=Math.min(5,Math.max(0,Number(n)||0));codes[kind]=task()[2];result=null;feedback="";update()}
 function edit(value){codes[kind]=String(value).slice(0,kind==="python"?3000:2000)}
@@ -35,23 +37,35 @@ function check(reply,mode,t){
 function run(){
  if(busy)return;
  stop();const selected=kind,t=task(),source=codes[kind],id=++runId;
- busy=true;feedback="Loading "+(selected==="python"?"Python":"SQLite")+" and running…";result=null;update();
+ busy=true;feedback="loading";result=null;update();
  try{
   worker=new Worker(selected==="python"?"python-lab-worker.js":"sql-lab-worker.js");
-  timer=setTimeout(()=>{if(id!==runId)return;stop();feedback="Execution timeout. Check for an infinite loop or slow runtime download.";update()},35000);
-  worker.onmessage=e=>{if(id!==runId)return;const data=e.data&&typeof e.data==="object"?e.data:{ok:false,output:"Invalid worker response"};const passed=check(data,selected,t);stop();result={...data,passed};feedback=data.ok?(passed?"✓ Challenge passed":"Code ran — compare the output and try the challenge again"):"Execution failed — see the error below";update()};
-  worker.onerror=e=>{if(id!==runId)return;stop();result={ok:false,output:String(e.message||"Runtime loading error")};feedback="Cannot load runtime. Check internet and WebAssembly support.";update()};
+  timer=setTimeout(()=>{if(id!==runId)return;stop();feedback="timeout";update()},35000);
+  worker.onmessage=e=>{if(id!==runId)return;const data=e.data&&typeof e.data==="object"?e.data:{ok:false,output:"Invalid worker response"};const passed=check(data,selected,t);stop();result={...data,passed};feedback=data.ok?(passed?"passed":"retry"):"failed";update()};
+  worker.onerror=e=>{if(id!==runId)return;stop();result={ok:false,output:String(e.message||"Runtime loading error")};feedback="runtime_error";update()};
   worker.postMessage({code:String(source).slice(0,selected==="python"?3000:2000)});
- }catch(e){stop();result={ok:false,output:String(e)};feedback="Web Worker not available." ;update()}
+ }catch(e){stop();result={ok:false,output:String(e)};feedback="worker_error" ;update()}
 }
 function output(){
- if(!result)return '<p>Run the code to see the result.</p>';
- if(result.results?.length)return result.results.map(r=>'<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse"><thead><tr>'+r.columns.map(x=>'<th style="text-align:left;padding:9px;border-bottom:2px solid #ddd">'+esc(x)+'</th>').join("")+'</tr></thead><tbody>'+r.values.map(row=>'<tr>'+row.map(x=>'<td style="padding:9px;border-bottom:1px solid #ddd">'+esc(x===null?"NULL":x)+'</td>').join("")+'</tr>').join("")+'</tbody></table></div>').join("");
- return '<pre style="white-space:pre-wrap;overflow-wrap:anywhere">'+esc(result.output||"No output rows.")+'</pre>';
+ if(!result)return '<p>'+text("lab_output_empty")+'</p>';
+ if(result.results?.length)return result.results.map(r=>'<div class="coding-lab__table" dir="ltr"><table><thead><tr>'+r.columns.map(x=>'<th>'+esc(x)+'</th>').join('')+'</tr></thead><tbody>'+r.values.map(row=>'<tr>'+row.map(x=>'<td>'+esc(x===null?'NULL':x)+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>').join('');
+ return '<pre class="coding-lab__output" dir="ltr">'+esc(result.output||text("lab_no_rows"))+'</pre>';
 }
-function render(){
- const t=task(),u=grade===1?window.EBDAA_DATA.sessions.filter(x=>x.unit===unit+1)[lesson]?.title:window.EBDAA_GRADES.grades[grade-1].subjects[0].units[unit]?.sessions[lesson];
- return '<section class="practice-focus"><header class="practice-focus__header"><div class="practice-focus__header-row"><button class="practice-focus__exit" onclick="closeCodeLab()">← Back to lessons</button><span class="practice-focus__year">YEAR '+grade+' · AI & DATA</span></div><div class="practice-focus__info"><h1 class="practice-focus__lesson">Coding Laboratory</h1><span class="practice-focus__counter">'+esc(u||"Practical exercises")+'</span></div></header><div class="practice-focus__content" style="max-width:1000px;margin:0 auto"><div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px"><button class="btn '+(kind==="python"?"teal":"light")+'" onclick="EBDAA_CODE_LABS.switchTo(\'python\')">🐍 Python Lab</button><button class="btn '+(kind==="sql"?"teal":"light")+'" onclick="EBDAA_CODE_LABS.switchTo(\'sql\')">🗄 SQL Lab</button><button class="btn light" onclick="backToAIQuestions()">Return to questions →</button></div><div class="hint"><strong>'+esc(t[0])+'</strong><p>'+esc(t[1])+'</p></div><div style="display:flex;flex-wrap:wrap;gap:7px;margin:16px 0">'+challenges[kind].map((v,i)=>'<button class="btn '+(selection[kind]===i?"teal":"light")+'" style="font-size:12px;padding:9px 12px" onclick="EBDAA_CODE_LABS.choose('+i+')">Task '+(i+1)+'</button>').join("")+'</div><label for="coding-editor"><b>Write your '+(kind==="python"?"Python":"SQL")+' code</b></label><textarea id="coding-editor" spellcheck="false" autocorrect="off" autocapitalize="off" style="display:block;box-sizing:border-box;width:100%;min-height:260px;margin:10px 0 16px;padding:16px;border:1px solid #263c49;border-radius:14px;resize:vertical;background:#11212c;color:#e3f5ed;font:14px/1.65 monospace;tab-size:4" oninput="EBDAA_CODE_LABS.edit(this.value)">'+esc(codes[kind])+'</textarea><div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center"><button class="btn teal" '+(busy?"disabled":"")+' onclick="EBDAA_CODE_LABS.run()">▶ Run Code</button><button class="btn light" onclick="EBDAA_CODE_LABS.reset()">↺ Reset</button><span role="status">'+esc(feedback)+'</span></div><div class="hint" style="margin-top:18px"><strong>Output</strong>'+output()+(result?.passed?'<p><b>✓ Correct output</b></p>':'')+'</div><p class="muted" style="font-size:12px;margin-top:18px">Python runs through Pyodide WebAssembly; SQL uses SQLite via sql.js (not MySQL). Sample data are fictional and SQL resets for each run. External libraries require internet; code runs locally in isolated workers. Do not enter passwords, personal data or secret keys. Code from untrusted sources is unsafe. These learning workers are not a complete security sandbox; never paste personal data, passwords or API keys.</p></div></section>';
+function render(options={}){
+ const inline=options.embedded??embedded;
+ const language=kind==="python"?'Python':'SQL';
+ const titles=text("lab_task_titles_"+kind),instructions=text("lab_task_instructions_"+kind);
+ const t=task();
+ const header=inline?'':'<header class="practice-focus__header"><div class="practice-focus__header-row"><button class="practice-focus__exit" onclick="closeCodeLab()">'+text("lab_back_subject")+'</button><span class="practice-focus__year">'+text("year_tag")(grade)+' · '+text("lab_free_title")+'</span></div><h1 class="practice-focus__lesson">'+text("lab_title")+'</h1></header>';
+ return '<section class="coding-lab '+(inline?'coding-lab--embedded':'practice-focus')+'" dir="'+(window.EBDA_I18N.current()==='ar'?'rtl':'ltr')+'">'+header+'<div class="practice-focus__content coding-lab__content">'+
+ '<div class="coding-lab__top"><h2>'+text("lab_title")+'</h2><button class="btn light coding-lab__language" onclick="EBDA_I18N.toggle()">'+(window.EBDA_I18N.current()==='ar'?'English':'عربي')+'</button></div>'+
+ '<p class="coding-lab__notice">'+text(inline?"lab_shared_note":"lab_free_note")+'</p><div class="coding-lab__modes" role="group" aria-label="'+text("lab_language")+'">'+['python','sql'].map(x=>'<button class="btn '+(kind===x?'teal':'light')+'" aria-pressed="'+(kind===x)+'" onclick="EBDAA_CODE_LABS.switchTo(&#39;'+x+'&#39;)">'+(x==='python'?'Python':'SQL')+'</button>').join('')+'</div>'+
+ '<div class="hint"><strong>'+esc(titles[selection[kind]])+'</strong><p>'+esc(instructions[selection[kind]])+'</p></div>'+
+ '<div class="coding-lab__tasks" role="group" aria-label="'+text("lab_tasks")+'">'+challenges[kind].map((v,i)=>'<button class="btn '+(selection[kind]===i?'teal':'light')+'" aria-pressed="'+(selection[kind]===i)+'" onclick="EBDAA_CODE_LABS.choose('+i+')">'+text("lab_task")+' '+(i+1)+'</button>').join('')+'</div>'+
+ '<label for="coding-editor"><b>'+text("lab_write")+' <bdi>'+language+'</bdi></b></label><textarea id="coding-editor" dir="ltr" spellcheck="false" autocorrect="off" autocapitalize="off" oninput="EBDAA_CODE_LABS.edit(this.value)">'+esc(codes[kind])+'</textarea>'+
+ '<div class="coding-lab__actions"><button class="btn teal" '+(busy?'disabled':'')+' onclick="EBDAA_CODE_LABS.run()">▶ '+text("lab_run")+'</button><button class="btn light" onclick="EBDAA_CODE_LABS.reset()">↺ '+text("lab_reset")+'</button><span role="status">'+(feedback?esc(text("lab_status_"+feedback)):'')+'</span></div>'+
+ '<div class="hint coding-lab__results"><strong>'+text("lab_output")+'</strong>'+output()+(result?.passed?'<p><b>✓ '+text("lab_correct")+'</b></p>':'')+'</div>'+
+ '<button class="btn light" onclick="closeCodeLab()">'+text(inline?"lab_return_stage":"lab_back_subject")+'</button><p class="coding-lab__safety">'+text("lab_safety")+'</p></div></section>';
 }
 return {start,switchTo,choose,edit,reset,run,stop,render,challenges};
 })();

@@ -29,6 +29,15 @@ jobs:
           npx playwright install --with-deps chromium firefox webkit
       - name: Responsive Chromium and live workers
         run: NTSS_BROWSER=chromium node scripts/assessment-browser-qa.mjs
+      - name: Bilingual lesson lab integration
+        run: node scripts/lab-integration-qa.mjs
+      - name: Upload lesson lab review screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lesson-lab-integration
+          path: qa-artifacts/lab-integration
+          if-no-files-found: ignore
       - name: Responsive Firefox
         run: NTSS_BROWSER=firefox node scripts/assessment-browser-qa.mjs
       - name: Responsive WebKit
