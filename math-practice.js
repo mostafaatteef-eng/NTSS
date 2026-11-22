@@ -75,7 +75,74 @@ function conceptual(title,fact,n){
  return select(stems[n%10]+" "+(correct?fact:"It is not true that: "+fact),["True","False"],correct?0:1,
  "The reference rule is: "+fact+" The extra negation makes the displayed statement false when present.");
 }
+// Narrow review pilot: original generated exercises using standard formula facts.
+// Sources: https://openstax.org/books/precalculus-2e/pages/7-5-solving-trigonometric-equations
+// https://openstax.org/books/precalculus-2e/pages/7-3-double-angle-half-angle-and-reduction-formulas
+// https://openstax.org/books/calculus-volume-1/pages/a-table-of-integrals
+function diversifiedPilot(g,u,i){
+ const rounded=x=>Number(x.toFixed(3));
+ if(g===2&&u===1&&i===1){
+  const seeds=[
+   ["sin","0",[0,180]],["sin","1/2",[30,150]],["sin","-1/2",[210,330]],
+   ["sin","1",[90]],["sin","-1",[270]],["cos","0",[90,270]],
+   ["cos","1/2",[60,300]],["cos","-1/2",[120,240]],["cos","1",[0]],["cos","-1",[180]]
+  ];
+  return seeds.flatMap(([fn,value,roots],seed)=>{
+   const equation=fn+" θ = "+value,prefix="For 0° ≤ θ < 360°, "+equation+". ";
+   const wrong=[0,30,45,60,90,120,135,150,180,210,225,240,270,300,315,330].filter(x=>!roots.includes(x));
+   const choices=(text,correct,distractors,n)=>{
+    const opts=[correct,...distractors].map(x=>x+"°"),shift=n%4;
+    return select(prefix+text,opts.slice(shift).concat(opts.slice(0,shift)),(4-shift)%4,
+     "The solutions in this interval are "+roots.map(x=>x+"°").join(" and ")+". The endpoint 360° is excluded.");
+   };
+   const least=Math.min(...roots),greatest=Math.max(...roots);
+   const notSolutions=wrong.slice(0,3);
+   const candidate=seed%2===0?roots[0]:wrong[seed%wrong.length],isSolution=roots.includes(candidate);
+   return [
+    choices("Which angle is a solution?",roots[0],notSolutions,seed),
+    numeric(prefix+"Enter the smallest solution in degrees.",least,"Use the unit circle and the stated interval. The smallest solution is "+least+"°."),
+    numeric(prefix+"Enter the largest solution in degrees.",greatest,"Use the unit circle and exclude 360°. The largest solution is "+greatest+"°."),
+    numeric(prefix+"How many distinct solutions are in this interval?",roots.length,"The solutions are "+roots.map(x=>x+"°").join(" and ")+"."),
+    select(prefix+"Is θ = "+candidate+"° a solution?",["Yes","No"],isSolution?0:1,
+     (isSolution?"Yes.":"No.")+" The solutions in the interval are "+roots.map(x=>x+"°").join(" and ")+".")
+   ];
+  });
+ }
+ if(g===2&&u===1&&i===6){
+  const triples=[[3,4,5],[5,12,13],[8,15,17],[7,24,25],[20,21,29]],items=[];
+  for(const [p,q,r] of triples){
+   for(const [sp,cp] of [[1,1],[-1,1],[1,-1],[-1,-1]]){
+    const sin=sp*p/r,cos=cp*q/r,given="Given sin θ = "+(sp*p)+"/"+r+" and cos θ = "+(cp*q)+"/"+r+", ";
+    items.push(numeric(given+"find sin(2θ). Round to 3 decimal places.",rounded(2*sin*cos),"Use sin(2θ) = 2 sin θ cos θ."));
+    items.push(numeric(given+"find cos(2θ). Round to 3 decimal places.",rounded(cos*cos-sin*sin),"Use cos(2θ) = cos² θ - sin² θ."));
+   }
+   for(const sign of [1,-1]){
+    const sin=sign*p/r,cos=q/r;
+    items.push(numeric("Given sin θ = "+(sign*p)+"/"+r+" and cos θ = "+q+"/"+r+", find tan(2θ). Round to 3 decimal places.",rounded(2*sin*cos/(cos*cos-sin*sin)),"Use tan(2θ) = 2 sin θ cos θ / (cos² θ - sin² θ). The denominator here is nonzero."));
+   }
+  }
+  return items;
+ }
+ if(g===3&&u===2&&i===1){
+  const items=[];
+  for(let a=1;a<=10;a++){
+   const cases=[
+    ["sin","π/2",a,"An antiderivative is -"+a+" cos x. Evaluate at π/2 and 0."],
+    ["cos","π/2",a,"An antiderivative is "+a+" sin x. Evaluate at π/2 and 0."],
+    ["sin","π",2*a,"An antiderivative is -"+a+" cos x. At π and 0, the difference is 2 × "+a+"."],
+    ["cos","π/6",a/2,"An antiderivative is "+a+" sin x. Use sin(π/6) = 1/2."],
+    ["cos","π/3",a*Math.sqrt(3)/2,"An antiderivative is "+a+" sin x. Use sin(π/3) = √3/2."]
+   ];
+   for(const [fn,upper,answer,explanation] of cases)items.push(numeric("Angles are in radians. Evaluate ∫ from 0 to "+upper+" of "+a+" "+fn+"(x) dx. Round to 3 decimal places.",rounded(answer),explanation));
+  }
+  return items;
+ }
+ return null;
+}
+
 function build(g,u,i){
+ const pilot=diversifiedPilot(g,u,i);
+ if(pilot)return pilot.map((q,n)=>Object.assign({id:g+"-"+u+"-"+i+"-"+(n+1),source:window.EBDAA_MATH_UNITS[g][u].source},q));
  const unit=window.EBDAA_MATH_UNITS[g][u],title=unit.sessions[i],fact=factFor(g,u,i);
  let items=[];
  for(let n=0;n<50;n++){
