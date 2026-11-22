@@ -75,8 +75,8 @@ for(const grade of win.EBDAA_GRADES.grades){
  }
 }
 assert.deepEqual(errors,[],"Broken lesson banks: "+JSON.stringify(errors.slice(0,15)));
-assert.equal(lessonCount,598,"Expected indexed lesson/activity total");
+assert.equal(lessonCount,603,"Expected indexed lesson/activity total");
 assert.equal(projects,8,"Business English projects require teacher review, not automatic grading");
-assert.equal(graded,590,"Graded 50-item assessments");
+assert.equal(graded,595,"Graded 50-item assessments");
 assert.equal(aiCounts[1]+aiCounts[2]+aiCounts[3],116);
 console.log(JSON.stringify({result:"PASS",lessons:lessonCount,assessments:graded,ungradedProjects:projects,ai:aiCounts.slice(1),subjects:perSubject}));
