@@ -158,7 +158,7 @@ The new UI and content changes have passed scripted JavaScript-flow tests. Brows
 
 **Pedagogy and evidence:** Every session has a manipulable or executable activity and a formative checkpoint. These checkpoints provide explanations rather than recording student grades. The current lab outcomes, numerical assessment items and unit-level question banks are **supplementary instructional prototypes**, not validated equivalents of all official practical projects, product checklists or summative assessments. The 77 pages therefore provide working practical entry points, **not 77 independently validated full curriculum labs**. A curriculum expert must still review each against the original session's full teaching steps and acceptance criteria.
 
-**Security/privacy:** No student registration, names, saved marks, telemetry, or backend. The browser fetches public runtime assets from third-party CDNs when Python or SQL is launched; ordinary network requests may expose standard connection metadata to those providers. No student records are transmitted by the application. Admin editing uses GitHub repository write permissions.
+**Security/privacy:** No student registration, remote student records, telemetry, or backend. Saved practice keeps the original name and answers only on the device for up to seven days; completion or clearing the draft removes the saved copy. The browser fetches public runtime assets from third-party CDNs when Python or SQL is launched; ordinary network requests may expose standard connection metadata to those providers. No student records are transmitted by the application. Admin editing uses GitHub repository write permissions.
 
 **Testing:** JavaScript syntax, navigation, every one of the 77 new session flows, embedded feedback, 39 original Year-1 lessons, and 77 practical lesson structures pass scripted simulation tests. End-to-end execution of Pyodide and SQLite in a real browser, complete academic validation, accessibility testing and confirmation of GitHub Pages publication remain outstanding.
 
@@ -173,7 +173,7 @@ There are 18 unit-level mission banks and 54 authored formative questions. Their
 All mission questions and answers live in `missions-data.js` and require GitHub collaborator access to edit. Tests check every mission. Results and attempts exist only in browser memory during the active visit. Do not treat them as formal assessment or student records.
 
 ## Public learning
-- No student accounts, no student names, no teacher dashboards and no student analytics.
+- No student accounts or server-side student data collection. Practice names stay device-local with saved attempts for up to seven days.
 - Six curriculum units and 39 short concept journeys, with 39 distinct entry questions and a separate application checkpoint.
 - Each journey includes a prediction question, a topic demonstration, a concept explanation, and an immediate-feedback practice step.
 - Browser-only calculated experiments include K-Means centroid updates, 2D KNN distances and voting, BFS traversal, vector magnitude, gradient descent, probability and algorithm operations.

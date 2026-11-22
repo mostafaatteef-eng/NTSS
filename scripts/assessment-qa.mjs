@@ -66,6 +66,7 @@ assert.ok(read("index.html").includes("assessment-enhancements.js"),"Assessment 
   new Function("window","document","localStorage","setTimeout","clearTimeout",read(path))(site,mockDocument,local,fn=>{if(typeof fn==="function")fn();return 1},()=>{});
  }
  const practice=site.EBDAA_PRACTICE;
+ site.EBDA_COMPLETION.setName("ai:1:0:0","QA Student");
  practice.begin(1,0,0);
  const first=practice.currentQuestion();
  const firstAnswer=first.mode==="order"?first.answer.split("|"):first.mode==="live-code"?"pass":first.answer;
