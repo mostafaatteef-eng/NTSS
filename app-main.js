@@ -34,7 +34,7 @@ function ensureTeacherAudit(){
   app.innerHTML='<section role="alert"><h2>Unable to load review questions</h2><button class="btn teal" onclick="ensureTeacherAudit()">Retry</button></section>';
  });
 }
-function nav(n){mode=n;document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("active",b.dataset.nav===n));render();scrollTo(0,0)}function openUnit(n){window.EBDAA_PRACTICE.reset();stageAnswers={};unit=n;selectedId=D.sessions.find(s=>s.unit===n).id;step=0;registerNamedLesson("ai",1,n-1,0,D.sessions.find(s=>s.unit===n).title,"learn");answer=null;checked=false;hint=false;labValue=2;
+function nav(n){if(lessonCodeLabActive||mode==="codeLab"){window.EBDAA_CODE_LABS.stop();lessonCodeLabActive=false;codeLabReturn=null}mode=n;document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("active",b.dataset.nav===n));render();scrollTo(0,0)}function openUnit(n){window.EBDAA_PRACTICE.reset();stageAnswers={};unit=n;selectedId=D.sessions.find(s=>s.unit===n).id;step=0;registerNamedLesson("ai",1,n-1,0,D.sessions.find(s=>s.unit===n).title,"learn");answer=null;checked=false;hint=false;labValue=2;
  if(window.NTSS_LAZY.isReady()){nav("learn");return}
  mode="advancedLoading";render();
  window.NTSS_LAZY.ensureStudio().then(()=>{if(mode==="advancedLoading")nav("learn")}).catch(()=>{
@@ -67,10 +67,29 @@ function chooseSubject(id="ai-data-engineering"){
   window.__ntssSubjectRetry=()=>chooseSubject(id);
  });
 }
-let codeLabReturn=null;
-function openCodeLab(language="python"){const oldMode=mode;codeLabReturn={mode:oldMode,grade,unit,year2Unit,advancedSession,selectedId,step,advancedStep};const u=grade===1?Math.max(0,unit-1):year2Unit;const i=grade===1?Math.max(0,D.sessions.filter(s=>s.unit===unit).findIndex(s=>s.id===selectedId)):advancedSession;mode="codeLab";window.EBDAA_CODE_LABS.start(grade,u,i,language);scrollTo(0,0)}
-function closeCodeLab(){window.EBDAA_CODE_LABS.stop();mode=codeLabReturn?.mode||"subject";render();scrollTo(0,0)}
-function backToAIQuestions(){window.EBDAA_CODE_LABS.stop();if(codeLabReturn?.mode==="learn"||codeLabReturn?.mode==="advancedLab"){mode=codeLabReturn.mode;render()}else if(grade===1){mode="subject";render()}else{mode="unitPreview";render()}scrollTo(0,0)}
+let codeLabReturn=null,lessonCodeLabActive=false;
+function lessonLabEntry(){return '<div class="lesson-lab-entry"><button class="btn light" onclick="openCodeLab()">'+t("lab_open")+'</button><small>'+t("lab_shared_note")+'</small></div>'}
+function openCodeLab(language="python"){
+ const embedded=mode==="learn"||mode==="advancedLab";
+ codeLabReturn={mode,grade,unit,year2Unit,advancedSession,selectedId,step,advancedStep,embedded};
+ const u=grade===1?Math.max(0,unit-1):year2Unit;
+ const i=grade===1?Math.max(0,D.sessions.filter(s=>s.unit===unit).findIndex(s=>s.id===selectedId)):advancedSession;
+ lessonCodeLabActive=embedded;
+ if(!embedded)mode="codeLab";
+ window.EBDAA_CODE_LABS.start(grade,u,i,language,{embedded});scrollTo(0,0);
+}
+function closeCodeLab(){
+ window.EBDAA_CODE_LABS.stop();lessonCodeLabActive=false;
+ const saved=codeLabReturn;codeLabReturn=null;
+ if(saved){({mode,grade,unit,year2Unit,advancedSession,selectedId,step,advancedStep}=saved)}else mode="subject";
+ render();document.querySelector('.lesson-lab-entry button')?.focus({preventScroll:true});scrollTo(0,0);
+}
+function backToAIQuestions(){closeCodeLab()}
+function integratedLessonLab(){
+ const n=mode==="learn"?step:advancedStep;
+ const title=mode==="learn"?current()?.title:window.EBDAA_GRADES.grades[grade-1].subjects[0].units[year2Unit].sessions[advancedSession];
+ return '<section class="integrated-lesson-lab" dir="'+(window.EBDA_I18N.current()==="ar"?'rtl':'ltr')+'"><div class="topmeta"><span class="eyebrow">'+t("year_tag")(grade)+' · '+t("lab_lesson_context")+'</span><button class="btn light" onclick="closeCodeLab()">'+t("lab_return_stage")+'</button></div><h1 class="integrated-lesson-lab__title" dir="auto">'+esc(title)+'</h1><nav class="lesson-steps" aria-label="'+t("stages_aria")+'">'+t("stages").map((name,i)=>'<span class="lesson-step '+(i===n?'current':i<n?'done':'')+'" '+(i===n?'aria-current="step"':'')+'><span class="lesson-step__num">'+(i<n?'✓':i+1)+'</span>'+esc(name)+'</span>').join('')+'</nav><p class="muted">'+t("lab_stage_context")+' '+esc(t("stages")[n])+'.</p>'+window.EBDAA_CODE_LABS.render({embedded:true})+'</section>';
+}
 function chooseGradeUnit(n){if(grade===1){openUnit(n+1)}else{year2Unit=n;nav("unitPreview");window.NTSS_LAZY.ensureStudio().catch(()=>{/* Retry on lesson open. */})}}function openAdvancedSession(i){
  window.EBDAA_PRACTICE.reset();
  advancedSession=i;advancedStep=0;
@@ -124,9 +143,14 @@ return '<section class="hero" aria-label="Welcome to EBDA Learning"><div>'+label
 '<div class="cards" id="year-cards">'+labels.map((name,i)=>'<article class="course"><div class="course-art"><i>'+String(i+1).padStart(2,"0")+'</i></div><div class="course-body"><small>'+t("year_tag")(i+1)+'</small><h3>'+name+'</h3><p>'+descriptions[i]+'</p><button onclick="chooseGrade('+(i+1)+')">'+t("year_view")+'</button></div></article>').join("")+'</div>';
 }
 function browse(){const g=window.EBDAA_GRADES.grades.find(g=>g.id===grade);return '<div class="eyebrow"><a href="#" onclick="nav(\'home\');return false">'+t("browse_all_years")+'</a> / '+t("year_tag")(grade)+'</div><h1>'+esc(g.name)+'</h1><p>'+t("browse_select")+'</p><div class="cards">'+g.subjects.map(s=>'<article class="course"><div class="course-art"><i>'+(s.id==="data-analysis"?'📊':s.id==="mathematics"?'∑':s.id==="advanced-english"?'Aa':s.id==="arabic-language"?'ع':s.id==="german-language"?'DE':s.id==="economics"?"📈":s.id==="civics"?"🇪🇬":s.id==="social-studies"?"🌍":s.id==="business-english"?'BE':s.id==="physics-stem"?'⚛':'AI')+'</i></div><div class="course-body"><small>'+(s.id==="ai-data-engineering"?t("tag_specialization"):t("tag_general"))+'</small><h3>'+esc(s.name)+'</h3><p>'+subjectSummary(s)+'</p><button onclick="chooseSubject(\''+s.id+'\')">'+t("subject_explore")+'</button></div></article>').join('')+'</div>'}
-function subjectUnits(){if(subjectId==="data-analysis")return dataAnalysisUnits();if(subjectId==="economics")return economicsUnits();if(subjectId==="civics")return civicsUnits();if(subjectId==="social-studies")return socialUnits();if(subjectId==="business-english")return businessUnits();if(subjectId==="physics-stem")return physicsUnits();if(subjectId==="german-language")return germanUnits();if(subjectId==="arabic-language")return arabicUnits();if(subjectId==="advanced-english")return englishUnits();if(subjectId==="mathematics")return mathUnits();const g=window.EBDAA_GRADES.grades.find(g=>g.id===grade),subject=g.subjects[0];if(!subject)return browse();const units=grade===1?D.names.map((title,i)=>({title,term:i<3?1:2,sessions:D.sessions.filter(s=>s.unit===i+1).map(x=>x.title)})):subject.units;return '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:15px 0 22px"><button class="btn teal" onclick="openCodeLab(&#39;python&#39;)">🐍 Open Python Lab</button><button class="btn light" onclick="openCodeLab(&#39;sql&#39;)">🗄 Open SQL Lab</button></div>'+'<div class="eyebrow"><a href="#" onclick="nav(\'home\');return false">Grades</a> / <a href="#" onclick="nav(\'browse\');return false">Year '+grade+'</a> / Subject</div><div class="subject-page-intro"><h1 class="subject-page-title" dir="ltr">'+esc(subject.name)+'</h1><p>'+esc(g.name)+' · Browse both semesters and select a unit.</p></div><div class="unit-strip"><button onclick="nav(\'browse\')">← Back to subjects</button></div>'+[1,2].map(term=>'<div class="section-title"><h2>Term '+term+'</h2><span class="count">'+units.filter(u=>u.term===term).length+' UNITS</span></div><div class="cards">'+units.map((u,i)=>u.term!==term?'':'<article class="course"><div class="course-art"><i>'+icons[i]+'</i></div><div class="course-body"><small>UNIT 0'+(i+1)+'</small><h3>'+esc(u.title)+'</h3><p>'+u.sessions.length+' sessions · '+(grade===1?'Interactive lessons':'Official session index')+'</p><button onclick="chooseGradeUnit('+i+')">'+(grade===1?'Start learning':'View session index')+' ↗</button></div></article>').join("")+'</div>').join("")}
+function subjectUnits(){if(subjectId==="data-analysis")return dataAnalysisUnits();if(subjectId==="economics")return economicsUnits();if(subjectId==="civics")return civicsUnits();if(subjectId==="social-studies")return socialUnits();if(subjectId==="business-english")return businessUnits();if(subjectId==="physics-stem")return physicsUnits();if(subjectId==="german-language")return germanUnits();if(subjectId==="arabic-language")return arabicUnits();if(subjectId==="advanced-english")return englishUnits();if(subjectId==="mathematics")return mathUnits();const g=window.EBDAA_GRADES.grades.find(g=>g.id===grade),subject=g.subjects[0];if(!subject)return browse();
+ const units=grade===1?D.names.map((title,i)=>({title,term:i<3?1:2,sessions:D.sessions.filter(s=>s.unit===i+1).map(x=>x.title)})):subject.units;
+ return '<div class="eyebrow"><a href="#" onclick="nav(&quot;home&quot;);return false">'+t("browse_all_years")+'</a> / '+t("year_tag")(grade)+'</div><div class="subject-page-intro"><h1 class="subject-page-title" dir="ltr">'+esc(subject.name)+'</h1><p>'+t("lab_subject_intro")+'</p></div><div class="unit-strip"><button onclick="nav(&quot;browse&quot;)">'+t("lab_back_subjects")+'</button></div><div class="lesson-lab-entry"><button class="btn light" onclick="openCodeLab()">'+t("lab_free_open")+'</button><small>'+t("lab_free_note")+'</small></div>'+
+ [1,2].map(term=>'<div class="section-title"><h2>'+t("lab_term")+' '+term+'</h2><span class="count">'+t("lab_unit_count")(units.filter(u=>u.term===term).length)+'</span></div><div class="cards">'+units.map((u,i)=>u.term!==term?'':'<article class="course"><div class="course-art"><i>'+icons[i]+'</i></div><div class="course-body"><small>'+t("unit_word")+' '+String(i+1).padStart(2,'0')+'</small><h3 dir="auto">'+esc(u.title)+'</h3><p>'+t("lab_session_count")(u.sessions.length)+'</p><button onclick="chooseGradeUnit('+i+')">'+t(grade===1?"lab_start_learning":"lab_session_index")+'</button></div></article>').join('')+'</div>').join('');
+}
 function previewUnit(){if(subjectId==="data-analysis")return dataAnalysisPreview();if(subjectId==="economics")return economicsPreview();if(subjectId==="civics")return civicsPreview();if(subjectId==="social-studies")return socialPreview();if(subjectId==="business-english")return businessPreview();if(subjectId==="physics-stem")return physicsPreview();if(subjectId==="german-language")return germanPreview();if(subjectId==="arabic-language")return arabicPreview();if(subjectId==="advanced-english")return englishPreview();if(subjectId==="mathematics")return mathPreview();const g=window.EBDAA_GRADES.grades.find(g=>g.id===grade),u=g.subjects[0].units[year2Unit];return '<div class="eyebrow"><a href="#" onclick="nav(\'home\');return false">Grades</a> / <a href="#" onclick="nav(\'browse\');return false">Year '+grade+'</a> / <a href="#" onclick="nav(\'subject\');return false">Subject</a></div><div class="pill" style="display:inline-block;margin-top:15px">TERM '+u.term+' · UNIT '+(year2Unit+1)+'</div><h1>'+esc(u.title)+'</h1><p>'+esc(u.source)+'</p><div class="no-data">Practical sessions: select a lesson to experiment, run calculations or code, then answer its integrated challenge. Exercises are supplementary and subject to academic review.</div><div class="grid" style="display:grid;gap:12px;margin-top:22px">'+u.sessions.map((name,i)=>'<button class="card" style="background:white;border:1px solid #e6e3de;border-radius:15px;padding:20px;text-align:left;cursor:pointer" onclick="openAdvancedSession('+i+')"><span class="eyebrow">SESSION '+(i+1)+' · HANDS-ON LAB</span><h3>'+esc(name)+'</h3>'+progressBadge("ai",grade,year2Unit,i)+'<p style="font-size:13px">Try interactive experiment → solve an integrated challenge</p></button>').join("")+'</div><div class="actions"><button class="btn light" onclick="nav(\'subject\')">← Back to units</button></div>'}
 function advancedLab(){
+ if(lessonCodeLabActive)return integratedLessonLab();
  if(advancedStep===4)return focusPractice();
  const g=window.EBDAA_GRADES.grades[grade-1],u=g.subjects[0].units[year2Unit],sessions=u.sessions;
  const stages=t("stages");
@@ -138,11 +162,12 @@ function advancedLab(){
  '<div class="lesson-layout"><nav class="side-list" aria-label="'+t("lessons_in_unit")+'">'+sessions.map((title,i)=>'<button class="'+(advancedSession===i?'active':'')+'" '+(advancedSession===i?'aria-current="step"':'')+' onclick="openAdvancedSession('+i+')"><span class="stepnum">'+(i+1)+'</span><span>'+esc(title)+'</span>'+progressBadge("ai",grade,year2Unit,i)+'</button>').join("")+'</nav>'+
  '<section class="stage"><nav class="lesson-steps" aria-label="'+t("stages_aria")+'">'+stages.map((name,i)=>'<span class="lesson-step '+(i===n?'current':i<n?'done':'')+'"><span class="lesson-step__num">'+(i<n?'\u2713':(i+1))+'</span>'+esc(name)+'</span>').join('')+'</nav>'+
  (n<4?'<div class="lesson-shortcut"><button class="lesson-jump" onclick="jumpAdvancedPractice()">'+t("go_practice")+'</button></div>':'')+
- content+
+ lessonLabEntry()+content+
  '<div class="stepfooter"><button class="btn light" onclick="'+(n===0?'nav(&quot;unitPreview&quot;)':'goAdvancedStep('+(n-1)+')')+'">'+(n===0?t("all_lessons"):t("back_btn"))+'</button>'+
  '<div class="stage-next">'+next+'</div></div></section></div>';
 }
 function sourceFor(s){if(s.unit===1)return "First Term Teacher Guide, pp. 5–8 (session map)";if(s.unit===2)return "First Term Teacher Guide, pp. 38–41 (session map)";if(s.unit===3)return "First Term Teacher Guide, pp. 74–76 (session map)";const pages={4:[6,16,27,37,45,55],5:[62,74,85,94,105,113],6:[117,128,139,147,159,169,176]};const part=Number(s.id.split("-")[1])-1;return "Second Term Student Book, p. "+pages[s.unit][part]+" (session starting page); Second Term Teacher Guide for teaching and assessment";}function lab(s){return window.EBDAA_MICRO_RENDER(s)+(window.EBDAA_ADVANCED_LAB(s,labValue)||window.EBDAA_LAB_RENDER(s,labValue))}function setLab(v){labValue=Number(v);render()}function learn(){
+ if(lessonCodeLabActive)return integratedLessonLab();
  let sessions=D.sessions.filter(s=>s.unit===unit),s=current();
  if(!s)return browse();
  if(step===4)return focusPractice();
@@ -161,7 +186,7 @@ function sourceFor(s){if(s.unit===1)return "First Term Teacher Guide, pp. 5–8 
   const challenge=currentChallenge();
   main='<div class="eyebrow">'+t("stage4_eyebrow")+'</div><h2>'+t("stage4_title")+'</h2><p>'+t("stage4_lead")+'</p><div class="interactive"><p><b>'+esc(challenge.question)+'</b></p><div class="choices">'+challenge.options.map((v,i)=>'<button class="choice '+(answer===i?'chosen ':'')+(checked&&i===challenge.answer?'correct':'')+(checked&&answer===i&&i!==challenge.answer?'wrong':'')+'" onclick="chooseAnswer('+i+')">'+esc(v)+'</button>').join('')+'</div>'+(checked?'<div class="feedback '+(answer===challenge.answer?'':'error')+'">'+esc(challenge.explanation)+'</div>':'')+'</div>';
  }
- return '<div class="topmeta"><span class="eyebrow">'+t("unit_word")+' '+unit+' / '+esc(D.names[unit-1])+'</span><span class="pill">'+t("concept_word")+' '+(lessonIndex+1)+' / '+sessions.length+'</span></div><div class="lesson-layout"><div class="side-list">'+sessions.map((x,i)=>'<button class="'+(x.id===selectedId?'active':'')+'" onclick="choose(\''+x.id+'\')"><span class="stepnum">'+(i+1)+'</span><span>'+esc(x.title)+'</span>'+progressBadge("ai",1,unit-1,i)+'</button>').join('')+'</div><section class="stage"><nav class="lesson-steps" aria-label="'+t("stages_aria")+'">'+stages.map((name,i)=>'<span class="lesson-step '+(i===step?'current':i<step?'done':'')+'"><span class="lesson-step__num">'+(i<step?'\u2713':(i+1))+'</span>'+esc(name)+'</span>').join('')+'</nav>'+(step<4?'<div class="lesson-shortcut"><button class="lesson-jump" onclick="jumpToPractice()">'+t("go_practice")+'</button></div>':'')+main+(hint?'<div class="hint"><b>'+t("hint_label")+'</b> '+esc(step===1?'Change the input and compare two outcomes. Explain the pattern you observe.':step===2?'Connect the model to the lesson title. Which variable is changing?':'Eliminate choices that conflict with the definition. Use the experiment before choosing.')+'</div>':'')+'<div class="stepfooter"><button class="btn light" onclick="back()">'+t("back_btn")+'</button><div style="display:flex;gap:8px">'+(step===0||step===3?(!checked?'<button class="btn teal" '+(answer===null?'disabled':'')+' onclick="verify()">'+t("check_btn")+'</button>':'<button class="btn teal" onclick="next()">'+t("continue_btn")+'</button>'):'<button class="btn teal" onclick="next()">'+t("continue_btn")+'</button>')+'</div></div>'+(step===4?'':'<button class="btn light" onclick="hint=true;render()">'+t("hint_btn")+'</button>')+'<div class="source">'+t("source_line")+' '+esc(sourceFor(s))+'. '+t("source_extra")+'</div></section></div>';
+ return '<div class="topmeta"><span class="eyebrow">'+t("unit_word")+' '+unit+' / '+esc(D.names[unit-1])+'</span><span class="pill">'+t("concept_word")+' '+(lessonIndex+1)+' / '+sessions.length+'</span></div><div class="lesson-layout"><div class="side-list">'+sessions.map((x,i)=>'<button class="'+(x.id===selectedId?'active':'')+'" onclick="choose(\''+x.id+'\')"><span class="stepnum">'+(i+1)+'</span><span>'+esc(x.title)+'</span>'+progressBadge("ai",1,unit-1,i)+'</button>').join('')+'</div><section class="stage"><nav class="lesson-steps" aria-label="'+t("stages_aria")+'">'+stages.map((name,i)=>'<span class="lesson-step '+(i===step?'current':i<step?'done':'')+'"><span class="lesson-step__num">'+(i<step?'\u2713':(i+1))+'</span>'+esc(name)+'</span>').join('')+'</nav>'+(step<4?'<div class="lesson-shortcut"><button class="lesson-jump" onclick="jumpToPractice()">'+t("go_practice")+'</button></div>':'')+lessonLabEntry()+main+(hint?'<div class="hint"><b>'+t("hint_label")+'</b> '+esc(step===1?'Change the input and compare two outcomes. Explain the pattern you observe.':step===2?'Connect the model to the lesson title. Which variable is changing?':'Eliminate choices that conflict with the definition. Use the experiment before choosing.')+'</div>':'')+'<div class="stepfooter"><button class="btn light" onclick="back()">'+t("back_btn")+'</button><div style="display:flex;gap:8px">'+(step===0||step===3?(!checked?'<button class="btn teal" '+(answer===null?'disabled':'')+' onclick="verify()">'+t("check_btn")+'</button>':'<button class="btn teal" onclick="next()">'+t("continue_btn")+'</button>'):'<button class="btn teal" onclick="next()">'+t("continue_btn")+'</button>')+'</div></div>'+(step===4?'':'<button class="btn light" onclick="hint=true;render()">'+t("hint_btn")+'</button>')+'<div class="source">'+t("source_line")+' '+esc(sourceFor(s))+'. '+t("source_extra")+'</div></section></div>';
 }
 function germanUnits(){return catalogUnits("de")}
 function germanChooseUnit(i){year2Unit=i;nav("unitPreview")}
@@ -278,6 +303,7 @@ function startNamedPractice(g,u,i){
  window.EBDA_COMPLETION.open(k);
 }
 function focusPractice(){
+ if(lessonCodeLabActive)return integratedLessonLab();
  let g,u,i,name;
  if(mode==="learn"){
   g=1;const s=current(),sessions=D.sessions.filter(x=>x.unit===unit);
@@ -318,7 +344,7 @@ function focusPractice(){
  '<div class="practice-focus__info"><h1 class="practice-focus__lesson">'+esc(name)+'</h1>'+
  '<span id="focus-counter" class="practice-focus__counter">'+(finished?'Completed · 50 / 50':'Question '+progress.position+' / '+progress.total)+'</span></div>'+
  '<div id="focus-progress-track" class="practice-focus__track" role="progressbar" aria-label="Answered questions" aria-valuemin="0" aria-valuemax="50" aria-valuenow="'+progress.answered+'"><i id="focus-progress-fill" style="width:'+percent+'%"></i></div></header>'+
- '<div class="practice-focus__content">'+content+(nextLesson?'<div class="practice-focus__finish">'+nextLesson+'</div>':'')+'</div>'+
+ '<div class="practice-focus__content">'+lessonLabEntry()+content+(nextLesson?'<div class="practice-focus__finish">'+nextLesson+'</div>':'')+'</div>'+
  '</section>';
 }
 
@@ -350,7 +376,7 @@ function render(){
  if(document.body?.classList)document.body.classList.toggle("practice-focus-active",focused);
  const activeId=document.activeElement&&document.activeElement.id;
  const LTR=new Set(["learn","advancedLab","codeLab","dataAnalysisPractice","mathPractice","physicsPractice","englishPractice","businessPractice","germanPractice","teacherReview"]);
- app.dir=LTR.has(mode)?"ltr":"";
+ app.dir=lessonCodeLabActive||mode==="codeLab"?(window.EBDA_I18N.current()==="ar"?"rtl":"ltr"):LTR.has(mode)?"ltr":"";
  app.innerHTML=mode==="subjectLoading"||mode==="teacherLoading"?'<section class="practice-focus"><div class="practice-focus__content" role="status"><h2>'+t("loading_lesson")+'</h2><p>'+t("loading_preparing")+'</p></div></section>':namedLessonContext&&namedLessonContext.mode===mode&&!window.EBDA_COMPLETION.getName(namedLessonKey(namedLessonContext)).trim()?namedLessonGate(namedLessonContext):mode==="advancedLoading"?'<section class="practice-focus" aria-label="'+t("loading_lab")+'"><div class="practice-focus__content" role="status"><h2>'+t("loading_lab")+'</h2><p>'+t("loading_lab_preparing")+'</p></div></section>':mode==="teacherReview"?teacherView():mode==="dataAnalysisPractice"?window.EBDAA_DATA_ANALYSIS_PRACTICE.render():mode==="economicsPractice"?window.EBDAA_ECONOMICS_PRACTICE.render():mode==="civicsPractice"?window.EBDAA_CIVICS_PRACTICE.render():mode==="socialPractice"?window.EBDAA_SOCIAL_STUDIES_PRACTICE.render():mode==="businessPractice"?window.EBDAA_BUSINESS_PRACTICE.render():mode==="physicsPractice"?window.EBDAA_PHYSICS_PRACTICE.render():mode==="codeLab"?window.EBDAA_CODE_LABS.render():mode==="germanPractice"?window.EBDAA_GERMAN_PRACTICE.render():mode==="arabicPractice"?window.EBDAA_ARABIC_PRACTICE.render():mode==="englishPractice"?window.EBDAA_ENGLISH_PRACTICE.render():mode==="mathPractice"?window.EBDAA_MATH_PRACTICE.render():focused?focusPractice():mode==="home"?home():mode==="browse"?browse():mode==="subject"?subjectUnits():mode==="unitPreview"?previewUnit():mode==="advancedLab"?advancedLab():mode==="learn"?learn():about();
  window.NTSS_QUEST_PATH?.render(app,mode);
  if(activeId){const el=document.getElementById(activeId);if(el)el.focus({preventScroll:true})}
@@ -359,7 +385,7 @@ function render(){
 window.EBDA_APP_RENDER=render;
 const SUBJECT_ENGINES={dataAnalysisPractice:"EBDAA_DATA_ANALYSIS_PRACTICE",mathPractice:"EBDAA_MATH_PRACTICE",physicsPractice:"EBDAA_PHYSICS_PRACTICE",englishPractice:"EBDAA_ENGLISH_PRACTICE",arabicPractice:"EBDAA_ARABIC_PRACTICE",germanPractice:"EBDAA_GERMAN_PRACTICE",civicsPractice:"EBDAA_CIVICS_PRACTICE",economicsPractice:"EBDAA_ECONOMICS_PRACTICE",socialPractice:"EBDAA_SOCIAL_STUDIES_PRACTICE",businessPractice:"EBDAA_BUSINESS_PRACTICE"};
 document.addEventListener?.("keydown",function(event){
- if(mode==="codeLab"||event.altKey||event.metaKey||event.ctrlKey||event.repeat)return;
+ if(mode==="codeLab"||lessonCodeLabActive||event.altKey||event.metaKey||event.ctrlKey||event.repeat)return;
  const tag=event.target?.tagName?.toLowerCase();
  if(["input","textarea","select","button","a","summary"].includes(tag)||event.target?.isContentEditable)return;
  const key=event.key;
