@@ -101,7 +101,7 @@ try{
 
  // Each curriculum must request a student name before rendering its 50-question activity.
  const subjectChecks=[
-  ["mathOpen",1],["englishOpen",1],["physicsOpen",1],["businessOpen",1],
+  ["dataAnalysisOpen",1],["dataAnalysisOpen",2],["mathOpen",1],["englishOpen",1],["physicsOpen",1],["businessOpen",1],
   ["germanOpen",1],["arabicOpen",1],["civicsOpen",1],["socialOpen",2],["economicsOpen",3]
  ];
  const subjectPage=await browser.newPage({viewport:{width:430,height:850},serviceWorkers:"block",ignoreHTTPSErrors:true});
