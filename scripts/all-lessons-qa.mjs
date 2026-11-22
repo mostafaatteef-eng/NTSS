@@ -5,7 +5,7 @@ import vm from "node:vm";
 const read=(name)=>readFileSync(name,"utf8");
 const win={};
 const curriculum=[
- "curriculum-data.js","grade-catalog.js","performance-map.js",
+ "curriculum-data.js","grade-catalog.js","performance-map.js","data-analysis-curriculum.js",
  "math-curriculum.js","english-curriculum.js","physics-curriculum.js",
  "arabic-curriculum.js","german-curriculum.js","social-studies-curriculum.js",
  "civics-curriculum.js","economics-curriculum.js","business-english-curriculum.js",
@@ -13,7 +13,7 @@ const curriculum=[
  "german-question-data.js","german-audio-dialogues.js","english-grammar-extensions.js"
 ];
 const engines=[
- "assessment-enhancements.js","question-factory.js","unified-practice.js",
+ "assessment-enhancements.js","question-factory.js","unified-practice.js","data-analysis-practice.js",
  "math-practice.js","english-practice.js","physics-practice.js",
  "arabic-practice.js","german-practice.js","social-studies-practice.js",
  "civics-practice.js","economics-practice.js","business-english-practice.js"
@@ -24,6 +24,7 @@ for(const file of [...curriculum,...engines]){
  new Function("window",source)(win);
 }
 const specs=[
+ ["da","EBDAA_DATA_ANALYSIS_UNITS","EBDAA_DATA_ANALYSIS_PRACTICE"],
  ["math","EBDAA_MATH_UNITS","EBDAA_MATH_PRACTICE"],
  ["en","EBDAA_ENGLISH_UNITS","EBDAA_ENGLISH_PRACTICE"],
  ["physics","EBDAA_PHYSICS_UNITS","EBDAA_PHYSICS_PRACTICE"],
@@ -74,8 +75,8 @@ for(const grade of win.EBDAA_GRADES.grades){
  }
 }
 assert.deepEqual(errors,[],"Broken lesson banks: "+JSON.stringify(errors.slice(0,15)));
-assert.equal(lessonCount,586,"Expected indexed lesson/activity total");
+assert.equal(lessonCount,594,"Expected indexed lesson/activity total");
 assert.equal(projects,8,"Business English projects require teacher review, not automatic grading");
-assert.equal(graded,578,"Graded 50-item assessments");
+assert.equal(graded,586,"Graded 50-item assessments");
 assert.equal(aiCounts[1]+aiCounts[2]+aiCounts[3],116);
 console.log(JSON.stringify({result:"PASS",lessons:lessonCount,assessments:graded,ungradedProjects:projects,ai:aiCounts.slice(1),subjects:perSubject}));
