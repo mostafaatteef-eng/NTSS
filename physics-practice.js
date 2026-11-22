@@ -86,7 +86,7 @@ function build(g,u,i){
 }
 window.EBDAA_PHYSICS_PRACTICE=window.EBDA_PRACTICE_FRAMEWORK.create({
  name:"EBDAA_PHYSICS_PRACTICE",subject:"physics",gameKey:"physics",learningMode:"physicsPractice",appliedKey:"physics",contextGames:true,
- locale:"en",inputId:"practice-answer",checkId:"physics-check",back:"physicsBack()",
+ locale:"en",inputId:"practice-answer",checkId:"physics-check",back:()=>physicsBack(),
  tolerance:q=>Math.max(.011,Math.abs(Number(q.answer))*.001),
  buildItems:(g,u,i)=>build(g,u,i).map(q=>{
   const base={...q,pmode:q.mode,explanation:"Result: "+q.value+" "+(q.model[1]||"")+" · "+q.formula,focus:1};
@@ -95,7 +95,7 @@ window.EBDAA_PHYSICS_PRACTICE=window.EBDA_PRACTICE_FRAMEWORK.create({
   return {...base,mode:"number",answer:q.value};
  }),
  title:(g,u,i)=>window.EBDAA_PHYSICS_UNITS[g][u].sessions[i],
- header:g=>({exitLabel:"← Physics lessons",exit:"physicsBack()",yearLabel:"YEAR "+g+" · PHYSICS",disclaimer:"These 50 practice prompts are generated variations of simplified models; not 50 independent textbook questions. Models are illustrative, especially for semiconductors and magnetic proportionality. Teacher validation is required."}),
+ header:g=>({exitLabel:"← Physics lessons",exit:()=>physicsBack(),yearLabel:"YEAR "+g+" · PHYSICS",disclaimer:"These 50 practice prompts are generated variations of simplified models; not 50 independent textbook questions. Models are illustrative, especially for semiconductors and magnetic proportionality. Teacher validation is required."}),
  eyebrow:q=>"PHYSICS LAB · "+esc((q.pmode||"").toUpperCase()),
  beforeControls:q=>'<div class="hint" style="margin-bottom:16px"><strong>'+esc(q.model[0])+'</strong><p>Input A = '+q.a+' · Input B = '+q.b+' · Unit: '+esc(q.model[1]||"dimensionless")+'</p><p>'+esc(q.model[4])+'</p></div>',
  sliderLabel:(q,v)=>"Experiment prediction: "+esc(v||"select a value"),

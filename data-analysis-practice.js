@@ -465,9 +465,9 @@
  }
  window.EBDAA_DATA_ANALYSIS_PRACTICE=window.EBDA_PRACTICE_FRAMEWORK.create({
   name:"EBDAA_DATA_ANALYSIS_PRACTICE",subject:"da",gameKey:"da",learningMode:"dataAnalysisPractice",progressKey:"da",
-  locale:"en",inputId:"da-answer",checkId:"da-check",back:"dataAnalysisBackToUnit()",completionArabic:false,
+  locale:"en",inputId:"da-answer",checkId:"da-check",back:()=>dataAnalysisBackToUnit(),completionArabic:false,
   buildItems:build,title:(g,u,i)=>window.EBDAA_DATA_ANALYSIS_UNITS[g][u].sessions[i].title,
-  header:(g,u,i)=>({dir:"ltr",lang:"en",exitLabel:"← Data Analysis lessons",exit:"dataAnalysisBackToUnit()",
+  header:(g,u,i)=>({dir:"ltr",lang:"en",exitLabel:"← Data Analysis lessons",exit:()=>dataAnalysisBackToUnit(),
     yearLabel:"YEAR "+g+" · DATA ANALYSIS",
     disclaimer:"Based on Ms. Asmaa Ahmed Abd El-Hadi's uploaded grade-specific slide decks. 40 repeated-concept scenarios and 10 numerical applications; not 50 independent textbook items. Formative practice; teacher verification pending."}),
   eyebrow:(q,{cursor})=>["📊 Core concept","🔎 Analyze","🧠 Decide","🧮 Work with data","🎯 Check understanding"][cursor%5],

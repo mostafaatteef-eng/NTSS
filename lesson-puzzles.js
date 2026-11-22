@@ -64,15 +64,13 @@ function view(g,u,i){
  const count=s.done?3:s.round+(s.solved?1:0);
  const heading='<div class="puzzle-heading"><div><span class="puzzle-kicker">🎮 PLAY & LEARN</span><h3>'+escapeHtml(p.title)+'</h3></div><span class="puzzle-number">'+(s.done?"3 / 3":"PUZZLE "+(s.round+1)+" / 3")+'</span></div>'+
  '<div class="puzzle-meter" role="progressbar" aria-label="Puzzles solved" aria-valuemin="0" aria-valuemax="3" aria-valuenow="'+count+'"><i style="width:'+(100*count/3)+'%"></i></div>';
- if(s.done)return heading+'<div class="puzzle-result" role="status"><h4>🏆 Mission solved</h4><p>Three puzzles completed. Explore the explanation or continue to the next learning stage.</p><button class="btn light" onclick="EBDA_PUZZLES.restart('+g+','+u+','+i+')">Play again ↻</button></div>';
+ if(s.done)return ((heading)+"<div class=\"puzzle-result\" role=\"status\"><h4>🏆 Mission solved</h4><p>Three puzzles completed. Explore the explanation or continue to the next learning stage.</p><button class=\"btn light\" "+window.NTSS_EVENTS.bind("click",function(event){EBDA_PUZZLES.restart((g),(u),(i))},"EBDA_PUZZLES.restart")+">Play again ↻</button></div>");
  const buttons='<div class="puzzle-options">'+p.options.map((opt,j)=>
- '<button class="puzzle-choice '+(s.solved&&j===p.answerIndex?"puzzle-choice--correct":"")+'" type="button" '+(s.solved?"disabled":"")+' onclick="EBDA_PUZZLES.choose('+g+','+u+','+i+','+j+')"><span class="puzzle-choice__key">'+String.fromCharCode(65+j)+'</span>'+escapeHtml(opt)+'</button>').join("")+'</div>';
+ ("<button class=\"puzzle-choice "+(s.solved&&j===p.answerIndex?"puzzle-choice--correct":"")+"\" type=\"button\" "+(s.solved?"disabled":"")+" "+window.NTSS_EVENTS.bind("click",function(event){EBDA_PUZZLES.choose((g),(u),(i),(j))},"EBDA_PUZZLES.choose")+"><span class=\"puzzle-choice__key\">"+(String.fromCharCode(65+j))+"</span>"+(escapeHtml(opt))+"</button>")).join("")+'</div>';
  let feedback='';
- if(s.solved)feedback='<div class="puzzle-result" role="status"><strong>✓ Correct reasoning</strong><p>'+escapeHtml(p.reason)+'</p></div>'+
- '<div class="puzzle-controls"><button class="btn teal" onclick="EBDA_PUZZLES.next('+g+','+u+','+i+')">'+(s.round===2?"Complete mission ✓":"Next puzzle →")+'</button></div>';
- else feedback=(s.wrong?'<div class="puzzle-try" role="status">Not quite — inspect the evidence and try again.</div>':'')+
- (s.hint?'<p class="puzzle-tip">💡 '+escapeHtml(p.hint)+'</p>':'')+
- '<div class="puzzle-controls"><button class="btn light" onclick="EBDA_PUZZLES.hint('+g+','+u+','+i+')" '+(s.hint?"disabled":"")+'>💡 '+(s.hint?"Hint shown":"Need a hint?")+'</button></div>';
+ if(s.solved)feedback=("<div class=\"puzzle-result\" role=\"status\"><strong>✓ Correct reasoning</strong><p>"+(escapeHtml(p.reason))+"</p></div><div class=\"puzzle-controls\"><button class=\"btn teal\" "+window.NTSS_EVENTS.bind("click",function(event){EBDA_PUZZLES.next((g),(u),(i))},"EBDA_PUZZLES.next")+">"+(s.round===2?"Complete mission ✓":"Next puzzle →")+"</button></div>");
+ else feedback=(((s.wrong?'<div class="puzzle-try" role="status">Not quite — inspect the evidence and try again.</div>':'')+
+ (s.hint?'<p class="puzzle-tip">💡 '+escapeHtml(p.hint)+'</p>':''))+"<div class=\"puzzle-controls\"><button class=\"btn light\" "+window.NTSS_EVENTS.bind("click",function(event){EBDA_PUZZLES.hint((g),(u),(i))},"EBDA_PUZZLES.hint")+" "+(s.hint?"disabled":"")+">💡 "+(s.hint?"Hint shown":"Need a hint?")+"</button></div>");
  return heading+'<p class="puzzle-prompt">'+escapeHtml(p.question)+'</p>'+p.scene+buttons+feedback;
 }
 function panel(g,u,i){return '<section id="ebda-puzzle-'+key(g,u,i)+'" class="ebda-puzzle" aria-label="Interactive lesson mini-game" aria-live="polite">'+view(g,u,i)+'</section>'}

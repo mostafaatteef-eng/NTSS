@@ -33,7 +33,7 @@ window.NTSS_JOURNEY=(function(){
  function inside(g,u,i){
   const st=get(g,u,i),type=st.stage,fam=family(g,u),questions=fam?bank[fam][type]:null,arr=st[type];
   const items=[["quick","1. Quick Check"],["explore","2. Learn & Explore"],["practice","3. Practice"],["review","4. Review"],["master","5. Mastery Check"],["later","6. Continue Later"]];
-  const nav='<nav class="ntss-journey-nav">'+items.map(x=>'<button class="'+(x[0]===type?"active":"")+'" onclick="NTSS_JOURNEY.stage('+g+','+u+','+i+',\''+x[0]+'\')">'+x[1]+'</button>').join("")+'</nav>';
+  const nav='<nav class="ntss-journey-nav">'+items.map(x=>("<button class=\""+(x[0]===type?"active":"")+"\" "+window.NTSS_EVENTS.bind("click",function(event){NTSS_JOURNEY.stage((g),(u),(i),(x[0]))},"NTSS_JOURNEY.stage")+">"+(x[1])+"</button>")).join("")+'</nav>';
   let main="";
   if(!fam&&(type==="quick"||type==="master"))main='<p>Topic-specific five-question checks are not yet academically reviewed for this unit. Continue with the normal lesson, interactive concepts and mistake review instead.</p>';
   else if(questions){
@@ -43,12 +43,12 @@ window.NTSS_JOURNEY=(function(){
       questions.map((q,j)=>'<p>'+esc(j+1)+'. '+esc(q.q)+' — '+(arr[j].correct?"✓": "Review: "+esc(q.explain))+'</p>').join("");
     }else{
      const q=questions[arr.length];
-     main='<div class="ntss-journey-test"><small>Question '+(arr.length+1)+' of 5 · formative only</small><h3>'+esc(q.q)+'</h3>'+q.options.map((option,j)=>'<button onclick="NTSS_JOURNEY.choose('+g+','+u+','+i+',\''+type+'\','+j+')">'+esc(option)+'</button>').join("")+'</div>';
+     main='<div class="ntss-journey-test"><small>Question '+(arr.length+1)+' of 5 · formative only</small><h3>'+esc(q.q)+'</h3>'+q.options.map((option,j)=>("<button "+window.NTSS_EVENTS.bind("click",function(event){NTSS_JOURNEY.choose((g),(u),(i),(type),(j))},"NTSS_JOURNEY.choose")+">"+(esc(option))+"</button>")).join("")+'</div>';
     }
   }else if(type==="explore")main='<p>Read the lesson explanation, then open Interactive Concept Visualizer from Learning Tools when available. Predict the result before moving a parameter.</p>';
   else if(type==="practice")main='<p>Return to the main question above. Complete ten questions at a time. The AI specialization uses recent performance to prioritize the next unanswered group.</p>';
   else if(type==="review")main='<p>Check missed questions in Learning Tools. Read the reasoning and try a similar question before continuing.</p>';
-  else main='<p>Save an opt-in checkpoint with the Continue Later control below. On shared school devices, clear the saved session when finished.</p><button onclick="EBDAA_PRACTICE.saveCheckpoint()">Save my progress on this device</button><button onclick="EBDAA_PRACTICE.clearCheckpoint()">Clear saved checkpoint</button><p id="ntss-checkpoint-status" role="status">Checkpoints are stored only if you choose to save. On a shared device, clear the saved session.</p>';
+  else main=("<p>Save an opt-in checkpoint with the Continue Later control below. On shared school devices, clear the saved session when finished.</p><button "+window.NTSS_EVENTS.bind("click",function(event){EBDAA_PRACTICE.saveCheckpoint()},"EBDAA_PRACTICE.saveCheckpoint")+">Save my progress on this device</button><button "+window.NTSS_EVENTS.bind("click",function(event){EBDAA_PRACTICE.clearCheckpoint()},"EBDAA_PRACTICE.clearCheckpoint")+">Clear saved checkpoint</button><p id=\"ntss-checkpoint-status\" role=\"status\">Checkpoints are stored only if you choose to save. On a shared device, clear the saved session.</p>");
   return nav+main;
  }
  function panel(g,u,i){return '<details class="ntss-journey"><summary>Learning Journey · Quick Check → Mastery</summary><div id="ntss-journey-content">'+inside(g,u,i)+'</div></details>'}

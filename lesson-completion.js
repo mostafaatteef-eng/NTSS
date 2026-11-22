@@ -54,7 +54,7 @@ window.EBDA_COMPLETION=(function(){
     const weak=stages.findIndex(v=>v.completed>0&&v.good/v.completed<0.7);
     missionReview='<details class="ebda-mastery-review"><summary>📊 '+(arabic?"تحليل مراحل التعلم":"Learning journey breakdown")+'</summary><div class="ebda-mastery-grid">'+stages.map((v,i)=>'<div class="ebda-mastery-item"><span>'+labels[i]+'</span><b>'+v.good+' / '+v.completed+'</b><div class="ebda-mastery-track"><i style="width:'+(v.completed?Math.round(v.good/v.completed*100):0)+'%"></i></div></div>').join('')+'</div><p>'+(weak>=0?(arabic?"راجع مرحلة "+labels[weak]+" ثم أعد تجربة الأسئلة غير الصحيحة.":"Suggested review: revisit the "+labels[weak]+" stage and your missed questions."):(arabic?"عمل ممتاز؛ واصل التدرب بانتظام.":"Strong progress across the completed stages. Keep practicing."))+'</p></details>';
   }
-  const actions='<div class="ebda-finish-actions">'+(retry?'<button class="ebda-finish-btn ebda-finish-secondary" onclick="'+retry+'">'+(arabic?"↻ إعادة التدريب":"↻ Try again")+'</button>':'')+(back?'<button class="ebda-finish-btn ebda-finish-secondary" onclick="'+back+'">'+(arabic?"العودة للدروس":"Back to lessons")+'</button>':'')+'</div>';
+  const actions='<div class="ebda-finish-actions">'+(retry?("<button class=\"ebda-finish-btn ebda-finish-secondary\" "+window.NTSS_EVENTS.bind("click",function(event){(retry).call(this,event)})+">"+(arabic?"↻ إعادة التدريب":"↻ Try again")+"</button>"):'')+(back?("<button class=\"ebda-finish-btn ebda-finish-secondary\" "+window.NTSS_EVENTS.bind("click",function(event){(back).call(this,event)})+">"+(arabic?"العودة للدروس":"Back to lessons")+"</button>"):'')+'</div>';
   let certificate="";
   if(eligible&&visible&&name.trim().length>=3){
     const displayName=esc(name.trim()),subjectName=esc(subjects[subject]||subject),displayLesson=esc(lesson),fullDate=new Intl.DateTimeFormat("en-GB",{day:"numeric",month:"short",year:"numeric"}).format(new Date());
@@ -78,7 +78,7 @@ window.EBDA_COMPLETION=(function(){
       '<p class="ebda-certificate-disclaimer">Locally generated practice record · Not an officially verified school credential</p>'+
       '</article>';
   }
-  const form=eligible?(name.trim().length>=3?'<div class="ebda-finish-print-actions">'+(visible?'<button class="ebda-finish-btn ebda-finish-primary" onclick="EBDA_COMPLETION.print()">⬇ '+(arabic?"حفظ PDF / طباعة":"Save as PDF / Print")+'</button>':'<button class="ebda-finish-btn ebda-finish-primary" onclick="EBDA_COMPLETION.open('+JSON.stringify(k)+')">'+(arabic?"معاينة الشهادة":"Preview certificate")+'</button>')+'</div>':'<p role="status">'+(arabic?"لا يوجد اسم مسجل لهذه المحاولة. ارجع لبداية الدرس.":"This attempt has no starting name. Return to the lesson start.")+'</p>'):"";
+  const form=eligible?(name.trim().length>=3?'<div class="ebda-finish-print-actions">'+(visible?("<button class=\"ebda-finish-btn ebda-finish-primary\" "+window.NTSS_EVENTS.bind("click",function(event){EBDA_COMPLETION.print()},"EBDA_COMPLETION.print")+">⬇ "+(arabic?"حفظ PDF / طباعة":"Save as PDF / Print")+"</button>"):("<button class=\"ebda-finish-btn ebda-finish-primary\" "+window.NTSS_EVENTS.bind("click",function(event){EBDA_COMPLETION.open((k))},"EBDA_COMPLETION.open")+">"+(arabic?"معاينة الشهادة":"Preview certificate")+"</button>"))+'</div>':'<p role="status">'+(arabic?"لا يوجد اسم مسجل لهذه المحاولة. ارجع لبداية الدرس.":"This attempt has no starting name. Return to the lesson start.")+'</p>'):"";
   return '<section class="ebda-lesson-completed" dir="'+(arabic?"rtl":"ltr")+'" lang="'+locale+'"><div class="ebda-finish-card">'+header+intro+attemptNotice(k,arabic)+'<p class="ebda-finish-message">'+msg+'</p>'+missionReview+form+actions+'</div>'+certificate+'</section>';
  }
  function participation({subject,grade,unit,index,lesson,back}){
@@ -99,10 +99,7 @@ window.EBDA_COMPLETION=(function(){
       '<div><span class="ebda-certificate-detail-label">Assessment</span><b>Not graded</b></div>'+
     '</div>'+
     '<p class="ebda-certificate-disclaimer">Self-reported project preparation only · No teacher verification or academic grade · Not an official school certificate</p></article>';
-  return '<section class="ebda-lesson-completed"><div class="ebda-finish-card"><h1 class="ebda-finish-title">'+(window.NTSS_UI?.pair("Project preparation recorded","تم تسجيل إعداد المشروع")||"Project preparation recorded")+'</h1>'+
-    '<p>Your outline has been prepared. Actual presentation and writing skills require teacher assessment.</p>'+
-    '<div class="ebda-finish-print-actions"><button class="ebda-finish-btn ebda-finish-primary" onclick="EBDA_COMPLETION.print()">'+(window.NTSS_UI?.pair("Save as PDF / Print","حفظ PDF / طباعة")||"Save as PDF / Print")+'</button>'+
-    (back?'<button class="ebda-finish-btn ebda-finish-secondary" onclick="'+back+'">'+(window.NTSS_UI?.back()||'Back to lessons')+'</button>':'')+'</div></div>'+sheet+'</section>';
+  return ("<section class=\"ebda-lesson-completed\"><div class=\"ebda-finish-card\"><h1 class=\"ebda-finish-title\">"+(window.NTSS_UI?.pair("Project preparation recorded","تم تسجيل إعداد المشروع")||"Project preparation recorded")+"</h1><p>Your outline has been prepared. Actual presentation and writing skills require teacher assessment.</p><div class=\"ebda-finish-print-actions\"><button class=\"ebda-finish-btn ebda-finish-primary\" "+window.NTSS_EVENTS.bind("click",function(event){EBDA_COMPLETION.print()},"EBDA_COMPLETION.print")+">"+(window.NTSS_UI?.pair("Save as PDF / Print","حفظ PDF / طباعة")||"Save as PDF / Print")+"</button>"+(back?("<button class=\"ebda-finish-btn ebda-finish-secondary\" "+window.NTSS_EVENTS.bind("click",function(event){(back).call(this,event)})+">"+(window.NTSS_UI?.back()||'Back to lessons')+"</button>"):'')+"</div></div>"+(sheet)+"</section>");
  }
  return {render,participation,setName,getName,open,forget,print,freshAttempt,checkpointIdentity,restoreIdentity,attemptNotice};
 })();

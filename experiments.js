@@ -4,7 +4,7 @@ window.EBDAA_LAB_RENDER=function(s,n){
 const i=window.EBDAA_DATA.sessions.findIndex(x=>x.id===s.id),a=window.EBDAA_LAB_CONFIG[i]||["trace","Experiment","Change the control","n×2"],type=a[0],title=a[1],desc=a[2],formula=a[3];
 const esc=t=>String(t).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const out=t=>'<div class="simlabel">'+esc(title)+'</div><p>'+esc(desc)+'</p>'+t;
-const slider=(max=8,min=1)=>'<input class="range" aria-label="Adjust experiment" type="range" min="'+min+'" max="'+max+'" step="1" value="'+n+'" oninput="setLab(this.value)"/><p class="muted">Adjust the slider: <strong>'+n+'</strong></p>';
+const slider=(max=8,min=1)=>("<input class=\"range\" aria-label=\"Adjust experiment\" type=\"range\" min=\""+(min)+"\" max=\""+(max)+"\" step=\"1\" value=\""+(n)+"\" "+window.NTSS_EVENTS.bind("input",function(event){setLab(this.value)},"setLab")+"/><p class=\"muted\">Adjust the slider: <strong>"+(n)+"</strong></p>");
 const chip=(v,c="#ffeab0")=>'<span class="visual-cell" style="background:'+c+'">'+esc(v)+'</span>';
 let body='';
 switch(type){

@@ -109,12 +109,19 @@ try{
  if(await page.evaluate(()=>window.EBDA_RUBRIC.score(2,0,0).earned)!==35)throw Error("Numeric evidence state was not preserved");
  const prior=await page.evaluate(()=>window.EBDAA_PRACTICE.questionOrder());
  await page.evaluate(()=>window.EBDAA_PRACTICE.restart());
+ // Restart intentionally clears the original attempt identity. Enter the new
+ // attempt through its real name gate before looking for question controls.
+ await page.locator('#ebda-lesson-student-name').fill('QA Student');
+ await page.getByRole('button',{name:/Start lesson/i}).click();
  const current=await page.evaluate(()=>window.EBDAA_PRACTICE.questionOrder());
  if(prior.length!==50||new Set(prior).size!==50||prior.join("|")===current.join("|"))throw Error("New attempt did not reshuffle its 50 unique questions");
  const q=await page.evaluate(()=>window.EBDAA_PRACTICE.currentQuestion());
  if(q.mode==="live-code"){
-   // Code execution is covered separately; this checks navigation and grading integration.
-   await page.evaluate(()=>window.EBDAA_PRACTICE.answer("pass"));
+   // A shuffled attempt can start with code. Exercise its actual worker button;
+   // coding cards intentionally have no separate Check answer button.
+   await page.locator('#ntss-code-editor').fill(q.codeTask.solution);
+   await page.getByRole('button',{name:'▶ Run & check',exact:true}).click();
+   await page.locator('#ebdaa-practice-stage .feedback').waitFor({timeout:45000});
  }else if(q.mode==="order"){
    for(const value of q.answer.split("|"))await page.locator("#ebdaa-practice-stage button.choice").filter({hasText:value}).click();
  }else if(q.mode==="number"){
@@ -122,7 +129,7 @@ try{
  }else{
    await page.locator("#ebdaa-practice-stage button.choice").filter({hasText:String(q.answer)}).first().click();
  }
- await page.locator("#ebdaa-practice-stage").getByRole("button",{name:"Check answer",exact:true}).click();
+ if(q.mode!=="live-code")await page.locator("#ebdaa-practice-stage").getByRole("button",{name:"Check answer",exact:true}).click();
  if(!await page.locator("#ebdaa-practice-stage").getByText(/Correct — well done|Not quite — here is why/).count())throw Error("Practice feedback missing");
  await page.locator("#ebdaa-practice-stage").getByRole("button",{name:/Next question/i}).click();
  if((await page.locator("#focus-counter").textContent())!=="Question 2 / 50")throw Error("Next practice question missing");

@@ -38,7 +38,7 @@ window.NTSS_LAZY=(function(){
   const promise=new Promise((resolve,reject)=>{
    const script=document.createElement("script");
    script.async=false;
-   script.src=file;
+   script.src=file+(file.includes("?")?"&":"?")+"release=20261122-round2";
    script.onload=()=>{ready.add(file);resolve()};
    script.onerror=()=>{script.remove();reject(Error("Unable to load "+file))};
    document.head.appendChild(script);

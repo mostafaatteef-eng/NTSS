@@ -29,6 +29,8 @@ jobs:
           npx playwright install --with-deps chromium firefox webkit
       - name: Responsive Chromium and live workers
         run: NTSS_BROWSER=chromium node scripts/assessment-browser-qa.mjs
+      - name: Strict CSP and isolated SQL/Python challenge buttons
+        run: node scripts/audit-round2-browser-qa.mjs
       - name: Bilingual lesson lab integration
         run: node scripts/lab-integration-qa.mjs
       - name: Upload lesson lab review screenshots

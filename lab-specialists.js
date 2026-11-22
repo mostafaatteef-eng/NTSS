@@ -1,6 +1,6 @@
 /* Real numerical specialty exercises for source-aligned sessions. All values are explicitly synthetic. */
 window.EBDAA_SPECIAL=function(g,u,i,v){
-const f=n=>Number(n).toFixed(3);const slider=(label,max=10)=>'<label for="studio-slider"><b>'+label+': '+v+'</b></label><input id="studio-slider" class="range" type="range" min="1" max="'+max+'" value="'+v+'" oninput="EBDAA_STUDIO.value(this.value)">';
+const f=n=>Number(n).toFixed(3);const slider=(label,max=10)=>("<label for=\"studio-slider\"><b>"+(label)+": "+(v)+"</b></label><input id=\"studio-slider\" class=\"range\" type=\"range\" min=\"1\" max=\""+(max)+"\" value=\""+(v)+"\" "+window.NTSS_EVENTS.bind("input",function(event){EBDAA_STUDIO.value(this.value)},"EBDAA_STUDIO.value")+">");
 const cell=(x)=>'<span class="visual-cell" style="font-size:15px">'+x+'</span>';let heading="",result="",method="",values="";
 if(g===3&&u===0){
  if(i===0){const a=[4,5,6,v],mean=a.reduce((x,y)=>x+y)/4;heading="Descriptive statistics";result="Sample mean = "+f(mean)+", median = "+f([...a].sort((x,y)=>x-y).reduce((x,y,idx,arr)=>idx===1?y:idx===2?x+y:x)/2);method="The mean describes the observed sample. Inferring population properties requires sampling assumptions.";}

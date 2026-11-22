@@ -3,7 +3,7 @@ import {readFileSync} from "node:fs";
 import vm from "node:vm";
 const html=readFileSync("index.html","utf8");
 const sw=readFileSync("sw.js","utf8");
-const appSource=readFileSync("app-main.js","utf8");
+const appSource=readFileSync("app-main.js","utf8").replace(/\\"/g,'"');
 assert.match(appSource,/class="subject-page-title" dir="ltr"/,"Long English subject headings must use a responsive class and LTR");
 assert.match(html,/\.subject-page-title\{[^}]*overflow-wrap:anywhere/,"Long subject titles must wrap rather than overflow horizontally");
 assert.match(html,/font-size:clamp\(28px,3\.45vw,49px\)/,"Subject heading must have a bounded type scale");
@@ -43,7 +43,8 @@ const doc={
 new Function("window","document",lazy)(fake,doc);
 await Promise.all([fake.NTSS_LAZY.ensureStudio(),fake.NTSS_LAZY.ensureStudio()]);
 assert.equal(fake.NTSS_LAZY.isReady(),true);
-assert.deepEqual(calls,lazyModules,"Exactly seven lazy scripts should load once and in order");
+assert.ok(calls.every(file=>file.endsWith("release=20261122-round2")),"Lazy assets must bypass stale pre-migration caches");
+assert.deepEqual(calls.map(file=>file.replace(/[?&]release=20261122-round2$/, "")),lazyModules,"Exactly seven lazy scripts should load once and in order");
 await fake.NTSS_LAZY.ensureStudio();
 assert.equal(calls.length,7,"Repeated requests should not load scripts again");
 for(const mode of ["mathPractice","physicsPractice","englishPractice","businessPractice","germanPractice",

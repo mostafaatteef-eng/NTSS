@@ -79,7 +79,7 @@ window.NTSS_CONCEPTS=(function(){
  function inside(kind,id){
   const n=values.get(id)??3,v=visualization(kind,n);
   return '<div class="ntss-viz-display">'+display(kind,n)+'</div>'+
-   (kind==="sentence"||kind.startsWith("arabic-")||kind==="english-past"?'':'<label class="ntss-viz-slider">'+escape(v.unit)+' <strong>'+v.value+'</strong><input type="range" min="1" max="8" step="1" value="'+n+'" oninput="NTSS_CONCEPTS.choose('+JSON.stringify(id).replace(/"/g,"&quot;")+',this.value)" aria-label="'+escape(v.unit)+'"></label>')+
+   (kind==="sentence"||kind.startsWith("arabic-")||kind==="english-past"?'':("<label class=\"ntss-viz-slider\">"+(escape(v.unit))+" <strong>"+(v.value)+"</strong><input type=\"range\" min=\"1\" max=\"8\" step=\"1\" value=\""+(n)+"\" "+window.NTSS_EVENTS.bind("input",function(event){NTSS_CONCEPTS.choose((id),this.value)},"NTSS_CONCEPTS.choose")+" aria-label=\""+(escape(v.unit))+"\"></label>"))+
    '<small>Illustrative synthetic values for practice · Does not alter your answer or certificate.</small>';
  }
  function attach(root,mode,title){
@@ -88,7 +88,7 @@ window.NTSS_CONCEPTS=(function(){
   const isArabic=/arabic|economics|civics|social/i.test(mode),isGerman=/german/i.test(mode);
   const heading=isArabic?"استكشف المفهوم بصريًا":isGerman?"Konzept visualisieren":"Interactive Concept Visualizer";
   const subtitle=isArabic?"اختياري · جرّب وراقب":isGerman?"Optional · ausprobieren":"Optional · experiment and observe";
-  const id="ntss-concept-"+mode+"-"+kind,html='<details class="ntss-concept" '+(opened.has(id)?"open":"")+' ontoggle="NTSS_CONCEPTS.expand('+JSON.stringify(id).replace(/"/g,"&quot;")+',this.open)"><summary><span>▥ '+heading+'</span><small>'+subtitle+'</small></summary><div class="ntss-concept-inner" id="'+id+'" data-kind="'+kind+'">'+inside(kind,id)+'</div></details>';
+  const id="ntss-concept-"+mode+"-"+kind,html=("<details class=\"ntss-concept\" "+(opened.has(id)?"open":"")+" "+window.NTSS_EVENTS.bind("toggle",function(event){NTSS_CONCEPTS.expand((id),this.open)},"NTSS_CONCEPTS.expand")+"><summary><span>▥ "+(heading)+"</span><small>"+(subtitle)+"</small></summary><div class=\"ntss-concept-inner\" id=\""+(id)+"\" data-kind=\""+(kind)+"\">"+(inside(kind,id))+"</div></details>");
   root.insertAdjacentHTML("beforeend",html);
  }
  return {type,visualization,attach,choose,expand};

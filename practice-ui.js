@@ -7,7 +7,7 @@ window.NTSS_UI=(function(){
  const subject=k=>(names[k]||[k,k])[current()==="ar"?1:0];
  const year=g=>pair("Year "+g,"الصف "+g);
  const back=()=>pair("Back to lessons","العودة للدروس");
- function toolbar(){return '<div class="practice-language-bar" dir="'+(current()==="ar"?"rtl":"ltr")+'"><span>EBDA Learning</span><button type="button" class="btn light" onclick="EBDA_I18N.toggle()" aria-label="'+pair("Switch interface to Arabic","تغيير لغة الواجهة إلى الإنجليزية")+'">'+pair("عربي","English")+'</button></div>'}
+ function toolbar(){return ("<div class=\"practice-language-bar\" dir=\""+(current()==="ar"?"rtl":"ltr")+"\"><span>EBDA Learning</span><button type=\"button\" class=\"btn light\" "+window.NTSS_EVENTS.bind("click",function(event){EBDA_I18N.toggle()},"EBDA_I18N.toggle")+" aria-label=\""+(pair("Switch interface to Arabic","تغيير لغة الواجهة إلى الإنجليزية"))+"\">"+(pair("عربي","English"))+"</button></div>")}
  function catalog(key,c,g){
   return {...c,dir:current()==="ar"?"rtl":"ltr",crumb:()=>year(g),termLabel:n=>pair("Term "+n,"الفصل الدراسي "+n),
    unitKicker:(u,i)=>{const n=key==="de"?i+(g===1?1:g===2?4:7):(u.unitNo??i+1);return pair((key==="de"?"Module ":"Unit ")+n+" · "+u.sessions.length+" lessons","الوحدة "+n+" · "+u.sessions.length+" درسًا")},

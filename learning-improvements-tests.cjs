@@ -7,6 +7,7 @@ const fs=require('node:fs');
 const read=name=>fs.readFileSync(name,'utf8');
 function moduleFrom(file,stubs={}){
  const window={EBDA_APP_RENDER(){},...stubs};
+ require("./test-ui-events.cjs")(window);
  vm.runInNewContext(read(file),{window,document:{getElementById(){return null},querySelector(){return null}}},{filename:file});
  return window;
 }
@@ -73,6 +74,11 @@ test('Adaptive AI sprint reprioritizes only the next ten unanswered items',()=>{
  };
  const practice=moduleFrom('practice-workshop.js',stubs).EBDAA_PRACTICE;
  practice.begin(1,0,0);
+ const firstMarkup=practice.panel(1,0,0),secondMarkup=practice.panel(1,0,0);
+ const callbackIds=html=>[...html.matchAll(/data-ntss-(?:click|input|toggle|keydown)="(ui\d+)"/g)].map(m=>m[1]);
+ assert.ok(callbackIds(firstMarkup).length>0);
+ assert.ok(callbackIds(firstMarkup).every(id=>!callbackIds(secondMarkup).includes(id)),"Full-shell rebuild must not reuse consumed callbacks from cached HTML");
+ assert.equal(practice.progress().position,1,"Rebinding must not advance or reset the attempt");
  const before=practice.questionOrder();
  for(let i=0;i<10;i++){
   const q=practice.currentQuestion();

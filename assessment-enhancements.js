@@ -82,21 +82,11 @@ window.NTSS_ASSESSMENT=(function(){
     '<p class="ntss-probe-note">Threshold: '+v.threshold+' · Values to its right exceed the limit.</p></div>';
   }
 
-  return '<div class="ntss-data-card"><div class="ntss-chart-head"><b>Factory sensor readings</b><span>Explore the threshold</span></div>'+
-   '<div class="ntss-chart" role="img" aria-label="Sensor readings: '+safe(v.readings.join(", "))+'">'+
-   v.readings.map((n,j)=>'<div class="ntss-chart-item"><strong>'+n+'</strong><div class="ntss-chart-track"><div class="ntss-chart-bar '+(n>selected?"is-high":"")+'" style="height:'+Math.round(100*n/max)+'%"></div></div><small>S'+(j+1)+'</small></div>').join("")+'</div>'+
-   '<label class="ntss-probe-label" for="ntss-probe">Explore threshold: <output>'+selected+'</output></label>'+
-   '<input id="ntss-probe" aria-label="Explore threshold; the question uses its original value" type="range" min="5" max="22" step="1" value="'+selected+'" oninput="EBDAA_PRACTICE.probe(this.value)">'+
-   '<p class="ntss-probe-note">Explore freely; answer using the fixed threshold of <b>'+v.threshold+'</b> stated in the question.</p></div>';
+  return ("<div class=\"ntss-data-card\"><div class=\"ntss-chart-head\"><b>Factory sensor readings</b><span>Explore the threshold</span></div><div class=\"ntss-chart\" role=\"img\" aria-label=\"Sensor readings: "+(safe(v.readings.join(", ")))+"\">"+(v.readings.map((n,j)=>'<div class="ntss-chart-item"><strong>'+n+'</strong><div class="ntss-chart-track"><div class="ntss-chart-bar '+(n>selected?"is-high":"")+'" style="height:'+Math.round(100*n/max)+'%"></div></div><small>S'+(j+1)+'</small></div>').join(""))+"</div><label class=\"ntss-probe-label\" for=\"ntss-probe\">Explore threshold: <output>"+(selected)+"</output></label><input id=\"ntss-probe\" aria-label=\"Explore threshold; the question uses its original value\" type=\"range\" min=\"5\" max=\"22\" step=\"1\" value=\""+(selected)+"\" "+window.NTSS_EVENTS.bind("input",function(event){EBDAA_PRACTICE.probe(this.value)},"EBDAA_PRACTICE.probe")+"><p class=\"ntss-probe-note\">Explore freely; answer using the fixed threshold of <b>"+(v.threshold)+"</b> stated in the question.</p></div>");
  }
  function codePanel(q,draft,running,message){
   const isSQL=q.engine==="sql";
-  return '<section class="ntss-live-code" aria-label="Executable '+(isSQL?"SQL":"Python")+' question">'+
-   '<label for="ntss-code-editor">Write your '+(isSQL?"SQL SELECT":"Python")+' solution</label>'+
-   '<textarea id="ntss-code-editor" spellcheck="false" autocorrect="off" autocapitalize="off" autocomplete="off" rows="6" maxlength="'+(isSQL?2000:3000)+'" oninput="EBDAA_PRACTICE.codeInput(this.value)">'+safe(draft)+'</textarea>'+
-   '<div class="ntss-code-actions"><button class="btn teal" type="button" '+(running?"disabled":"")+' onclick="EBDAA_PRACTICE.runCode()">▶ '+(running?"Running…":"Run & check")+'</button>'+
-   '<span role="status">'+safe(message||"Your first executable submission counts as this question's answer.")+'</span></div>'+
-   '<small>Runs locally in a time-limited worker. Sample data are fictional. Do not enter personal data or passwords.</small></section>';
+  return ("<section class=\"ntss-live-code\" aria-label=\"Executable "+(isSQL?"SQL":"Python")+" question\"><label for=\"ntss-code-editor\">Write your "+(isSQL?"SQL SELECT":"Python")+" solution</label><textarea id=\"ntss-code-editor\" spellcheck=\"false\" autocorrect=\"off\" autocapitalize=\"off\" autocomplete=\"off\" rows=\"6\" maxlength=\""+(isSQL?2000:3000)+"\" "+window.NTSS_EVENTS.bind("input",function(event){EBDAA_PRACTICE.codeInput(this.value)},"EBDAA_PRACTICE.codeInput")+">"+(safe(draft))+"</textarea><div class=\"ntss-code-actions\"><button class=\"btn teal\" type=\"button\" "+(running?"disabled":"")+" "+window.NTSS_EVENTS.bind("click",function(event){EBDAA_PRACTICE.runCode()},"EBDAA_PRACTICE.runCode")+">▶ "+(running?"Running…":"Run & check")+"</button><span role=\"status\">"+(safe(message||"Your first executable submission counts as this question's answer."))+"</span></div><small>Runs locally in a time-limited worker. Sample data are fictional. Do not enter personal data or passwords.</small></section>");
  }
  function run(q,code,callback){
   const kind=q.engine;let worker,timeout,settled=false;

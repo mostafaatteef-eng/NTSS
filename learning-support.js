@@ -25,7 +25,7 @@ window.NTSS_LEARNING=(function(){
  function review(mode,index){
   const key=mode+":"+index,r=attempts.get(key);if(!r||r.correct)return "";
   const t=strings[lang(mode)],exp=r.explanation||t[5];
-  return '<details class="ntss-support" '+(opened.has(key)?"open":"")+' ontoggle="NTSS_LEARNING.toggle('+escape(JSON.stringify(key))+',this.open)"><summary>'+t[0]+' <small>'+t[1]+'</small></summary><div class="ntss-support-inner"><b>01 · '+t[2]+'</b><p>'+escape(r.question)+'</p><b>02 · '+t[3]+'</b><p>'+escape(exp)+'</p><b>03 · '+t[4]+'</b><p>'+t[5]+'</p></div></details>';
+  return ("<details class=\"ntss-support\" "+(opened.has(key)?"open":"")+" "+window.NTSS_EVENTS.bind("toggle",function(event){NTSS_LEARNING.toggle((key),this.open)},"NTSS_LEARNING.toggle")+"><summary>"+(t[0])+" <small>"+(t[1])+"</small></summary><div class=\"ntss-support-inner\"><b>01 · "+(t[2])+"</b><p>"+(escape(r.question))+"</p><b>02 · "+(t[3])+"</b><p>"+(escape(exp))+"</p><b>03 · "+(t[4])+"</b><p>"+(t[5])+"</p></div></details>");
  }
  function adaptiveAdvice(mode,index){
   if(index<4)return "";
@@ -33,7 +33,7 @@ window.NTSS_LEARNING=(function(){
   if(last.length<4||last.filter(x=>x.correct).length>=3)return "";
   const recent=last.filter(x=>!x.correct&&x.explanation).at(-1);
   const t=strings[lang(mode)],key=mode+":tip:"+index;
-  return '<details class="ntss-support ntss-adaptive-tip" '+(opened.has(key)?"open":"")+' ontoggle="NTSS_LEARNING.toggle('+escape(JSON.stringify(key))+',this.open)"><summary>◈ '+(lang(mode)==="ar"?"اقتراح مراجعة بناءً على محاولاتك":lang(mode)==="de"?"Persönlicher Wiederholungstipp":"Suggested review based on recent answers")+' <small>'+t[1]+'</small></summary><div class="ntss-support-inner"><p>'+escape(recent?.explanation||t[5])+'</p><p>'+t[5]+'</p></div></details>';
+  return ("<details class=\"ntss-support ntss-adaptive-tip\" "+(opened.has(key)?"open":"")+" "+window.NTSS_EVENTS.bind("toggle",function(event){NTSS_LEARNING.toggle((key),this.open)},"NTSS_LEARNING.toggle")+"><summary>◈ "+(lang(mode)==="ar"?"اقتراح مراجعة بناءً على محاولاتك":lang(mode)==="de"?"Persönlicher Wiederholungstipp":"Suggested review based on recent answers")+" <small>"+(t[1])+"</small></summary><div class=\"ntss-support-inner\"><p>"+(escape(recent?.explanation||t[5]))+"</p><p>"+(t[5])+"</p></div></details>");
  }
  function toolsToggle(key,isOpen){if(isOpen)toolsOpened.add(key);else toolsOpened.delete(key)}
  function decorate(root,mode){
@@ -53,11 +53,11 @@ window.NTSS_LEARNING=(function(){
   window.NTSS_CONCEPTS?.attach(target,mode,screen.querySelector(".practice-focus__lesson")?.textContent||"");
   // Disclose nonessential activities in a single drawer. Keep the assessed question in view.
   const optional=[...target.querySelectorAll(".ntss-optional-game,.ntss-applied,.context-report,.practice-milestone,.practice-source,.ntss-concept,.ntss-support,.focus-mistake,.ntss-journey")].filter(el=>!el.closest(".ntss-learning-tools"));
-  const labs=[...screen.querySelectorAll(".practice-focus__header button")].filter(el=>el.getAttribute("onclick")?.startsWith("openCodeLab("));
+  const labs=[...screen.querySelectorAll(".practice-focus__header button")].filter(el=>el.getAttribute("data-ntss-action")==="openCodeLab");
   if(optional.length||labs.length){
     const key=mode+":"+index,drawer=document.createElement("details");drawer.className="ntss-learning-tools";
     if(toolsOpened.has(key))drawer.open=true;
-    drawer.setAttribute("ontoggle","NTSS_LEARNING.toolsToggle("+JSON.stringify(key)+",this.open)");
+    drawer.addEventListener("toggle",function(){toolsToggle(key,this.open)});
     const summary=document.createElement("summary");summary.textContent=lang(mode)==="ar"?"✦ أدوات التعلم (اختيارية)":lang(mode)==="de"?"✦ Lernwerkzeuge (optional)":"✦ Learning tools (optional)";
     drawer.appendChild(summary);
     if(labs.length){
