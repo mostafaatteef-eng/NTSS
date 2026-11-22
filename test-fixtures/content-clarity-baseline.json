@@ -1,0 +1,491 @@
+{
+  "sourceCommit": "091f0ed673da292b1f4382e2b2266c7b08cacbd1",
+  "banks": {
+    "be:1:0:0": {
+      "hash": "45a69e3614267c6736646ba5065884c4b4471b5e4579678f2688bb973646a5f8",
+      "title": "Everyday Words",
+      "keyHash": "6fa56c4dbb6558a758ce8c1e39b3d4be038abf8e3cd17a03962e081663ca4d75"
+    },
+    "be:1:0:1": {
+      "hash": "eb9979e3046f45b52af7d4f9c5ad4d305adbd96825b3aeadf2b9135db704ec16",
+      "title": "Describing Daily Routine",
+      "keyHash": "6fa56c4dbb6558a758ce8c1e39b3d4be038abf8e3cd17a03962e081663ca4d75"
+    },
+    "be:1:0:2": {
+      "hash": "b0a75a82691396f738b286bd1eba33696908d739ab5c9f84653998826c4601ce",
+      "title": "Describing the Past",
+      "keyHash": "6fa56c4dbb6558a758ce8c1e39b3d4be038abf8e3cd17a03962e081663ca4d75"
+    },
+    "be:1:0:3": {
+      "hash": "75cfd3c45e526db2430b89cfc9835f08b1d7fdde442a4dcaf54bd78855ec7d4f",
+      "title": "Directions",
+      "keyHash": "6fa56c4dbb6558a758ce8c1e39b3d4be038abf8e3cd17a03962e081663ca4d75"
+    },
+    "be:1:0:4": {
+      "hash": "6d709fb300fb2c079c2e326605ea094b2936b24b5118c9339a86b699bfac6712",
+      "title": "Classroom Instructions",
+      "keyHash": "6fa56c4dbb6558a758ce8c1e39b3d4be038abf8e3cd17a03962e081663ca4d75"
+    },
+    "be:1:1:0": {
+      "hash": "d78697065260d1653471cc48ab9a386b8bc241cfc082e39f65e1f36616d58ddf",
+      "title": "Introduction to Computer Systems",
+      "keyHash": "6fa56c4dbb6558a758ce8c1e39b3d4be038abf8e3cd17a03962e081663ca4d75"
+    },
+    "be:1:1:1": {
+      "hash": "e2008db5ea8ae729847ab725e78e6fcef6d0e090bdcc81c5410166147243c8a9",
+      "title": "Computer Systems in Detail",
+      "keyHash": "6fa56c4dbb6558a758ce8c1e39b3d4be038abf8e3cd17a03962e081663ca4d75"
+    },
+    "be:1:1:2": {
+      "hash": "8678b24aa15c40c44e4dfac855b716fe6eac194519ab806b367b2a167c2af68b",
+      "title": "The Cycle of the CPU",
+      "keyHash": "6fa56c4dbb6558a758ce8c1e39b3d4be038abf8e3cd17a03962e081663ca4d75"
+    },
+    "be:1:1:3": {
+      "hash": "e4ddb1ae79d6289e3c57a51f08e291856e6f4db4d6bbadbd350dc5f58b3e99cf",
+      "title": "Introduction to Computer Programming",
+      "keyHash": "6fa56c4dbb6558a758ce8c1e39b3d4be038abf8e3cd17a03962e081663ca4d75"
+    },
+    "be:1:1:4": {
+      "hash": "7b00112c1b8febb2ec3f7c297dc23fe0b87fbd959d73b0181fa91ed608b91858",
+      "title": "More about Computer Programming",
+      "keyHash": "6fa56c4dbb6558a758ce8c1e39b3d4be038abf8e3cd17a03962e081663ca4d75"
+    },
+    "be:1:1:5": {
+      "hash": "201372cc0e81ccf746e2a233d01644445fa636c4827058fbc8af8e290b32f818",
+      "title": "Revision",
+      "keyHash": "6fa56c4dbb6558a758ce8c1e39b3d4be038abf8e3cd17a03962e081663ca4d75"
+    },
+    "be:1:1:7": {
+      "hash": "201372cc0e81ccf746e2a233d01644445fa636c4827058fbc8af8e290b32f818",
+      "title": "Exam",
+      "keyHash": "6fa56c4dbb6558a758ce8c1e39b3d4be038abf8e3cd17a03962e081663ca4d75"
+    },
+    "be:1:2:0": {
+      "hash": "6207af455dd55c70dc7dc9c6968d755be74a965adf2ff27790bf84c81a99c6bc",
+      "title": "The Definition of AI",
+      "keyHash": "6fa56c4dbb6558a758ce8c1e39b3d4be038abf8e3cd17a03962e081663ca4d75"
+    },
+    "be:1:2:1": {
+      "hash": "9d3f1801e9cf4e71c681e6fb09b0c7b578fbce69d73ad9c2c21a7f582f60c248",
+      "title": "Types of AI",
+      "keyHash": "6fa56c4dbb6558a758ce8c1e39b3d4be038abf8e3cd17a03962e081663ca4d75"
+    },
+    "be:1:2:2": {
+      "hash": "b22346c8048771de3b2d67b8464536063018ff04e57cdece038125ac840996d3",
+      "title": "The Techniques of AI",
+      "keyHash": "6fa56c4dbb6558a758ce8c1e39b3d4be038abf8e3cd17a03962e081663ca4d75"
+    },
+    "be:1:2:3": {
+      "hash": "791c549f9a93e3891859e9a6ef28ecddbe4b19fa8939e9d8102be54cbd1ea5fb",
+      "title": "The Applications of AI",
+      "keyHash": "6fa56c4dbb6558a758ce8c1e39b3d4be038abf8e3cd17a03962e081663ca4d75"
+    },
+    "be:1:2:4": {
+      "hash": "f021ef8bce18a05b867a7200dd299fb541977aa8f6dbec58abfe9931a8ae38a1",
+      "title": "The Risks of AI",
+      "keyHash": "6fa56c4dbb6558a758ce8c1e39b3d4be038abf8e3cd17a03962e081663ca4d75"
+    },
+    "be:1:2:5": {
+      "hash": "2bfc8b1ef3df7cec6f2344a15ba9e644e4198157ea3af668d5644015851993e1",
+      "title": "Revision",
+      "keyHash": "6fa56c4dbb6558a758ce8c1e39b3d4be038abf8e3cd17a03962e081663ca4d75"
+    },
+    "be:1:2:7": {
+      "hash": "2bfc8b1ef3df7cec6f2344a15ba9e644e4198157ea3af668d5644015851993e1",
+      "title": "Exam",
+      "keyHash": "6fa56c4dbb6558a758ce8c1e39b3d4be038abf8e3cd17a03962e081663ca4d75"
+    },
+    "be:1:3:0": {
+      "hash": "86892886619594063f815d823db48b18169ab5add93b0a563923a2b1b122f4cd",
+      "title": "Do It the Right Way",
+      "keyHash": "6fa56c4dbb6558a758ce8c1e39b3d4be038abf8e3cd17a03962e081663ca4d75"
+    },
+    "be:1:3:1": {
+      "hash": "5d0152fba2be9935b67ba837b6188c46085bb88fd6a7c2f008c8697424ea2b68",
+      "title": "Building with a Vision",
+      "keyHash": "6fa56c4dbb6558a758ce8c1e39b3d4be038abf8e3cd17a03962e081663ca4d75"
+    },
+    "be:1:3:2": {
+      "hash": "2d9122949171e7705f1f0e6844f607980f22cdb492a959989d8c18a57455abf2",
+      "title": "Data in Colors",
+      "keyHash": "6fa56c4dbb6558a758ce8c1e39b3d4be038abf8e3cd17a03962e081663ca4d75"
+    },
+    "be:1:3:3": {
+      "hash": "bb7495d283808d1e4e927993cec66f3f92375481ea776a724bf5a6342eadc5a1",
+      "title": "To Automate or Not to Automate?",
+      "keyHash": "6fa56c4dbb6558a758ce8c1e39b3d4be038abf8e3cd17a03962e081663ca4d75"
+    },
+    "be:1:3:4": {
+      "hash": "23ef7206f6fae03770decf2bd9ff84e22f41b24db5f28bee347e4e2ac225795e",
+      "title": "Ahead of the Machines",
+      "keyHash": "6fa56c4dbb6558a758ce8c1e39b3d4be038abf8e3cd17a03962e081663ca4d75"
+    },
+    "be:1:3:5": {
+      "hash": "363fec8333fc5d51a27ec52a20df8702cc8070dd0f91271bbf7317d9557a135c",
+      "title": "Revision",
+      "keyHash": "6fa56c4dbb6558a758ce8c1e39b3d4be038abf8e3cd17a03962e081663ca4d75"
+    },
+    "be:1:3:7": {
+      "hash": "363fec8333fc5d51a27ec52a20df8702cc8070dd0f91271bbf7317d9557a135c",
+      "title": "Exam",
+      "keyHash": "6fa56c4dbb6558a758ce8c1e39b3d4be038abf8e3cd17a03962e081663ca4d75"
+    },
+    "be:1:4:0": {
+      "hash": "0b2a552b0dcf7db1d923dc94be7b7fb7e9632917ee133a0ce487d69e495cd640",
+      "title": "AI Ethics",
+      "keyHash": "6fa56c4dbb6558a758ce8c1e39b3d4be038abf8e3cd17a03962e081663ca4d75"
+    },
+    "be:1:4:1": {
+      "hash": "48e38971948f77f80765a3ab1f16c7bf1fd96f23f97082086fea6d8d5442c9da",
+      "title": "Your Health Matters",
+      "keyHash": "6fa56c4dbb6558a758ce8c1e39b3d4be038abf8e3cd17a03962e081663ca4d75"
+    },
+    "be:1:4:2": {
+      "hash": "4b9bc15fa63ac552da605d2386aff6175f66b96d2cd2641c6da777ec554f49ce",
+      "title": "Getting Ready",
+      "keyHash": "6fa56c4dbb6558a758ce8c1e39b3d4be038abf8e3cd17a03962e081663ca4d75"
+    },
+    "be:1:4:3": {
+      "hash": "a53ae95387d2efacd03ee29374884182f027740b276b47874c53cacc876e71f5",
+      "title": "AI Professionals",
+      "keyHash": "6fa56c4dbb6558a758ce8c1e39b3d4be038abf8e3cd17a03962e081663ca4d75"
+    },
+    "be:1:4:4": {
+      "hash": "1efae7b88db7eef5c8bdaaa477c2d3b718f0476ed37071b34907bd0ef5bb4da7",
+      "title": "Can You Fix it?",
+      "keyHash": "6fa56c4dbb6558a758ce8c1e39b3d4be038abf8e3cd17a03962e081663ca4d75"
+    },
+    "be:1:4:5": {
+      "hash": "eb88aa37cb5f554629e14b0aabd7046699a43886b38fa3d971379ab35148f7b5",
+      "title": "Revision",
+      "keyHash": "6fa56c4dbb6558a758ce8c1e39b3d4be038abf8e3cd17a03962e081663ca4d75"
+    },
+    "be:1:4:7": {
+      "hash": "eb88aa37cb5f554629e14b0aabd7046699a43886b38fa3d971379ab35148f7b5",
+      "title": "Exam",
+      "keyHash": "6fa56c4dbb6558a758ce8c1e39b3d4be038abf8e3cd17a03962e081663ca4d75"
+    },
+    "be:2:0:0": {
+      "hash": "9cc3fd93f2f4b275b474085d89d295de1ad352b69de8bf7ed37b43633decb8e1",
+      "title": "Unveiling the Magic Behind Tech",
+      "keyHash": "6fa56c4dbb6558a758ce8c1e39b3d4be038abf8e3cd17a03962e081663ca4d75"
+    },
+    "be:2:0:1": {
+      "hash": "348ae09554ef0e9dfd5b4b06a3ea27eb01ee14c95fba7c9b65624244958d295c",
+      "title": "Types of AI in the Workplace",
+      "keyHash": "6fa56c4dbb6558a758ce8c1e39b3d4be038abf8e3cd17a03962e081663ca4d75"
+    },
+    "be:2:0:2": {
+      "hash": "a8a04b82379419661deec2962e866a8abbc44f2223123f407319823648cadbea",
+      "title": "Tracking AI Projects",
+      "keyHash": "6fa56c4dbb6558a758ce8c1e39b3d4be038abf8e3cd17a03962e081663ca4d75"
+    },
+    "be:2:0:3": {
+      "hash": "0e8b02dcfcaedf174a3a78556c75c4572538a1d758efcf7c6aa19bde3c8b7483",
+      "title": "Promoting Innovations",
+      "keyHash": "6fa56c4dbb6558a758ce8c1e39b3d4be038abf8e3cd17a03962e081663ca4d75"
+    },
+    "be:2:0:4": {
+      "hash": "977aae5eb7cecde9b16dbc88758ffda106f6ad3f18a377e8521b9431ba1231d4",
+      "title": "Effective Online Collaboration Techniques",
+      "keyHash": "6fa56c4dbb6558a758ce8c1e39b3d4be038abf8e3cd17a03962e081663ca4d75"
+    },
+    "be:2:0:5": {
+      "hash": "d945cb8df3d5c9af094a89851db88f5a4b76a4ba314686558bdfa17deecbd608",
+      "title": "Revision",
+      "keyHash": "6fa56c4dbb6558a758ce8c1e39b3d4be038abf8e3cd17a03962e081663ca4d75"
+    },
+    "be:2:0:7": {
+      "hash": "d945cb8df3d5c9af094a89851db88f5a4b76a4ba314686558bdfa17deecbd608",
+      "title": "Exam",
+      "keyHash": "6fa56c4dbb6558a758ce8c1e39b3d4be038abf8e3cd17a03962e081663ca4d75"
+    },
+    "be:2:1:0": {
+      "hash": "a2d362fcb700ef05ac683e69b6d698bd7ddc84bdb55d21ba671073f193496ecf",
+      "title": "Decoding User Issues with Precision",
+      "keyHash": "6fa56c4dbb6558a758ce8c1e39b3d4be038abf8e3cd17a03962e081663ca4d75"
+    },
+    "be:2:1:1": {
+      "hash": "486ae98c9cd32a678e56c8f483264d854c9314e18ff469678237b6871e991a1b",
+      "title": "Tech Talk Made Easy",
+      "keyHash": "6fa56c4dbb6558a758ce8c1e39b3d4be038abf8e3cd17a03962e081663ca4d75"
+    },
+    "be:2:1:2": {
+      "hash": "d111798f71a635c52f4c13776c580dc65910450c17504292497ee81003ced3aa",
+      "title": "Closing the Loop",
+      "keyHash": "6fa56c4dbb6558a758ce8c1e39b3d4be038abf8e3cd17a03962e081663ca4d75"
+    },
+    "be:2:1:3": {
+      "hash": "4c5014ed089dc3cd6d0d5f45a9172b1c0c4c9c8cd5aaf24253e01c55b2b89f01",
+      "title": "The Power of User Feedback",
+      "keyHash": "6fa56c4dbb6558a758ce8c1e39b3d4be038abf8e3cd17a03962e081663ca4d75"
+    },
+    "be:2:1:4": {
+      "hash": "0786f1b7a32c6881f7fed3b027acf421498955880f4358a870960636c7497016",
+      "title": "Troubleshooting AI Systems Like a Pro",
+      "keyHash": "6fa56c4dbb6558a758ce8c1e39b3d4be038abf8e3cd17a03962e081663ca4d75"
+    },
+    "be:2:1:5": {
+      "hash": "5c1b16e66d9ff89b39511507ae8766fd9ab60480c9f62159db07469f90e51980",
+      "title": "Revision",
+      "keyHash": "6fa56c4dbb6558a758ce8c1e39b3d4be038abf8e3cd17a03962e081663ca4d75"
+    },
+    "be:2:1:7": {
+      "hash": "5c1b16e66d9ff89b39511507ae8766fd9ab60480c9f62159db07469f90e51980",
+      "title": "Exam",
+      "keyHash": "6fa56c4dbb6558a758ce8c1e39b3d4be038abf8e3cd17a03962e081663ca4d75"
+    },
+    "be:3:0:0": {
+      "hash": "1a8210c4675dfed9860506e0daca1ab32ef5f7caa747c98feb4ea0772e5208cf",
+      "title": "Introduction to Data Management",
+      "keyHash": "6fa56c4dbb6558a758ce8c1e39b3d4be038abf8e3cd17a03962e081663ca4d75"
+    },
+    "be:3:0:1": {
+      "hash": "e80b8e09c34600fb838f1c10f8cb3d3f518f6f4a4591cfe3f23810de6b28e1ed",
+      "title": "Data Storage & Organization",
+      "keyHash": "6fa56c4dbb6558a758ce8c1e39b3d4be038abf8e3cd17a03962e081663ca4d75"
+    },
+    "be:3:0:2": {
+      "hash": "ef9770be8f7d6c808c5ee2a42e4e6c61e669cfcbea821caf1ab76e7833326db8",
+      "title": "Visualizing Data",
+      "keyHash": "6fa56c4dbb6558a758ce8c1e39b3d4be038abf8e3cd17a03962e081663ca4d75"
+    },
+    "be:3:0:3": {
+      "hash": "16e51a55e751d7932ca2fb3749f88e4bce02d5ed0a608d28c72a89aa7567013a",
+      "title": "Data-Driven Decisions",
+      "keyHash": "6fa56c4dbb6558a758ce8c1e39b3d4be038abf8e3cd17a03962e081663ca4d75"
+    },
+    "be:3:0:4": {
+      "hash": "0ecb9845a22c0f599ea577406fec3baf78f74b6d2f351907a7c94d22c5617b2e",
+      "title": "Data Management Ethics",
+      "keyHash": "6fa56c4dbb6558a758ce8c1e39b3d4be038abf8e3cd17a03962e081663ca4d75"
+    },
+    "be:3:0:5": {
+      "hash": "22df50cc9c6446e7a033a601e1f2b71344690e4fa518f2b1ed356cb0e081952d",
+      "title": "Revision",
+      "keyHash": "6fa56c4dbb6558a758ce8c1e39b3d4be038abf8e3cd17a03962e081663ca4d75"
+    },
+    "be:3:0:7": {
+      "hash": "22df50cc9c6446e7a033a601e1f2b71344690e4fa518f2b1ed356cb0e081952d",
+      "title": "Exam",
+      "keyHash": "6fa56c4dbb6558a758ce8c1e39b3d4be038abf8e3cd17a03962e081663ca4d75"
+    },
+    "be:3:1:0": {
+      "hash": "e11e88ef9ae0b162532f6ae86a8d213f702710b9951d91ac010705b353d21d4f",
+      "title": "Entrepreneurial Thinking",
+      "keyHash": "6fa56c4dbb6558a758ce8c1e39b3d4be038abf8e3cd17a03962e081663ca4d75"
+    },
+    "be:3:1:1": {
+      "hash": "df1389e571146ea8c71c910963deee23b1d74a016551689e704d6e1589675776",
+      "title": "Project Management",
+      "keyHash": "6fa56c4dbb6558a758ce8c1e39b3d4be038abf8e3cd17a03962e081663ca4d75"
+    },
+    "be:3:1:2": {
+      "hash": "5c65b776f8af7ea50115d1922086f0b52bf4fde518f379a54825e9a39ad20122",
+      "title": "Negotiation and Persuasion",
+      "keyHash": "6fa56c4dbb6558a758ce8c1e39b3d4be038abf8e3cd17a03962e081663ca4d75"
+    },
+    "be:3:1:3": {
+      "hash": "a427edaea5ed123b99b554335f7f9dba52eee7ba65e891386adeb8be6ab4b711",
+      "title": "Resilience and Stress Management",
+      "keyHash": "6fa56c4dbb6558a758ce8c1e39b3d4be038abf8e3cd17a03962e081663ca4d75"
+    },
+    "be:3:1:4": {
+      "hash": "6d9a39856c0af0cde741e14b743c3d88bfd0bf057605c0317c4668b920fb37a0",
+      "title": "Leadership and Mentoring",
+      "keyHash": "6fa56c4dbb6558a758ce8c1e39b3d4be038abf8e3cd17a03962e081663ca4d75"
+    },
+    "be:3:1:5": {
+      "hash": "5d5224fc940c4bed4c8d7ecb024fe923de0108c8ecc0f9bc91739daf07c69cb1",
+      "title": "Revision",
+      "keyHash": "6fa56c4dbb6558a758ce8c1e39b3d4be038abf8e3cd17a03962e081663ca4d75"
+    },
+    "be:3:1:7": {
+      "hash": "5d5224fc940c4bed4c8d7ecb024fe923de0108c8ecc0f9bc91739daf07c69cb1",
+      "title": "Exam",
+      "keyHash": "6fa56c4dbb6558a758ce8c1e39b3d4be038abf8e3cd17a03962e081663ca4d75"
+    },
+    "social:2:0:0": {
+      "hash": "49cea12ff9f48dc13dcd5952b9b90e0e69d9185ed806d1c89d2714dfe4d78e4d",
+      "title": "موقع مصر وأهميته",
+      "keyHash": "0e1263a6c772a58ddfd1bbcfc50127d6294606f41c0d6a75341df650133767f7"
+    },
+    "social:2:0:1": {
+      "hash": "0dbf13bbdf1fddc0b72d8caa0f146671cc72e8c6f5aadef8b5b412282d442e54",
+      "title": "سطح مصر",
+      "keyHash": "2d8a5606bac3c80cac43366318d10b0e3080bf15e86895f91647ebf6dc3fcb28"
+    },
+    "social:2:0:2": {
+      "hash": "4eb944a156d43dc2b645da6d13751a1065a3deecc3cc524311b37ed499b5a986",
+      "title": "مناخ مصر والأقاليم المناخية",
+      "keyHash": "fdf8c01f5697995a02facc97da34be483bdac263941ae21eab0f8ebafa9c4578"
+    },
+    "social:2:1:0": {
+      "hash": "7dae036c2e7c3aa34e250c76b888b923d04117686f205aafa8d2d35505a71257",
+      "title": "نشأة الحضارة المصرية القديمة",
+      "keyHash": "e48d5e9565ce1fa118837069542f5c041757ec7d01a1c3bf40b0e73f8db8121f"
+    },
+    "social:2:1:1": {
+      "hash": "785a6bb81dac2b95fa88b4f895705af4e923a954b9b8c7ce5382da0b20673f5c",
+      "title": "عصور ما قبل التاريخ في مصر",
+      "keyHash": "71e57c6ddff701d34c57363d8a9e9b3a95063310b844c11a4ecbbe67699cb1a7"
+    },
+    "social:2:1:2": {
+      "hash": "b41cd3ca47eec09c17e36cba3eb0f5302f3968f22dd61a27647d4175615ec712",
+      "title": "العصور التاريخية في مصر",
+      "keyHash": "9f566108549e7ed8297d0992dcbe8e58f2a17b8447a030923dc7dd674754f72f"
+    },
+    "social:3:0:0": {
+      "hash": "9146cdeddb03290df55f47013d433b19fe818da043cc35992e72d5abcddd2d3f",
+      "title": "التوزيع الجغرافي للمعادن في مصر",
+      "keyHash": "d19a5b9a6a6754ebb5617b5f5e16ad9dcf3766aa8a4acfee468b00e010650dd1"
+    },
+    "social:3:0:1": {
+      "hash": "ada64a397d9691fc251607bdc055f0089e2c39b77e5d4779a0d7fb07027d8753",
+      "title": "الحديد الخام في مصر",
+      "keyHash": "6f63d1d8eea3a0cb448f85891608385f3126eb46dc2067b0c55213f5012508a6"
+    },
+    "social:3:0:2": {
+      "hash": "a6bf5cd14947f41b78937362cb445e2cfc7aba5f866f3e6e65e12185cc8a657b",
+      "title": "الفوسفات والمنجنيز",
+      "keyHash": "fda8499127833c093e6810356053e7146599a6238683965a411fdd45b1586aaf"
+    },
+    "social:3:0:3": {
+      "hash": "a3a1575cfe85ad4ecbd710808ff407f15f2c9a9132a57ecfb2ddf30a3cbeceb3",
+      "title": "الجبس وملح الطعام",
+      "keyHash": "2b9e059873429b1d6ba03ba2c3bd87802c876caf3440800084a3d2f052a8e4a8"
+    },
+    "social:3:0:4": {
+      "hash": "90cafa1295d55ead0f665786ab86d873484a97263a6d1e6623ded6d9865bf6b2",
+      "title": "مصادر الطاقة المتعددة في مصر",
+      "keyHash": "267c0849e607db7e4bd71e52a20d9107adb7c467c456ddabafa964f1898e7c8e"
+    },
+    "social:3:0:5": {
+      "hash": "8b831580aae75a2a9bc2dc7b31640f3e453a466662d2e0e335c088e52025d33c",
+      "title": "البترول وتكريره في مصر",
+      "keyHash": "e9f11df26d2f1ac6e112e30785c11e1cc45bf859fcd9be3d5ada65cf07bb9905"
+    },
+    "social:3:0:6": {
+      "hash": "f62ee41d8a62eb970cd5ca85b9af72321e19f5a8a0cef8cc31c5b3f3d0ba61ec",
+      "title": "الغاز الطبيعي في مصر",
+      "keyHash": "e90aaa42279a3c63649572c0461db6a88384ec29856bbb32c74d0fe9f2c485cb"
+    },
+    "social:3:0:7": {
+      "hash": "2b6a41cdbc6aafa48f98233485515d305380f4627b7c56b4e763a79f532eeae3",
+      "title": "الفحم وتوليد الكهرباء في مصر",
+      "keyHash": "44c1fd38287a804288b889f168a254747ca49fa0daa3c3e704705643cb71510d"
+    },
+    "social:3:0:8": {
+      "hash": "86dc6974081366056ecd431e34b93599b999f026f456ba93086e0317287c47b9",
+      "title": "النقل البري والمائي في مصر",
+      "keyHash": "ca270a5bd75d80ea3a386754a590314cf73337479902a68d2f0fe58665e90c77"
+    },
+    "social:3:0:9": {
+      "hash": "02db9d859767310af74744c457422eb61f0f0c9fcca7796cca5e05b86b98cbdc",
+      "title": "النقل الجوي في مصر",
+      "keyHash": "4b414cd355119b5bd2a1e0287ff62d5495607c71415a8738a5d60781372c358c"
+    },
+    "social:3:1:0": {
+      "hash": "ca7516f356858a4625ca3016d48150c5da22eb4978b0aca6c6d1e4d49aab6157",
+      "title": "التنمية البشرية والأمن الغذائي",
+      "keyHash": "02ce2bd50ad66c441fbb5cd2d1b9540c571fa42aadc7f5249df05cf0bd7051a2"
+    },
+    "social:3:1:1": {
+      "hash": "53a34c25e1815f1cdc12cdad8c58a017c96fce6d378b1cf45e2d7a5006cf7c50",
+      "title": "العطاء العلمي لمصر قديمًا وحديثًا",
+      "keyHash": "8a62c03fe45606bd09277be63deb128c8816df226d34921c7e6c38b18f9e7d20"
+    },
+    "social:3:1:2": {
+      "hash": "17293db3b19ce7303c849c1cdcbe4c14a9bafbc041bf5e4a781cad47d5973b11",
+      "title": "المجتمعات العمرانية الجديدة",
+      "keyHash": "df4324c45fa6f17ad6adc5d588cc0ef17237471fa158fc2789fa521138680a79"
+    },
+    "social:3:1:3": {
+      "hash": "6e3997c7d788400933ac7798cb1b4b531d48c7f7dfee658a4ab7e4e8069044e4",
+      "title": "الميزان التجاري لمصر",
+      "keyHash": "a0ef9dc486400b81d444ff0cc89fb0b29739c07e8e65480aaec9515f23338028"
+    },
+    "social:3:1:4": {
+      "hash": "923cf0f11319c6a78d2365f53c707f9e9cb40391f851fc764cbcaf8f67861cfa",
+      "title": "قناة السويس وأهميتها التجارية",
+      "keyHash": "29735dc3740e7fb7d33e2132f6149c0d6a95eefb20838824c97509ead4ff4e94"
+    },
+    "social:3:1:5": {
+      "hash": "2a86a5288835d36a8bbe741ca220fb06edf54cab7471a81082041ecc4f40ddb5",
+      "title": "القناطر والسدود المصرية",
+      "keyHash": "4c5503cea251f9f13ce83199f7e20b8d79ebd23c3ce9284eae4483536991803b"
+    },
+    "social:3:1:6": {
+      "hash": "d1a8e6b67c84bad8278826673d28ca62ec7163fbb838f0e5acf6979ff1acc330",
+      "title": "المشكلات البيئية للمجتمع المصري",
+      "keyHash": "16d33b56c95d2cd1df5fd3b4469c236564555020756363ff959a236692ed0503"
+    },
+    "social:3:1:7": {
+      "hash": "b7d8a11d7f6a859f202e51b7dcab4a80a71222774ced659e97bbe19c3952392c",
+      "title": "مصادر التلوث وأنواعه",
+      "keyHash": "32659ea6da47079aa78649b18f078277f8f9d8aad56bbca4c9171ca1f7fcb4de"
+    },
+    "social:3:1:8": {
+      "hash": "aeef0ba0c13c3f91ee82993ad9bf823c185c70f1f5cfefa88896031f645b8815",
+      "title": "الانفجار السكاني",
+      "keyHash": "dd0ab224ef6410282f26b9eea6fc288f8c29d4cc18efc3d67a6e72f1efa60d2c"
+    },
+    "social:3:1:9": {
+      "hash": "9869489b3b213bf57f3ea6c09c850cc06b2cf90f02060cfa5e1aa5a7e69aa7e7",
+      "title": "البطالة",
+      "keyHash": "fedc0f619b1a73a2faa130e108a2e8824c1df6e88ac46b53d7a8f4574ad93ce8"
+    }
+  },
+  "release": {
+    "curriculum": [
+      "data-analysis-curriculum.js?v=20261122-practice-fix1&release=20261122-round2",
+      "math-curriculum.js?v=20261115&release=20261122-round2",
+      "english-curriculum.js?v=20261115-review&release=20261122-round2",
+      "english-grammar-extensions.js?v=20261115-review&release=20261122-round2",
+      "arabic-curriculum.js?v=20261115-books&release=20261122-round2",
+      "arabic-source-questions.js?v=20261115-source&release=20261122-round2",
+      "arabic-grammar-items.js?v=20261115-targeted&release=20261122-round2",
+      "german-curriculum.js?v=20261115&release=20261122-round2",
+      "german-question-data.js?v=20261115&release=20261122-round2",
+      "german-audio-dialogues.js?v=20261115&release=20261122-round2",
+      "social-studies-curriculum.js?v=20261116-v1&release=20261122-round2",
+      "civics-curriculum.js?v=20261116-v1&release=20261122-round2",
+      "economics-curriculum.js?v=20261116-v1&release=20261122-round2",
+      "business-english-curriculum.js?v=20261116-verified&release=20261122-round2",
+      "physics-curriculum.js?v=20261116&release=20261122-round2",
+      "physics-special-sims.js?v=20261116-1&release=20261122-round2",
+      "physics-visual-lab.js?v=20261116&release=20261122-round2"
+    ],
+    "subjects": [
+      "math-practice.js?release=20261122-round2",
+      "physics-practice.js?release=20261122-round2",
+      "english-practice.js?release=20261122-round2",
+      "business-english-practice.js?v=20261122-practice-fix1&release=20261122-round2",
+      "german-practice.js?release=20261122-round2",
+      "arabic-practice.js?release=20261122-round2",
+      "social-studies-practice.js?release=20261122-round2",
+      "civics-practice.js?release=20261122-round2",
+      "economics-practice.js?release=20261122-round2",
+      "data-analysis-practice.js?v=20261122-practice-fix1&release=20261122-round2"
+    ],
+    "studio": [
+      "case-labs.js?release=20261122-round2",
+      "scenario-labs.js?release=20261122-round2",
+      "visual-playground.js?release=20261122-round2",
+      "code-challenges.js?release=20261122-round2",
+      "concept-visualizer.js?release=20261122-round2",
+      "theory-studio.js?release=20261122-round2",
+      "lab-studio.js?release=20261122-round2"
+    ],
+    "indexSha256": "de67f1729e7a5c3d6e148613d98726568d8ac55b637876754c35ef2abd0d150b",
+    "swSha256": "7ef9af6462ecd36fe988168c7295a48ffea8a98dbb6186cd7448e80515772fa5",
+    "baseAssets": {
+      "index.html": "de67f1729e7a5c3d6e148613d98726568d8ac55b637876754c35ef2abd0d150b",
+      "sw.js": "7ef9af6462ecd36fe988168c7295a48ffea8a98dbb6186cd7448e80515772fa5",
+      "lazy-features.js": "b99a87b6534a591fde8b351127e04014d131a670e4566291c232def550c7d7e9",
+      "business-english-curriculum.js": "ba65061e1f81913cb68cf1f14990304848c887bd33d2186ab71d21aa4157f3ab",
+      "social-studies-curriculum.js": "06e6b385ffb1935b36061ca36eda8fc82b24223250c55bbd343426ced7cd6761"
+    }
+  }
+}

@@ -15,4 +15,4 @@ jobs:
         with:
           node-version: '22'
       - name: Security regression tests (not a penetration test)
-        run: node --test ui-events-tests.cjs audit-round2-tests.cjs security-tests.cjs applied-missions-tests.cjs learning-improvements-tests.cjs quality-workflow-tests.cjs
+        run: node --test ui-events-tests.cjs audit-round2-tests.cjs security-tests.cjs applied-missions-tests.cjs learning-improvements-tests.cjs quality-workflow-tests.cjs content-clarity-tests.cjs content-release-tests.cjs
