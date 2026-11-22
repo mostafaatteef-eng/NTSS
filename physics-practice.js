@@ -86,7 +86,7 @@ function build(g,u,i){
 }
 window.EBDAA_PHYSICS_PRACTICE=window.EBDA_PRACTICE_FRAMEWORK.create({
  name:"EBDAA_PHYSICS_PRACTICE",subject:"physics",gameKey:"physics",learningMode:"physicsPractice",appliedKey:"physics",contextGames:true,
- locale:"en",inputId:"practice-answer",checkId:"physics-check",back:()=>physicsBack(),
+ locale:"en",inputId:"practice-answer",checkId:"physics-check",sliderStep:0.001,back:()=>physicsBack(),
  tolerance:q=>Math.max(.011,Math.abs(Number(q.answer))*.001),
  buildItems:(g,u,i)=>build(g,u,i).map(q=>{
   const base={...q,pmode:q.mode,explanation:"Result: "+q.value+" "+(q.model[1]||"")+" · "+q.formula,focus:1};

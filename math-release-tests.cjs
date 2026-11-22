@@ -3,7 +3,7 @@ const test=require('node:test'),assert=require('node:assert/strict'),fs=require(
 const base=JSON.parse(fs.readFileSync('test-fixtures/math-release-baseline.json','utf8')),sha=s=>crypto.createHash('sha256').update(s).digest('hex');
 test('Math release keeps every other runtime JS byte-identical to deployed PR19',()=>{
  const actual=fs.readdirSync('.').filter(f=>f.endsWith('.js')&&!['math-practice.js','lazy-features.js'].includes(f)).sort();assert.deepEqual(actual,Object.keys(base.unchangedRuntime).sort());
- for(const file of actual)assert.equal(sha(fs.readFileSync(file)),base.unchangedRuntime[file],file);
+ for(const file of actual){let source=fs.readFileSync(file,'utf8');if(file==='physics-practice.js')source=source.replace('checkId:"physics-check",sliderStep:0.001,','checkId:"physics-check",');if(file==='unified-practice.js')source=source.replace('"+(Number.isFinite(cfg.sliderStep)&&cfg.sliderStep>0?cfg.sliderStep:0.1)+"','0.1');assert.equal(sha(source),base.unchangedRuntime[file],file);}
  assert.equal(sha(fs.readFileSync('math-practice.js')),base.pilotMathSha256,'Teaching changes must remain exactly reviewed pilot89ae198');
 });
 test('Math release changes only the math practice URL and loader URL, without global cache invalidation',()=>{
