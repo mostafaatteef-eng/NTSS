@@ -22,7 +22,7 @@ const models={
  gravity:["Gravitational force factor","relative",1,1,"For fixed distance, gravitational force is proportional to both masses."],
  centripetal:["Centripetal acceleration","m/s²",1,2,"Centripetal acceleration = speed² ÷ radius."],
  friction:["Maximum static friction","N",1,1,"A simplified model: maximum static friction = μ × normal force."],
- heat:["Temperature increase","°C",1,0,"Temperature rise is final temperature minus initial temperature."],
+ heat:["Final temperature after heating","°C",1,0,"Final temperature = initial temperature + temperature rise."],
  temperature:["Kelvin temperature","K",1,0,"Kelvin = Celsius + 273.15."],
  heatCapacity:["Thermal energy","J",1,1,"Q = mcΔT when there is no phase change."],
  charge:["Electric charge","C",1,1,"Charge Q = current × time."],
