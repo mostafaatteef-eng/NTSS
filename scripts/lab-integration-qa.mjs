@@ -13,7 +13,7 @@ const url='http://127.0.0.1:'+server.address().port+'/';
 const browser=await chromium.launch({headless:true,args:['--no-sandbox','--ignore-certificate-errors']});
 let count=0;const faults=[];
 try{
- for(const lang of ['ar','en'])for(const viewport of [{width:1440,height:1000},{width:390,height:844}]){
+ for(const lang of ['ar','en'])for(const viewport of [{width:1440,height:1000},{width:820,height:1180},{width:390,height:844},{width:360,height:780}]){
   const ctx=await browser.newContext({viewport,ignoreHTTPSErrors:true});await ctx.addInitScript(lang=>localStorage.setItem('ebda-lang',lang),lang);
   const p=await ctx.newPage();p.on('pageerror',e=>faults.push(e.message));
   const capture=async filename=>{await p.evaluate(()=>scrollTo(0,0));await p.evaluate(()=>document.fonts.ready);await p.screenshot({path:artifacts+'/'+filename,fullPage:true})};
