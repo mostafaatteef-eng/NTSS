@@ -7,7 +7,7 @@ const server=createServer((req,res)=>{const name=new URL(req.url,'http://localho
 await new Promise(ok=>server.listen(0,'127.0.0.1',ok));const url='http://127.0.0.1:'+server.address().port+'/';const browser=await chromium.launch({args:['--no-sandbox']});let cases=0;const errors=[];
 const engines={ai:'EBDAA_PRACTICE','data-analysis':'EBDAA_DATA_ANALYSIS_PRACTICE',mathematics:'EBDAA_MATH_PRACTICE','advanced-english':'EBDAA_ENGLISH_PRACTICE','physics-stem':'EBDAA_PHYSICS_PRACTICE','german-language':'EBDAA_GERMAN_PRACTICE','arabic-language':'EBDAA_ARABIC_PRACTICE','business-english':'EBDAA_BUSINESS_PRACTICE','social-studies':'EBDAA_SOCIAL_STUDIES_PRACTICE',civics:'EBDAA_CIVICS_PRACTICE',economics:'EBDAA_ECONOMICS_PRACTICE'};
 try{
- for(const width of [390,1440])for(const lang of ['ar','en']){
+ for(const width of (process.env.NTSS_NAME_EDGES_ONLY?[]:[390,1440]))for(const lang of ['ar','en']){
   const p=await browser.newPage({viewport:{width,height:1000},serviceWorkers:'block'});p.on('pageerror',e=>errors.push(e.message));await p.goto(url);
   await p.evaluate(async lang=>{if(EBDA_I18N.current()!==lang)EBDA_I18N.toggle();await NTSS_LAZY.ensureAllCurricula();await NTSS_LAZY.ensureStudio();await Promise.all(Object.keys(NTSS_LAZY.subjectFiles).map(x=>NTSS_LAZY.ensureSubject(x)))},lang);
   const lessons=await p.evaluate(()=>allSearchLessons());const groups=new Set();
@@ -47,6 +47,7 @@ try{
   if(!legacy)assert.equal(await p.locator('.ebda-certificate-student').innerText(),'Original Student');
   if(subject==='mathematics')await p.screenshot({path:artifacts+'/'+(legacy?'legacy-learning-only':'restored-original-name')+'.png',fullPage:true});
   assert.equal(await p.evaluate(()=>Object.keys(localStorage).filter(k=>k.startsWith('ntss-private-practice-checkpoint-v4')).length),0,'Completion clears stored name and progress');
+  await p.getByRole('button',{name:/إعادة التدريب|Try again/}).click();assert.equal(await p.locator('#ebda-lesson-student-name').count(),1,'Fresh attempt asks for a new starting name');assert.equal(await p.evaluate(engine=>window[engine].progress().answered,engines[subject]),0,'Fresh name requires fresh answers');await p.locator('#ebda-lesson-student-name').fill('New Attempt Student');await p.locator('.ebda-name-gate form button').click();
   await p.close();
  }
 
