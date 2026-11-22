@@ -90,7 +90,7 @@ function drawCheckpoint(){const completed=cursor+1,round=completed/10;const inSt
 function beginFromCheckpoint(){checkpoint=false;cursor=Math.max(0,cursor-9);chosen=Object.hasOwn(responses,cursor)?(Array.isArray(responses[cursor])?responses[cursor].slice():responses[cursor]):null;graded=Object.hasOwn(reviewed,cursor);hintShown=!!hintFlags[cursor];draw()}
 function prev(){if(cursor>0){runToken++;codeRunning=false;codeMessage="";visualProbe=null;cursor--;chosen=Object.hasOwn(responses,cursor)?(Array.isArray(responses[cursor])?responses[cursor].slice():responses[cursor]):null;graded=Object.hasOwn(reviewed,cursor);hintShown=!!hintFlags[cursor];draw();saveCheckpoint();scrollToQuestion()}}
 function finish(){window.EBDA_PROGRESS?.mark("ai",grade,unit,lesson,Math.round(100*correct/50));finished=true;clearCheckpoint();cachedStage=completionView();const node=document.getElementById("ebdaa-practice-stage");if(node)node.innerHTML=cachedStage;window.EBDA_APP_RENDER?.()}
-function restart(){if(!session)return;const [g,u,i]=session.split("-").map(Number);begin(g,u,i);scrollToQuestion()}
+function restart(){if(!session)return;const [g,u,i]=session.split("-").map(Number);window.EBDA_COMPLETION?.forget(["ai",g,u,i].join(":"));begin(g,u,i);window.EBDA_APP_RENDER?.();scrollToQuestion()}
 
 function codeInput(value){if(graded||codeRunning)return;codeDrafts[cursor]=String(value).slice(0,3000);if(saveDelay)clearTimeout(saveDelay);saveDelay=setTimeout(()=>{saveDelay=null;saveCheckpoint()},450)}
 function probe(value){

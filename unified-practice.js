@@ -47,7 +47,7 @@ function create(cfg){
   window.EBDA_MASTERY?.begin(g,u,i,scope);
   refresh();
  }
- function restart(){start(g,u,i)}
+ function restart(){window.EBDA_COMPLETION?.forget([scope,g,u,i].join(":"));start(g,u,i)}
  function current(){return items[cursor]||null}
  function rec(){return answers[cursor]}
  function answer(v){

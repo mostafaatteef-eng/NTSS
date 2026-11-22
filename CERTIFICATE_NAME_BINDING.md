@@ -2,7 +2,7 @@
 
 ## Changes
 
-- The lesson-entry name is read-only for that attempt. Completion has no name input or Edit name action.
+- The lesson-entry name is read-only for that attempt. Completion has no name input or Edit name action. Try again clears the old answers and asks for a new starting name, so shared-device users can begin a genuinely new attempt.
 - The existing device-local checkpoint now includes the original name. Resume restores that name with its answers, even if a different name was entered after a reload.
 - Name and answers remain on this device only, within the existing seven-day checkpoint lifetime. Completion and explicit draft clearing remove the saved draft immediately. Expired drafts cannot resume and are removed on the next site visit or checkpoint access; a closed browser cannot run cleanup. Names are not sent to a server.
 - Existing checkpoints without an original name remain usable for learning. They cannot issue a named certificate. A fresh full attempt is required. This migration behavior and the device-local name retention were explicitly approved by the project owner.
