@@ -33,7 +33,7 @@ window.EBDAA_GAME=(function(){
  function resetLesson(subject,lesson){const prefix=subject+":"+lesson+":";for(const m of [typed,arranged])for(const k of m.keys())if(k.startsWith(prefix))m.delete(k);for(const k of [...removed])if(k.startsWith(prefix))removed.delete(k);usedHelp.delete(subject+":"+lesson)}
  function render(q,n,selected,checked,subject,lesson,name,locale){
   const opts=choices(q),correct=answerIndex(q),m=mode(q,n),k=key(subject,lesson,n),answer=opts[correct]||"",dis=checked?"disabled":"";
-  const L=LOCALES[locale]||LOCALES[subject==="ar"?"ar":"en"],labels=L;
+  const L=LOCALES[window.EBDA_I18N?.current?.()||locale]||LOCALES[subject==="ar"?"ar":"en"],labels=L;
   const top='<div class="game-label">'+labels[m]+'</div>';
   if(correct<0||correct>3)return '<p class="feedback error">'+L.keyReview+'</p>';
   if(m==="choice"){

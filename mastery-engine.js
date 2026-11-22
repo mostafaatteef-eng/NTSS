@@ -20,15 +20,35 @@ agriculture:["Accuracy","Precision","Recall","Nearest neighbors","Cluster centro
 function family(g,u){const type=g===1?["programming","math","charts","ai","ml","algorithms"][u]:window.EBDAA_PERFORMANCE[g+"-"+(u+1)]?.engine||"ai";return type==="python"?"programming":type}
 function names(g,u){return SKILL_NAMES[family(g,u)]||SKILL_NAMES.ai}
 
+const esc=x=>String(x??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;",'\'':"&#39;"}[c]));
 const clamp=(x,a,b)=>Math.min(b,Math.max(a,x));
 const key=(g,u,i,scope)=>scope?[scope,g,u,i].join("|"):[g,u,i].join("-");
 function begin(g,u,i,scope){ledger.set(key(g,u,i,scope),{skills:Array.from({length:10},(_,j)=>({id:j+1,attempted:0,correct:0,hints:0,confidence:0})),seen:0})}
 function get(g,u,i,scope){const k=key(g,u,i,scope);if(!ledger.has(k))begin(g,u,i,scope);return ledger.get(k)}
-function record(g,u,i,question,correct,usedHint,scope){const st=get(g,u,i,scope);const j=clamp(Number(question.focus||1)-1,0,9),s=st.skills[j];s.attempted++;if(correct)s.correct++;if(usedHint)s.hints++;const evidence=correct?(usedHint?0.65:1):0; s.confidence=clamp(s.confidence*0.65+evidence*0.35,0,1);st.seen++;return s}
+// A bank may define more than ten distinct concepts. Keep each valid ID separate.
+// Bad/absent metadata is ignored rather than breaking grading or inventing mastery.
+function skill(st,question,create=false){
+ const id=Number(question?.focus);
+ if(!Number.isInteger(id)||id<1||id>1000)return null;
+ let found=st.skills.find(x=>x.id===id);
+ if(!found&&create){found={id,attempted:0,correct:0,hints:0,confidence:0};st.skills.push(found)}
+ if(found&&question.focusLabel)found.label=String(question.focusLabel).slice(0,220);
+ return found||null;
+}
+function record(g,u,i,question,correct,usedHint,scope){const st=get(g,u,i,scope),s=skill(st,question,true);if(!s)return null;s.attempted++;if(correct)s.correct++;if(usedHint)s.hints++;const evidence=correct?(usedHint?0.65:1):0;s.confidence=clamp(s.confidence*0.65+evidence*0.35,0,1);st.seen++;return s}
 function band(s){if(!s.attempted)return "Not assessed";const ratio=s.correct/s.attempted;if(s.attempted>=3&&ratio>=0.8&&s.hints<=s.attempted/2)return "Developing mastery";if(ratio>=0.6)return "Progressing";return "Needs practice"}
 function weakest(g,u,i,scope){return get(g,u,i,scope).skills.slice().sort((a,b)=>((a.attempted? a.correct/a.attempted : 0)-(b.attempted?b.correct/b.attempted:0))||(a.attempted-b.attempted))[0]}
-function map(g,u,i,skillNames,scope){const st=get(g,u,i,scope),labels=skillNames||names(g,u);return '<section class="interactive" style="background:#f5fbf9"><div class="eyebrow">SKILL MASTERY MAP · THIS VISIT ONLY</div><h3>Your 10 learning skills</h3><p class="muted">Estimates based on formative first attempts, not an official competency certification. Nothing is uploaded or retained after refresh.</p><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:9px">'+st.skills.map((s,j)=>{const rate=s.attempted?Math.round(s.correct/s.attempted*100):0;return '<div style="background:white;padding:13px;border:1px solid #d9e7e0;border-radius:12px"><strong>Skill '+(j+1)+': '+labels[j]+'</strong><div style="height:7px;background:#e7ece9;border-radius:10px;margin:8px 0;overflow:hidden"><span style="display:block;height:100%;background:#1ca29a;width:'+rate+'%"></span></div><small>'+band(s)+' · '+s.correct+'/'+s.attempted+' correct</small></div>'}).join("")+'</div></section>'}
-function prioritizeUpcoming(g,u,i,nextItems,scope){const st=get(g,u,i,scope);return nextItems.slice().sort((a,b)=>{const x=st.skills[(a.focus||1)-1],y=st.skills[(b.focus||1)-1];const rx=x.attempted?x.correct/x.attempted:0,ry=y.attempted?y.correct/y.attempted:0;return rx-ry||x.attempted-y.attempted})}
+function map(g,u,i,skillNames,scope){const st=get(g,u,i,scope),labels=skillNames||names(g,u);return '<section class="interactive" style="background:#f5fbf9"><div class="eyebrow">SKILL MASTERY MAP · THIS VISIT ONLY</div><h3>Your learning skills</h3><p class="muted">Estimates based on formative first attempts, not an official competency certification. Nothing is uploaded or retained after refresh.</p><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:9px">'+st.skills.map((s,j)=>{const rate=s.attempted?Math.round(s.correct/s.attempted*100):0;return '<div style="background:white;padding:13px;border:1px solid #d9e7e0;border-radius:12px"><strong>Skill '+(j+1)+': '+esc(s.label||labels[s.id-1]||('Concept '+s.id))+'</strong><div style="height:7px;background:#e7ece9;border-radius:10px;margin:8px 0;overflow:hidden"><span style="display:block;height:100%;background:#1ca29a;width:'+rate+'%"></span></div><small>'+band(s)+' · '+s.correct+'/'+s.attempted+' correct</small></div>'}).join("")+'</div></section>'}
+function prioritizeUpcoming(g,u,i,nextItems,scope){
+ const st=get(g,u,i,scope);
+ // Sort only runs with valid metadata. Malformed items retain their exact slot.
+ const valid=q=>Number.isInteger(Number(q?.focus))&&Number(q.focus)>0&&Number(q.focus)<=1000;
+ const rank=q=>skill(st,q,false)||{attempted:0,correct:0};
+ const compare=(a,b)=>{const x=rank(a),y=rank(b);return (x.attempted?x.correct/x.attempted:0)-(y.attempted?y.correct/y.attempted:0)||x.attempted-y.attempted};
+ const result=nextItems.slice();let start=0;
+ while(start<result.length){if(!valid(result[start])){start++;continue}let end=start+1;while(end<result.length&&valid(result[end]))end++;result.splice(start,end-start,...result.slice(start,end).sort(compare));start=end}
+ return result;
+}
 function snapshot(g,u,i,scope){const st=get(g,u,i,scope);return {skills:st.skills.map(s=>({...s,band:band(s)})),seen:st.seen}}
 return {begin,get,record,band,weakest,map,prioritizeUpcoming,snapshot,names};
 })();

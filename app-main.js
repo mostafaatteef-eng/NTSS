@@ -247,6 +247,7 @@ function dataAnalysisOpen(i){
  if(!lesson)return;
  registerNamedLesson("da",grade,year2Unit,i,lesson.title,"dataAnalysisPractice");
  if(!window.NTSS_LAZY.isSubjectReady("dataAnalysisPractice"))return queueSubjectLesson("dataAnalysisPractice",()=>dataAnalysisOpen(i));
+ mode="dataAnalysisPractice";
  window.EBDAA_DATA_ANALYSIS_PRACTICE.start(grade,year2Unit,i);
  nav("dataAnalysisPractice");
 }
@@ -286,7 +287,7 @@ function submitNamedLesson(){
  const d=namedLessonContext;if(!d||d.mode!==mode)return;
  const field=document.getElementById("ebda-lesson-student-name");
  const name=String(field?.value||"").replace(/[\u0000-\u001f]/g,"").trim().replace(/\s+/g," ").slice(0,80);
- if(name.length<3){const error=document.getElementById("ebda-name-error");if(error)error.textContent="Enter at least three characters.";field?.focus();return}
+ if(name.length<3){const error=document.getElementById("ebda-name-error");if(error)error.textContent=window.NTSS_UI.pair("Enter at least three characters.","اكتب ثلاثة أحرف على الأقل.");field?.focus();return}
  window.EBDA_COMPLETION.setName(namedLessonKey(d),name);
  window.EBDA_COMPLETION.open(namedLessonKey(d));
 }
@@ -340,7 +341,7 @@ function focusPractice(){
  return '<section class="practice-focus" aria-label="Focused practice session">'+
  '<header class="practice-focus__header"><div class="practice-focus__header-row">'+
  '<button class="practice-focus__exit" onclick="exitPractice()" aria-label="Back to lessons">'+(window.EBDA_I18N&&window.EBDA_I18N.current()==="ar"?"العودة للدروس":"← Back to lessons")+'</button>'+
- '<span class="practice-focus__year">YEAR '+g+' · PRACTICE</span></div>'+
+ '<span class="practice-focus__year">'+window.NTSS_UI.year(g)+' · '+window.NTSS_UI.subject('ai')+'</span></div>'+
  '<div class="practice-focus__info"><h1 class="practice-focus__lesson">'+esc(name)+'</h1>'+
  '<span id="focus-counter" class="practice-focus__counter">'+(finished?'Completed · 50 / 50':'Question '+progress.position+' / '+progress.total)+'</span></div>'+
  '<div id="focus-progress-track" class="practice-focus__track" role="progressbar" aria-label="Answered questions" aria-valuemin="0" aria-valuemax="50" aria-valuenow="'+progress.answered+'"><i id="focus-progress-fill" style="width:'+percent+'%"></i></div></header>'+
@@ -375,9 +376,11 @@ function render(){
  const focused=practiceActive()||mode==="codeLab"||mode==="mathPractice"||mode==="physicsPractice"||mode==="englishPractice"||mode==="businessPractice"||mode==="economicsPractice"||mode==="civicsPractice"||mode==="socialPractice"||mode==="arabicPractice"||mode==="germanPractice"||mode==="dataAnalysisPractice";
  if(document.body?.classList)document.body.classList.toggle("practice-focus-active",focused);
  const activeId=document.activeElement&&document.activeElement.id;
- const LTR=new Set(["learn","advancedLab","codeLab","dataAnalysisPractice","mathPractice","physicsPractice","englishPractice","businessPractice","germanPractice","teacherReview"]);
- app.dir=lessonCodeLabActive||mode==="codeLab"?(window.EBDA_I18N.current()==="ar"?"rtl":"ltr"):LTR.has(mode)?"ltr":"";
+
+ app.dir=mode==="teacherReview"?"ltr":(window.EBDA_I18N.current()==="ar"?"rtl":"ltr");
  app.innerHTML=mode==="subjectLoading"||mode==="teacherLoading"?'<section class="practice-focus"><div class="practice-focus__content" role="status"><h2>'+t("loading_lesson")+'</h2><p>'+t("loading_preparing")+'</p></div></section>':namedLessonContext&&namedLessonContext.mode===mode&&!window.EBDA_COMPLETION.getName(namedLessonKey(namedLessonContext)).trim()?namedLessonGate(namedLessonContext):mode==="advancedLoading"?'<section class="practice-focus" aria-label="'+t("loading_lab")+'"><div class="practice-focus__content" role="status"><h2>'+t("loading_lab")+'</h2><p>'+t("loading_lab_preparing")+'</p></div></section>':mode==="teacherReview"?teacherView():mode==="dataAnalysisPractice"?window.EBDAA_DATA_ANALYSIS_PRACTICE.render():mode==="economicsPractice"?window.EBDAA_ECONOMICS_PRACTICE.render():mode==="civicsPractice"?window.EBDAA_CIVICS_PRACTICE.render():mode==="socialPractice"?window.EBDAA_SOCIAL_STUDIES_PRACTICE.render():mode==="businessPractice"?window.EBDAA_BUSINESS_PRACTICE.render():mode==="physicsPractice"?window.EBDAA_PHYSICS_PRACTICE.render():mode==="codeLab"?window.EBDAA_CODE_LABS.render():mode==="germanPractice"?window.EBDAA_GERMAN_PRACTICE.render():mode==="arabicPractice"?window.EBDAA_ARABIC_PRACTICE.render():mode==="englishPractice"?window.EBDAA_ENGLISH_PRACTICE.render():mode==="mathPractice"?window.EBDAA_MATH_PRACTICE.render():focused?focusPractice():mode==="home"?home():mode==="browse"?browse():mode==="subject"?subjectUnits():mode==="unitPreview"?previewUnit():mode==="advancedLab"?advancedLab():mode==="learn"?learn():about();
+ if(focused)app.insertAdjacentHTML("afterbegin",window.NTSS_UI.toolbar());
+ window.NTSS_UI.localize(app);
  window.NTSS_QUEST_PATH?.render(app,mode);
  if(activeId){const el=document.getElementById(activeId);if(el)el.focus({preventScroll:true})}
  window.NTSS_LEARNING?.decorate(app,mode);
@@ -505,16 +508,16 @@ const CATALOG={
 };
 function catalogUnitCard(c,u,i){
  const desc=c.unitDesc?c.unitDesc(u):null;
- return '<article class="course"><div class="course-art"><i>'+c.icon+'</i></div><div class="course-body"><small>'+esc(c.unitKicker(u,i))+'</small><h3>'+esc(u.title)+'</h3>'+(desc?'<p>'+esc(desc)+'</p>':"")+'<button onclick="'+c.choose+'('+i+')">'+esc(c.unitCta)+'</button></div></article>';
+ return '<article class="course"><div class="course-art"><i>'+c.icon+'</i></div><div class="course-body"><small>'+esc(c.unitKicker(u,i))+'</small><h3 dir="auto">'+esc(u.title)+'</h3>'+(desc?'<p>'+esc(desc)+'</p>':"")+'<button onclick="'+c.choose+'('+i+')">'+esc(c.unitCta)+'</button></div></article>';
 }
 function catalogUnits(key){
- const c=CATALOG[key],units=c.data(),rtl=c.dir==="rtl";
+ const c=window.NTSS_UI.catalog(key,CATALOG[key],grade),units=c.data(),rtl=c.dir==="rtl";
  let groups;
  if(c.groups)groups=c.groups(units);
  else if(c.grouping==="term"){const terms=[...new Set([1,2,...units.map(u=>u.term)])].sort((a,b)=>a-b);groups=terms.map(x=>({term:x,label:c.termLabel(x),items:units.map((u,i)=>({u,i})).filter(y=>y.u.term===x)}))}
  else groups=[{label:null,items:units.map((u,i)=>({u,i}))}];
  const body=groups.map(gp=>gp.items.length?(gp.label?'<div class="section-title"><h2>'+esc(gp.label)+'</h2><span class="count">'+gp.items.length+" "+(rtl?"وحدات":"UNITS")+'</span></div>':"")+'<div class="cards">'+gp.items.map(({u,i})=>catalogUnitCard(c,u,i)).join("")+'</div>':(c.missingTerm?c.missingTerm(gp.term):"")).join("");
- return '<section dir="'+c.dir+'" lang="'+(rtl?"ar":key==="de"?"de":"en")+'">'+
+ return '<section dir="'+c.dir+'" lang="'+window.NTSS_UI.current()+'">'+
   '<div class="eyebrow"><a href="#" onclick="nav(\'browse\');return false">'+esc(c.crumb())+'</a> / '+esc((c.shortName||c.name)())+'</div>'+
   '<h1>'+c.icon+" "+esc(c.name())+'</h1>'+c.intro()+
   '<div class="unit-strip"><button onclick="nav(\'browse\')">'+esc(c.backSubject)+'</button></div>'+body+'</section>';
@@ -522,12 +525,12 @@ function catalogUnits(key){
 function catalogSessionCard(c,u,l,i){
  const title=typeof l==="string"?l:l.title;
  const line=c.sessionLine?c.sessionLine(l,i):'<p>'+esc(c.sessionCta)+'</p>';
- return '<button class="card" style="background:white;border:1px solid #e6e3de;border-radius:15px;padding:20px;text-align:'+(c.dir==="rtl"?"right":"left")+';cursor:pointer" onclick="'+c.open+'('+i+')"><span class="eyebrow">'+esc(c.sessionKicker(l,i,u))+'</span><h3>'+esc(title)+'</h3>'+progressBadge(c.progress,grade,year2Unit,i)+line+'</button>';
+ return '<button class="card" style="background:white;border:1px solid #e6e3de;border-radius:15px;padding:20px;text-align:'+(c.dir==="rtl"?"right":"left")+';cursor:pointer" onclick="'+c.open+'('+i+')"><span class="eyebrow">'+esc(c.sessionKicker(l,i,u))+'</span><h3 dir="auto">'+esc(title)+'</h3>'+progressBadge(c.progress,grade,year2Unit,i)+line+'</button>';
 }
 function catalogPreview(key){
- const c=CATALOG[key],u=c.data()[year2Unit],rtl=c.dir==="rtl";
+ const c=window.NTSS_UI.catalog(key,CATALOG[key],grade),u=c.data()[year2Unit],rtl=c.dir==="rtl";
  const pill=c.termPill&&u.term?'<span class="pill">'+(rtl?"الفصل "+u.term:"TERM "+u.term)+'</span>':"";
- return '<section dir="'+c.dir+'" lang="'+(rtl?"ar":key==="de"?"de":"en")+'">'+
+ return '<section dir="'+c.dir+'" lang="'+window.NTSS_UI.current()+'">'+
   '<div class="eyebrow"><a href="#" onclick="nav(\'subject\');return false">'+esc((c.shortName||c.name)())+'</a> / '+esc(c.unitCrumb?c.unitCrumb(u):u.title)+'</div>'+
   pill+'<h1>'+esc(u.title)+'</h1>'+c.previewHead(u)+
   '<div class="grid" style="display:grid;gap:12px;margin-top:20px">'+u.sessions.map((l,i)=>catalogSessionCard(c,u,l,i)).join("")+'</div>'+

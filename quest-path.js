@@ -4,7 +4,7 @@ window.NTSS_QUEST_PATH=(function(){
  const STAGES={en:["Discover","Understand","Apply","Challenge","Master"],ar:["اكتشف","افهم","طبّق","تحدَّ","أتقن"],de:["Entdecken","Verstehen","Anwenden","Challenge","Meistern"]};
  const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
  let seen=null;
- function language(mode){return ["arabicPractice","civicsPractice","socialPractice","economicsPractice"].includes(mode)?"ar":mode==="germanPractice"?"de":"en"}
+ function language(mode){return window.EBDA_I18N?.current?.()||(["arabicPractice","civicsPractice","socialPractice","economicsPractice"].includes(mode)?"ar":mode==="germanPractice"?"de":"en")}
  function stepFromCounter(text){
   if(/Completed|مكتمل|إنجاز المهمة|GROUP PROJECT/i.test(text))return null;
   const m=String(text).match(/(?:Question|Frage|Mission|السؤال|سؤال)\s*(\d+)/i);

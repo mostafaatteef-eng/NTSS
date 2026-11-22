@@ -27,7 +27,7 @@ for(const name of curriculumModules)assert.ok(!scriptTags.some(tag=>tag.includes
 const lazy=readFileSync("lazy-features.js","utf8");
 assert.doesNotThrow(()=>new vm.Script(lazy));
 assert.ok(lazyModules.every(name=>lazy.includes('"'+name+'"')),"Every optional module must be available on demand");
-assert.ok(subjectModules.every(name=>lazy.includes('"'+name+'"')),"Every subject module must be configured for lazy loading");
+assert.ok(subjectModules.every(name=>lazy.includes('"'+name+'"')||lazy.includes('"'+name+'?')),"Every subject module must be configured for lazy loading");
 assert.ok(curriculumModules.every(name=>lazy.includes('"'+name)),"Every curriculum module must be configured for lazy loading");
 
 assert.doesNotThrow(()=>new vm.Script(sw));

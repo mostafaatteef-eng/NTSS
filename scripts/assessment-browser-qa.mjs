@@ -170,3 +170,6 @@ try{
 
 
 }finally{await browser?.close();await new Promise(done=>server.close(done));rmSync(certDir,{recursive:true,force:true})}
+
+// Cross-subject UI repair and actual Data Analysis progression buttons.
+if((process.env.NTSS_BROWSER||'chromium')==='chromium')await import('./practice-ui-browser-qa.mjs');

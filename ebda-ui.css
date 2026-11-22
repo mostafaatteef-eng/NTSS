@@ -765,3 +765,9 @@ html[lang="ar"] body,html[lang="ar"] button,html[lang="ar"] input,html[lang="ar"
 .practice-hud__xp,.practice-hud__streak{background:#fff3c4;color:#6b5300;border-color:#eadf9e}
 #lang-toggle{border:2px solid var(--teal,#1ca29a);background:#fff;color:#0f7f78;border-radius:999px;padding:8px 14px;font-weight:800;min-height:44px}
 #lang-toggle:hover{background:#edf7f3}
+
+/* Interface access remains visible in focused practice without interrupting the attempt. */
+.practice-language-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;box-sizing:border-box;padding:10px max(16px,calc((100% - 860px)/2));background:#fff;border-bottom:1px solid var(--line);font-size:14px;color:var(--teald)}
+.practice-language-bar .btn{min-height:44px;padding:8px 18px}
+.practice-focus__counter bdi,.ntss-quest-position{unicode-bidi:isolate;direction:ltr}
+.practice-focus .practice-question[dir=auto],.practice-focus .choice span[dir=auto]{unicode-bidi:plaintext;text-align:start}
