@@ -3,6 +3,11 @@ import {readFileSync} from "node:fs";
 import vm from "node:vm";
 const html=readFileSync("index.html","utf8");
 const sw=readFileSync("sw.js","utf8");
+const appSource=readFileSync("app-main.js","utf8");
+assert.match(appSource,/class="subject-page-title" dir="ltr"/,"Long English subject headings must use a responsive class and LTR");
+assert.match(html,/\.subject-page-title\{[^}]*overflow-wrap:anywhere/,"Long subject titles must wrap rather than overflow horizontally");
+assert.match(html,/font-size:clamp\(28px,3\.45vw,49px\)/,"Subject heading must have a bounded type scale");
+
 const scriptTags=[...html.matchAll(/<script\b[^>]*\bsrc="[^"]+"[^>]*><\/script>/gi)].map(m=>m[0]);
 assert.ok(scriptTags.length>=30,"Core application scripts should still be linked");
 assert.ok(scriptTags.every(tag=>/\bdefer\b/.test(tag)),"All classic app scripts should be deferred, not parser blocking");
