@@ -37,7 +37,9 @@ try{
    await p.waitForSelector('.lesson-steps');
    // Visit a nondefault stage, preserving checked-answer state and score.
    await p.evaluate(g=>{if(g===1){restoreStage(1);answer=2;checked=true;hint=true}else{goAdvancedStep(1)}render()},g);
-   const state=await p.evaluate(()=>({mode,grade,unit,year2Unit,advancedSession,selectedId,step,advancedStep,answer,checked,hint,score}));
+   if(await p.locator('#studio-editor').count())await p.locator('#studio-editor').fill('print("retained lesson draft")');
+   const studioDraft=await p.locator('#studio-editor').count()?await p.locator('#studio-editor').inputValue():null;
+   const state=await p.evaluate(()=>({mode,grade,unit,year2Unit,advancedSession,selectedId,step,advancedStep,answer,checked,hint,score,labValue}));
    await p.locator('.lesson-lab-entry button').click();
    await p.waitForSelector('.integrated-lesson-lab');
    assert.equal(await p.locator('.integrated-lesson-lab .lesson-step').count(),5);
@@ -63,12 +65,16 @@ try{
    if(g===1)await capture('after-lab-'+suffix+'.png');
    const overflow=await p.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1);assert.equal(overflow,false,'no page overflow '+suffix);
    await p.locator('.integrated-lesson-lab .topmeta button').click();
-   const restored=await p.evaluate(()=>({mode,grade,unit,year2Unit,advancedSession,selectedId,step,advancedStep,answer,checked,hint,score}));assert.deepEqual(restored,state,'exact lesson stage and answers restored');
+   const restored=await p.evaluate(()=>({mode,grade,unit,year2Unit,advancedSession,selectedId,step,advancedStep,answer,checked,hint,score,labValue}));assert.deepEqual(restored,state,'exact lesson stage and answers restored');
+   if(studioDraft!==null)assert.equal(await p.locator('#studio-editor').inputValue(),studioDraft,'lesson studio draft retained');
    // Practice-stage launch must also render the embedded lab, not the practice view.
    await p.evaluate(g=>{if(g===1){restoreStage(4)}else{advancedStep=4}render()},g);
+   await p.evaluate(()=>{const engine=window.EBDAA_PRACTICE,q=engine.currentQuestion();engine.answer(q.mode==='order'?q.answer.split('|'):q.answer);engine.check();engine.next()});
+   const progress=await p.evaluate(()=>window.EBDAA_PRACTICE.progress());assert.ok(progress.answered>=1,'nonempty practice state before opening lab');
    await p.locator('.lesson-lab-entry button').click();await p.waitForSelector('.integrated-lesson-lab');
    if(g===1&&viewport.width===390)await capture('after-practice-lab-'+suffix+'.png');
    await p.locator('.integrated-lesson-lab .topmeta button').click();assert.equal(await p.evaluate(g=>g===1?step:advancedStep,g),4);
+   assert.deepEqual(await p.evaluate(()=>window.EBDAA_PRACTICE.progress()),progress,'answered questions and practice cursor retained');
    // Leaving via top navigation must stop/clear the lab state.
    await p.locator('.lesson-lab-entry button').click();await p.evaluate(()=>nav('home'));
    assert.equal(await p.evaluate(()=>lessonCodeLabActive),false);
