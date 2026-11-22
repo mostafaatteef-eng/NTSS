@@ -121,6 +121,7 @@ try{
  const study=await browser.newPage({viewport:{width:430,height:850},serviceWorkers:"block",ignoreHTTPSErrors:true});
  await study.goto(url,{waitUntil:"load"});
  const before=await study.evaluate(()=>{
+  window.EBDA_COMPLETION.setName("ai:1:0:0","QA Student");
   window.EBDAA_PRACTICE.begin(1,0,0);
   const q=window.EBDAA_PRACTICE.currentQuestion();
   const response=q.mode==="live-code"?"pass":q.mode==="order"?q.answer.split("|"):q.answer;
@@ -173,3 +174,6 @@ try{
 
 // Cross-subject UI repair and actual Data Analysis progression buttons.
 if((process.env.NTSS_BROWSER||'chromium')==='chromium')await import('./practice-ui-browser-qa.mjs');
+
+// Name binding, real reload migration and immutable completion across the full UI matrix.
+if((process.env.NTSS_BROWSER||'chromium')==='chromium')await import('./certificate-name-browser-qa.mjs');

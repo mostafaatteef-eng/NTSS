@@ -281,7 +281,7 @@ function namedLessonGate(d){
  '<input id="ebda-lesson-student-name" type="text" dir="auto" minlength="3" maxlength="80" autocomplete="off" required placeholder="'+(ar?"اسم الطالب":"Your full name")+'" aria-describedby="ebda-name-error ebda-name-privacy">'+
  '<p id="ebda-name-error" class="ebda-name-gate__error" role="alert"></p>'+
  '<button class="btn teal" type="submit">'+(ar?"ابدأ الدرس":"Start lesson →")+'</button></form>'+
- '<p id="ebda-name-privacy" class="ebda-name-gate__privacy">'+(ar?"الاسم يستخدم داخل الجلسة فقط دون إرساله إلى خادم.":"Name is used only in this browser session and is not sent to a server.")+'</p></div></div></section>';
+ '<p id="ebda-name-privacy" class="ebda-name-gate__privacy">'+(ar?"الاسم والتقدم يُحفظان على هذا الجهاز فقط لمدة تصل إلى 7 أيام للاستكمال، دون إرسالهما إلى خادم. الاستئناف يعيد الاسم الأصلي للمحاولة.":"Name and progress are saved only on this device for up to 7 days. Resuming restores the original name. Nothing is sent to a server.")+'</p></div></div></section>';
 }
 function submitNamedLesson(){
  const d=namedLessonContext;if(!d||d.mode!==mode)return;
@@ -330,7 +330,7 @@ function focusPractice(){
    '<input id="ebda-lesson-student-name" name="studentName" type="text" dir="auto" minlength="3" maxlength="80" autocomplete="off" required placeholder="Your full name" aria-describedby="ebda-name-privacy ebda-name-error">'+
    '<p id="ebda-name-error" role="alert" class="ebda-name-gate__error"></p>'+
    '<button class="btn teal" type="submit">Start lesson →</button></form>'+
-   '<p id="ebda-name-privacy" class="ebda-name-gate__privacy">Your name is only used for this certificate in the current browser session. It is not sent to a school server.</p>'+
+   '<p id="ebda-name-privacy" class="ebda-name-gate__privacy">Name and progress are saved only on this device for up to 7 days. Resuming restores the original name. Nothing is sent to a server.</p>'+
    '</div></div></section>';
  }
  const content=window.EBDAA_PRACTICE.panel(g,u,i);
@@ -345,7 +345,7 @@ function focusPractice(){
  '<div class="practice-focus__info"><h1 class="practice-focus__lesson">'+esc(name)+'</h1>'+
  '<span id="focus-counter" class="practice-focus__counter">'+(finished?'Completed · 50 / 50':'Question '+progress.position+' / '+progress.total)+'</span></div>'+
  '<div id="focus-progress-track" class="practice-focus__track" role="progressbar" aria-label="Answered questions" aria-valuemin="0" aria-valuemax="50" aria-valuenow="'+progress.answered+'"><i id="focus-progress-fill" style="width:'+percent+'%"></i></div></header>'+
- '<div class="practice-focus__content">'+lessonLabEntry()+content+(nextLesson?'<div class="practice-focus__finish">'+nextLesson+'</div>':'')+'</div>'+
+ '<div class="practice-focus__content">'+window.EBDA_COMPLETION.attemptNotice(studentKey,window.EBDA_I18N.current()==="ar")+lessonLabEntry()+content+(nextLesson?'<div class="practice-focus__finish">'+nextLesson+'</div>':'')+'</div>'+
  '</section>';
 }
 

@@ -41,6 +41,8 @@ for(const [subject,label] of subjects){
  const key=[subject,1,0,0].join(":");
  completion.setName(key,"QA Student");
  completion.open(key);
+ assert.equal(completion.setName(key,"Different Student"),false,"Starting name is immutable");
+ assert.equal(completion.getName(key),"QA Student");
  const base={subject,grade:1,unit:0,index:0,lesson:"Lesson title",total:50};
  const pass=completion.render({...base,correct:35});
  const fail=completion.render({...base,correct:34});
@@ -52,3 +54,19 @@ const participation=completion.participation({subject:"be",grade:1,unit:0,index:
 assert.ok(participation.includes("Certificate of Participation")&&participation.includes("QA Student"));
 assert.ok(participation.includes("Not graded"),"Project must never claim an assessed score");
 console.log("Certificate coverage passed: student-name gate for all subjects, eleven subject completion pathways, project participation and 70% eligibility.");
+
+assert.equal(typeof completion.edit,"undefined");
+for(const arabic of [true,false]){
+ const result=completion.render({subject:"math",grade:1,unit:0,index:0,lesson:"Test",correct:50,arabic});
+ assert.ok(!result.includes('id="ebda-student-name"')&&!result.includes('EBDA_COMPLETION.edit('));
+}
+const escapedKey="math:2:0:0";
+completion.setName(escapedKey,'<img src=x onerror=alert(1)>');
+completion.open(escapedKey);
+const escaped=completion.render({subject:"math",grade:2,unit:0,index:0,lesson:"Test",correct:50});
+assert.ok(escaped.includes('&lt;img')&&!escaped.includes('<img src=x'));
+completion.restoreIdentity(escapedKey,null);completion.open(escapedKey);
+assert.ok(!completion.render({subject:"math",grade:2,unit:0,index:0,lesson:"Test",correct:50}).includes('id="ebda-certificate-sheet"'));
+assert.equal(completion.checkpointIdentity(escapedKey),null,"Legacy learning-only status survives another save");
+completion.freshAttempt(escapedKey);completion.open(escapedKey);
+assert.ok(completion.render({subject:"math",grade:2,unit:0,index:0,lesson:"Test",correct:50}).includes('id="ebda-certificate-sheet"'));
