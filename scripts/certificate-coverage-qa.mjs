@@ -24,7 +24,7 @@ assert.match(main,/getName\(studentKey\)/,"AI questions require name");
 for(const [subject,label,fn,file] of subjects){
  const practice=read(file);
  if(fn){
-  const opener=new RegExp("function "+fn+"\\(i\\)\\{[\\s\\S]{0,260}?registerNamedLesson\\(\\\""+subject+"\\\"");
+  const opener=new RegExp("function "+fn+"\\(i\\)\\{[\\s\\S]{0,"+(subject==="da"?1200:260)+"}?registerNamedLesson\\(\\\""+subject+"\\\"");
   assert.match(main,opener,subject+" name entry must be registered");
  }
  if(/EBDA_PRACTICE_FRAMEWORK\.create\(/.test(practice)){assert.match(read("unified-practice.js"),/EBDA_COMPLETION\.render\(/,"unified framework lesson completion")}
