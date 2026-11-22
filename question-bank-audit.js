@@ -1,7 +1,7 @@
 /* EBDA question bank quality audit. Static structural checks are not scientific validation.
    Teacher feedback is local until explicitly exported and reviewed in GitHub. */
 window.NTSS_BANK_AUDIT=(function(){
- const engines={ai:"EBDAA_QUESTION_FACTORY",math:"EBDAA_MATH_PRACTICE",en:"EBDAA_ENGLISH_PRACTICE",ar:"EBDAA_ARABIC_PRACTICE",de:"EBDAA_GERMAN_PRACTICE",physics:"EBDAA_PHYSICS_PRACTICE",business:"EBDAA_BUSINESS_PRACTICE",economics:"EBDAA_ECONOMICS_PRACTICE",civics:"EBDAA_CIVICS_PRACTICE",social:"EBDAA_SOCIAL_STUDIES_PRACTICE"};
+ const engines={da:"EBDAA_DATA_ANALYSIS_PRACTICE",ai:"EBDAA_QUESTION_FACTORY",math:"EBDAA_MATH_PRACTICE",en:"EBDAA_ENGLISH_PRACTICE",ar:"EBDAA_ARABIC_PRACTICE",de:"EBDAA_GERMAN_PRACTICE",physics:"EBDAA_PHYSICS_PRACTICE",business:"EBDAA_BUSINESS_PRACTICE",economics:"EBDAA_ECONOMICS_PRACTICE",civics:"EBDAA_CIVICS_PRACTICE",social:"EBDAA_SOCIAL_STUDIES_PRACTICE"};
  const notes=new Map();
  const escape=x=>String(x??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
  const norm=x=>String(x??"").normalize("NFKC").toLowerCase().replace(/\s+/g," ").trim();
