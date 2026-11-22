@@ -22,7 +22,7 @@ window.EBDAA_GERMAN_UNITS={
         14,
         17
       ],
-      "source": "Dabei! A1.1 · Kursbuch · Modul 7",
+      "source": "Dabei! A1.1 · Kursbuch · Modul 1",
       "series": "A1.1"
     },
     {
@@ -45,7 +45,7 @@ window.EBDAA_GERMAN_UNITS={
         27,
         31
       ],
-      "source": "Dabei! A1.1 · Kursbuch · Modul 8",
+      "source": "Dabei! A1.1 · Kursbuch · Modul 2",
       "series": "A1.1"
     },
     {
@@ -69,7 +69,7 @@ window.EBDAA_GERMAN_UNITS={
         41,
         44
       ],
-      "source": "Dabei! A1.1 · Kursbuch · Modul 9",
+      "source": "Dabei! A1.1 · Kursbuch · Modul 3",
       "series": "A1.1"
     }
   ],
@@ -96,8 +96,8 @@ window.EBDAA_GERMAN_UNITS={
         56,
         59
       ],
-      "source": "Dabei! A1.2 · Kursbuch · Modul 7",
-      "series": "A1.2"
+      "source": "Dabei! A1.1 · Kursbuch · Modul 4",
+      "series": "A1.1"
     },
     {
       "title": "Freunde",
@@ -120,7 +120,7 @@ window.EBDAA_GERMAN_UNITS={
         13,
         16
       ],
-      "source": "Dabei! A1.2 · Kursbuch · Modul 8",
+      "source": "Dabei! A1.2 · Kursbuch · Modul 5",
       "series": "A1.2"
     },
     {
@@ -144,7 +144,7 @@ window.EBDAA_GERMAN_UNITS={
         28,
         33
       ],
-      "source": "Dabei! A1.2 · Kursbuch · Modul 9",
+      "source": "Dabei! A1.2 · Kursbuch · Modul 6",
       "series": "A1.2"
     }
   ],
@@ -170,8 +170,8 @@ window.EBDAA_GERMAN_UNITS={
         44,
         47
       ],
-      "source": "Dabei! A1.3 · Kursbuch · Modul 7",
-      "series": "A1.3"
+      "source": "Dabei! A1.2 · Kursbuch · Modul 7",
+      "series": "A1.2"
     },
     {
       "title": "Ferien und Reisen",
@@ -194,8 +194,8 @@ window.EBDAA_GERMAN_UNITS={
         56,
         60
       ],
-      "source": "Dabei! A1.3 · Kursbuch · Modul 8",
-      "series": "A1.3"
+      "source": "Dabei! A1.2 · Kursbuch · Modul 8",
+      "series": "A1.2"
     }
   ]
 };
