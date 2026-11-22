@@ -9,12 +9,12 @@ for(const file of ["data-analysis-curriculum.js","unified-practice.js","data-ana
  assert.doesNotThrow(()=>new vm.Script(source,{filename:file}));
  new Function("window",source)(win);
 }
-const numbers=[1,2,3,6];
+const numbers=[1,2,3,4,5,6];
 for(const grade of [1,2]){
  const units=win.EBDAA_DATA_ANALYSIS_UNITS[grade];
  assert.equal(units.length,1,"Exactly one source collection unit");
- assert.deepEqual(units[0].sessions.map(x=>x.number),numbers,"No fabricated lessons 4 or 5");
- for(let index=0;index<4;index++){
+ assert.deepEqual(units[0].sessions.map(x=>x.number),numbers,"All six source-based lessons are present");
+ for(let index=0;index<6;index++){
   const lesson=units[0].sessions[index];
   assert.ok(lesson.title&&lesson.source&&lesson.slides,"Source metadata must be present");
   const bank=win.EBDAA_DATA_ANALYSIS_PRACTICE.build(grade,0,index);
@@ -45,4 +45,4 @@ const lazy=read("lazy-features.js");
 assert.ok(index.includes('registerNamedLesson("da"')&&index.includes('dataAnalysisPractice'));
 assert.ok(lazy.includes('"data-analysis"')&&lazy.includes("data-analysis-curriculum.js"));
 assert.ok(lazy.includes("data-analysis-practice.js"));
-console.log("Data Analysis QA PASSED: 8 source-grounded lessons, 400 interactive questions, name gates and certificates.");
+console.log("Data Analysis QA PASSED: 12 source-grounded lesson instances, 600 interactive questions, name gates and certificates.");

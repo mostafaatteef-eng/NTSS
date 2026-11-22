@@ -14,12 +14,12 @@ window.NTSS_LAZY=(function(){
  const subjectFiles={
   mathPractice:"math-practice.js",physicsPractice:"physics-practice.js",englishPractice:"english-practice.js",
   businessPractice:"business-english-practice.js",germanPractice:"german-practice.js",arabicPractice:"arabic-practice.js",
-  socialPractice:"social-studies-practice.js",civicsPractice:"civics-practice.js",economicsPractice:"economics-practice.js",dataAnalysisPractice:"data-analysis-practice.js?v=20261122-da1"
+  socialPractice:"social-studies-practice.js",civicsPractice:"civics-practice.js",economicsPractice:"economics-practice.js",dataAnalysisPractice:"data-analysis-practice.js?v=20261122-da-complete1"
  };
  // Subject curricula (unit titles and session lists) download only when a student opens
  // that subject or searches across subjects; the landing page no longer downloads all of them.
  const curriculumFiles={
-  "data-analysis":["data-analysis-curriculum.js?v=20261122-da1"],
+  "data-analysis":["data-analysis-curriculum.js?v=20261122-da-complete1"],
   "mathematics":["math-curriculum.js?v=20261115"],
   "advanced-english":["english-curriculum.js?v=20261115-review","english-grammar-extensions.js?v=20261115-review"],
   "arabic-language":["arabic-curriculum.js?v=20261115-books","arabic-source-questions.js?v=20261115-source","arabic-grammar-items.js?v=20261115-targeted"],

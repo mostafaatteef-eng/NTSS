@@ -70,6 +70,330 @@
  ["What should respondents be given?","Sufficient time without pressure","No explanation at all","An intended answer","A compulsory personal profile","Allow suitable time and encourage honest responses."],
  ["Why is a short survey often preferable?","It reduces unnecessary respondent burden","It always produces more reliable results","It automatically eliminates bias","It proves validity","Keep only questions relevant to research objectives."]
  ],
+ 4:[
+ [
+  "What does KPI stand for?",
+  "Key Performance Indicator",
+  "Knowledge Process Index",
+  "Key Project Instruction",
+  "Known Performance Input",
+  "A KPI is a measurable indicator of progress toward a goal."
+ ],
+ [
+  "Which KPI measures how often learners attend school?",
+  "Student Attendance Rate",
+  "Sales Growth Rate",
+  "Website Click Rate",
+  "Customer Retention Rate",
+  "The attendance rate tracks school attendance."
+ ],
+ [
+  "Which indicator measures the percentage of students who pass examinations?",
+  "Student Success Rate",
+  "Customer Satisfaction Rate",
+  "Annual Sales Growth",
+  "Task Completion Rate",
+  "The success/pass rate counts students passing a defined exam."
+ ],
+ [
+  "What is a satisfaction rate?",
+  "Percentage of respondents who report satisfaction",
+  "Number of questions in the questionnaire",
+  "The total number of classes",
+  "The number of teachers present",
+  "Satisfaction rate uses the proportion of satisfied respondents."
+ ],
+ [
+  "What does the S in SMART stand for?",
+  "Specific",
+  "Statistical",
+  "Short",
+  "Standard",
+  "A specific objective is clear about what will be accomplished."
+ ],
+ [
+  "What does M in SMART mean?",
+  "Measurable",
+  "Memorable",
+  "Manual",
+  "Moderate",
+  "A measurable objective can be tracked quantitatively."
+ ],
+ [
+  "What does A in SMART mean?",
+  "Achievable",
+  "Automatic",
+  "Accidental",
+  "Abstract",
+  "An achievable target is realistic with available resources."
+ ],
+ [
+  "What does R in SMART mean?",
+  "Relevant",
+  "Random",
+  "Repeated",
+  "Rapid",
+  "A relevant objective directly supports a goal."
+ ],
+ [
+  "What does T in SMART mean?",
+  "Time-bound",
+  "Technical",
+  "Temporary",
+  "Tested",
+  "A time-bound objective specifies a deadline."
+ ],
+ [
+  "Which objective best follows SMART in the slide example?",
+  "Increase attendance from 85% to 95% within three months",
+  "Make attendance better",
+  "All students must like the school",
+  "Try to improve something someday",
+  "The slide example specifies a baseline, target, metric and deadline."
+ ],
+ [
+  "What does Student Attendance Rate typically report?",
+  "Percentage of students attending",
+  "Average student height",
+  "Number of available classrooms",
+  "Number of teachers hired",
+  "Attendance rate expresses attendance as a proportion."
+ ],
+ [
+  "Which KPI relates to sales performance?",
+  "Sales Growth Rate",
+  "Student Pass Rate",
+  "Survey Question Count",
+  "Number of classrooms",
+  "Growth rate compares sales levels across periods."
+ ],
+ [
+  "Which KPI relates to finished assignments?",
+  "Task Completion Rate",
+  "Canteen Satisfaction Rate",
+  "Student Registration Code",
+  "Number of forms created",
+  "Task completion measures the fraction of planned tasks finished."
+ ],
+ [
+  "What is the first step in selecting KPIs?",
+  "Define strategic objectives",
+  "Choose chart colors",
+  "Publish results before collecting data",
+  "Delete previous metrics",
+  "An indicator should support a clearly defined objective."
+ ],
+ [
+  "What follows setting strategic objectives when designing KPIs?",
+  "Identify aspects to measure",
+  "Conclude the project is complete",
+  "Replace collected data with guesses",
+  "Make every indicator identical",
+  "Identify which parts of the objective need measurement."
+ ],
+ [
+  "Which data source might measure satisfaction with school facilities?",
+  "Responses to a relevant student questionnaire",
+  "A list of keyboard shortcuts",
+  "An unrelated restaurant receipt",
+  "A computer wallpaper",
+  "A satisfaction questionnaire gathers relevant perceptions."
+ ],
+ [
+  "Why should a KPI be reviewed over time?",
+  "To verify it remains useful and accurate",
+  "To avoid measuring performance",
+  "To hide any change",
+  "To make the objective less clear",
+  "The slide emphasizes testing and updating KPIs periodically."
+ ],
+ [
+  "Which is an educational KPI named in the slides?",
+  "Test Pass Rate",
+  "Daily Sunlight Duration",
+  "Distance Between Cities",
+  "Volume of Rainfall",
+  "The lesson lists test pass rate in educational institutions."
+ ],
+ [
+  "What can a KPI not establish by itself?",
+  "The complete cause of a performance change",
+  "A value to track",
+  "Progress toward an objective",
+  "Whether a target was reached",
+  "A measurement alone does not prove what caused the result."
+ ],
+ [
+  "What is the lesson's group project output?",
+  "A digital satisfaction survey, three KPIs and one SMART objective",
+  "A Python game only",
+  "A report with no data",
+  "A chart without a research question",
+  "The teacher notes specify a survey, three KPIs and one SMART objective."
+ ]
+],
+ 5:[
+ [
+  "Where do you begin creating a Google Form according to the slides?",
+  "forms.google.com",
+  "Excel Data Analysis",
+  "A printed questionnaire",
+  "A drawing canvas",
+  "The slides begin by opening Google Forms."
+ ],
+ [
+  "What should be added near the top of a new Google Form?",
+  "Survey title and description",
+  "Only the researcher's exam grade",
+  "Only a histogram",
+  "Only a scatter chart",
+  "The form header identifies its purpose."
+ ],
+ [
+  "Which Google Forms tab is used to edit questions?",
+  "Questions",
+  "Responses",
+  "Settings",
+  "Charts",
+  "The Questions tab contains the question editor."
+ ],
+ [
+  "Which Google Forms tab lets you inspect submitted answers?",
+  "Responses",
+  "Questions",
+  "Settings",
+  "Images",
+  "The Responses tab provides collected answers."
+ ],
+ [
+  "Which tab controls options such as quiz mode or response settings?",
+  "Settings",
+  "Questions",
+  "Responses",
+  "File Explorer",
+  "The Settings tab contains configurable form behavior."
+ ],
+ [
+  "What does the Required control mean?",
+  "The respondent must answer the item before submitting",
+  "The question is hidden permanently",
+  "Answers are automatically correct",
+  "The survey is deleted",
+  "Required marks an answer as mandatory."
+ ],
+ [
+  "Which Google Forms control adds a new question?",
+  "The add-question plus button",
+  "The Undo button",
+  "The color theme only",
+  "The preview eye only",
+  "The plus icon inserts a question card."
+ ],
+ [
+  "Which question type allows a long text response?",
+  "Paragraph",
+  "Multiple choice",
+  "Dropdown",
+  "Linear scale",
+  "Paragraph questions are suited to extended text."
+ ],
+ [
+  "Which question type allows one selected option among several?",
+  "Multiple choice",
+  "Checkboxes with multiple selections",
+  "Paragraph",
+  "File upload",
+  "Multiple-choice questions select one answer."
+ ],
+ [
+  "Which question type supports selecting several answers?",
+  "Checkboxes",
+  "Short answer",
+  "Single-option dropdown",
+  "Date picker",
+  "Checkboxes can accept multiple selections."
+ ],
+ [
+  "Which format lets respondents choose an ordered score like 1 to 5?",
+  "Linear scale",
+  "Paragraph",
+  "Short answer",
+  "File upload",
+  "The lesson gives a linear scale as a rating example."
+ ],
+ [
+  "Which response format is designed for picking a date?",
+  "Date",
+  "Paragraph",
+  "Multiple choice grid",
+  "Short answer",
+  "Date fields collect calendar dates."
+ ],
+ [
+  "What can QuestionPro's Analytics area be used for?",
+  "Reviewing charts and reports",
+  "Deleting the research objective",
+  "Measuring a classroom's temperature directly",
+  "Writing a programming language",
+  "The lesson introduces QuestionPro analytics and reports."
+ ],
+ [
+  "What feature is shared by Google Forms and QuestionPro?",
+  "Creating and distributing online questionnaires",
+  "Operating as a spreadsheet formula",
+  "Replacing survey objectives",
+  "Automatically guaranteeing unbiased samples",
+  "Both services support questionnaire creation and sharing."
+ ],
+ [
+  "Which QuestionPro format is described as a recommendation-likelihood question?",
+  "NPS",
+  "Mean",
+  "Histogram",
+  "Sampling frame",
+  "NPS asks about likelihood to recommend."
+ ],
+ [
+  "Which QuestionPro question format arranges items into rows and columns?",
+  "Matrix",
+  "Paragraph",
+  "File upload",
+  "Short answer",
+  "Matrix questions use structured rows and columns."
+ ],
+ [
+  "Which QuestionPro format asks respondents to order choices?",
+  "Ranking",
+  "Date",
+  "Text box",
+  "Constant sum only",
+  "Ranking orders alternatives by preference."
+ ],
+ [
+  "When should researchers enable collecting personal emails?",
+  "Only if necessary, with appropriate consent and privacy safeguards",
+  "Always, regardless of study goal",
+  "Because every survey needs addresses",
+  "To make the question more biased",
+  "Collect only information needed for the task, especially with students."
+ ],
+ [
+  "What is the final Google Forms workflow step shown in the slides?",
+  "Review settings, share the form and inspect responses",
+  "Remove the survey title",
+  "Erase submitted data",
+  "Choose a random answer key",
+  "The slides finish with sharing and examining results."
+ ],
+ [
+  "What is important about screenshots marked Paste your real screenshot here?",
+  "They are placeholders, not confirmed interface documentation",
+  "They prove the interface never changes",
+  "They are actual live screenshots",
+  "They are required student answers",
+  "The provided teaching file contains screenshot placeholders."
+ ]
+],
  6:[
  ["Why clean a dataset before analysis?","Errors can distort statistics and decisions","To maximize duplicate records","To erase all evidence","To make charts deliberately misleading","Cleaning improves consistency and quality."],
  ["Which Excel action converts a range to a structured table?","Insert → Table","File → Print","Data → Correlation","Insert → SmartArt","Use Insert > Table and confirm headers."],
@@ -97,6 +421,8 @@
   ["In a school data project", "For a classroom investigation"],
   ["In an attendance study", "While planning a student survey"],
   ["When collecting feedback", "In a digital questionnaire exercise"],
+  ["When measuring school performance", "For a SMART objective task"],
+  ["When building an online survey", "During a digital questionnaire activity"],
   ["In a spreadsheet-based analysis", "When preparing an Excel report"]
  ];
  const numerical={
@@ -112,6 +438,8 @@
   const yes=12+j,no=6+j*2;
   return {question:"A pilot survey receives "+yes+" Yes responses and "+no+" No responses. How many responses were collected?",mode:"number",answer:yes+no,explanation:"Total responses = Yes + No = "+(yes+no)+"."};
  },
+ 4:(j)=>{const total=40+j*5,attending=total-(8+j);const pct=100*attending/total;return {question:"A class has "+total+" students and "+attending+" attend today. What percentage is attending? Round to one decimal place.",mode:"number",answer:Math.round(pct*10)/10,explanation:"Attendance percentage = "+attending+" / "+total+" × 100 = "+pct.toFixed(1)+"%.",tolerance:0.051};},
+ 5:(j)=>{const asked=20+j*3,responded=asked-3-j;return {question:"An online form was shared with "+asked+" students and "+responded+" submitted responses. How many students did not respond?",mode:"number",answer:asked-responded,explanation:"No response = students invited minus responses received = "+(asked-responded)+"."};},
  6:(j)=>{
   const vals=[10+j,14+j,18+j,22+j],answer=j%2===0?16+j:12;
   return j%2===0?{question:"In Excel, the values are "+vals.join(", ")+". What is their mean?",mode:"number",answer,explanation:"AVERAGE = sum of values / 4 = "+answer+"."}:
@@ -119,8 +447,8 @@
  }
  };
  function build(g,u,i){
-  if(![1,2].includes(g)||u!==0||!Number.isInteger(i)||i<0||i>3)throw Error("Unknown Data Analysis lesson");
-  const lesson=[1,2,3,6][i],seeds=decks[lesson],result=[];
+  if(![1,2].includes(g)||u!==0||!Number.isInteger(i)||i<0||i>5)throw Error("Unknown Data Analysis lesson");
+  const lesson=[1,2,3,4,5,6][i],seeds=decks[lesson],result=[];
   // Revisit definitions in two scenario phrasings, deliberately labelled formative practice.
   for(let k=0;k<40;k++){
    const seed=seeds[k%seeds.length],pass=Math.floor(k/seeds.length);
@@ -141,7 +469,7 @@
   buildItems:build,title:(g,u,i)=>window.EBDAA_DATA_ANALYSIS_UNITS[g][u].sessions[i].title,
   header:(g,u,i)=>({dir:"ltr",lang:"en",exitLabel:"← Data Analysis lessons",exit:"dataAnalysisBackToUnit()",
     yearLabel:"YEAR "+g+" · DATA ANALYSIS",
-    disclaimer:"Based on Ms. Asmaa Ahmed Abd El-Hadi's supplied slides (Lessons 1, 2, 3 and 6). 40 repeated-concept scenarios and 10 numerical applications; not 50 independent textbook items. Formative practice; teacher verification pending."}),
+    disclaimer:"Based on Ms. Asmaa Ahmed Abd El-Hadi's supplied slides (Lessons 1 through 6). 40 repeated-concept scenarios and 10 numerical applications; not 50 independent textbook items. Formative practice; teacher verification pending."}),
   eyebrow:(q,{cursor})=>["📊 Core concept","🔎 Analyze","🧠 Decide","🧮 Work with data","🎯 Check understanding"][cursor%5],
   beforeControls:q=>"",
  });
