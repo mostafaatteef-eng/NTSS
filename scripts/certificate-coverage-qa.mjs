@@ -5,6 +5,7 @@ const read=file=>readFileSync(file,"utf8");
 const main=read("app-main.js");
 const subjects=[
  ["ai","AI & Data Analysis",null,"practice-workshop.js"],
+ ["da","Data Analysis","dataAnalysisOpen","data-analysis-practice.js"],
  ["math","Mathematics","mathOpen","math-practice.js"],
  ["en","Advanced English","englishOpen","english-practice.js"],
  ["physics","Physics STEM","physicsOpen","physics-practice.js"],
@@ -23,7 +24,7 @@ assert.match(main,/getName\(studentKey\)/,"AI questions require name");
 for(const [subject,label,fn,file] of subjects){
  const practice=read(file);
  if(fn){
-  const opener=new RegExp("function "+fn+"\\(i\\)\\{[\\s\\S]{0,260}?registerNamedLesson\\(\\\""+subject+"\\\"");
+  const opener=new RegExp("function "+fn+"\\(i\\)\\{[\\s\\S]{0,"+(subject==="da"?1200:260)+"}?registerNamedLesson\\(\\\""+subject+"\\\"");
   assert.match(main,opener,subject+" name entry must be registered");
  }
  if(/EBDA_PRACTICE_FRAMEWORK\.create\(/.test(practice)){assert.match(read("unified-practice.js"),/EBDA_COMPLETION\.render\(/,"unified framework lesson completion")}
@@ -50,4 +51,4 @@ for(const [subject,label] of subjects){
 const participation=completion.participation({subject:"be",grade:1,unit:0,index:0,lesson:"Workplace Project"});
 assert.ok(participation.includes("Certificate of Participation")&&participation.includes("QA Student"));
 assert.ok(participation.includes("Not graded"),"Project must never claim an assessed score");
-console.log("Certificate coverage passed: student-name gate for all subjects, ten normal completion pathways, project participation and 70% eligibility.");
+console.log("Certificate coverage passed: student-name gate for all subjects, eleven subject completion pathways, project participation and 70% eligibility.");
