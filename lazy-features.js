@@ -12,7 +12,7 @@ window.NTSS_LAZY=(function(){
   "lab-studio.js"
  ];
  const subjectFiles={
-  mathPractice:"math-practice.js",physicsPractice:"physics-practice.js",englishPractice:"english-practice.js",
+  mathPractice:"math-practice.js?v=20261122-math1",physicsPractice:"physics-practice.js",englishPractice:"english-practice.js",
   businessPractice:"business-english-practice.js?v=20261122-practice-fix1",germanPractice:"german-practice.js",arabicPractice:"arabic-practice.js",
   socialPractice:"social-studies-practice.js",civicsPractice:"civics-practice.js",economicsPractice:"economics-practice.js",dataAnalysisPractice:"data-analysis-practice.js?v=20261122-practice-fix1"
  };

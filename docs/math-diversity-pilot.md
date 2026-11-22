@@ -1,5 +1,5 @@
-# Scoped math diversity pilot, review only
-Base: frozen091f0ed. Separate branch fix/math-diversity-pilot-2026-11-22. No publishing or merging.
+# Scoped math diversity release candidate
+Originally reviewed as pilot89ae198 atop091f0ed. Release branch fix/math-diversity-release-2026-11-22 is based on deployed PR19 merge682351c. The user approved the disclosed expanded level and before/after samples on22Nov2026 at22:00Cairo. No remote publication has yet occurred from this local candidate.
 
 Replace only three banks currently at 3 unique full items each:
 - Year2 unit1 lesson1: Solving Trigonometric Equations. Ten sine/cosine equations at unit-circle values, each exercised through solution identification, smallest/largest solution, number of solutions and rejecting a non-solution. Explicit half-open degree interval. Remains introductory, no quadratic equations or calculator inverses.
@@ -16,8 +16,21 @@ All retain 50 items and generated-practice disclosure. Distinct combinations are
 - Browser samples at 1280px and 390px: actual numeric input/check accepted a correct answer in each pilot bank; baseline comparison uses the same lesson/cursor/student/viewport. Baseline trig recall used actual Enter submission before Check. No page errors, CSP violations, or horizontal overflow in these samples.
 - Full before/after evidence is supporting material, not production evidence.
 
-## Release status
-Local review candidate only. No PR, push, merge, deployment, service-worker version bump or claim that the general repetition problem is solved. A release needs a separate review and cache/version update. The signed-input fractions and actual integration tasks improve lesson relevance but change the previous narrow difficulty profile. Review them, rather than treating distinctness alone as approval.
+## Release preparation and final-source verification
+
+Teaching output remains byte-identical to reviewed pilot89ae198: only the three listed banks change. Other73math banks remain byte-equivalent to091. The two definitions published in PR19 and all other runtime JavaScript remain unchanged. Math numeric inputs receive one targeted CSS direction rule so signed answers display with a leading minus in the Arabic UI; this is not a shared framework change.
+
+Only the math-practice URL and the lazy-loader URL gain a math1 version. Service worker and cache namespace remain unchanged. Existing security-regression CI now runs math-diversity-tests and math-release-tests as well as every prior test. Prior release-scope assertions were extended for the explicit math version and numeric-direction rule, with strict hashes still guarding every other HTML/loader difference. No security checks, permissions or jobs were removed.
+
+-46/46 tests pass with zero skips, including five math-content oracle tests and three math-release tests. All six structural, grader, performance, certificate-coverage, catalog and data-analysis scripts pass.603activities remain595graded banks of50plus8projects.
+-All150pilot answers checked independently, including numeric quadrature and exactly-one-correct distractors. All three banks have50distinct question strings. This is parameterized practice, not50independently authored questions or a solution to repetition elsewhere.
+-16real-input/control browser cases at390/1280cover equation choice/rejection/negative RHS, signed double-angle/tangent and first/irrational/final integrals. Answers accepted, zero page/CSP errors or horizontal overflow. Targeted negative-input screenshots visually inspected after correcting RTL sign placement. Setup questions advanced through framework calls.
+-Responsive assessment passed Chromium, Firefox and WebKit at four sizes; Chromium live workers passed.112cross-subject UI cases and17data-analysis completions passed.112certificate-name cases passed separately after the aggregate invocation timed out during that matrix; timeout was not counted as a pass.
+-Actual strict-CSP SQL2/2andPython3/3, independent lab/challenge drafts, overwrite confirmation and real print dispatch pass.
+-Warmed PR19same-origin cache upgrade preserves all58prior entries. Only index.html is replaced; exactly2new entries are added, loader and math-practice. Server receives onlyHTMLplus those2requests. No unchanged BE/social/math-curriculum refetch. New math questions and both published definitions persist offline; zero page/CSP errors.
+-Previously disclosed learning-WebKit offline internal engine failure remains unresolved. Responsive-WebKit success is not a claim that its offline test is fixed. Actual remote CI and live release verification remain pending.
+
+Reproducible scripts: scripts/math-release-browser-qa.mjs (NTSS_MATH_ARTIFACTS; optional NTSS_MATH_BASE_URL), scripts/math-release-cache-qa.mjs (requires NTSS_MATH_BASE_ROOT set to extracted PR19source). Cache script validates the baseline before use.
 
 ## Formula sources, read 2026-11-22
 - OpenStax Precalculus 2e, 7.5 Solving Trigonometric Equations: https://openstax.org/books/precalculus-2e/pages/7-5-solving-trigonometric-equations
