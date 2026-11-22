@@ -8,11 +8,11 @@ test('Release changes only two curriculum URLs, with all other lazy module URLs 
  await win.NTSS_LAZY.ensureAllCurricula();const curriculum=urls.splice(0),changed=[];assert.equal(curriculum.length,baseline.curriculum.length);
  for(const [i,url]of curriculum.entries())if(url!==baseline.curriculum[i]){const name=url.split('?')[0];changed.push(name);assert.equal(url,name+'?v=20261122-clarity1&release=20261122-round2');}
  assert.deepEqual(changed.sort(),['business-english-curriculum.js','social-studies-curriculum.js']);
- for(const mode of Object.keys(win.NTSS_LAZY.subjectFiles))await win.NTSS_LAZY.ensureSubject(mode);assert.deepEqual(urls.splice(0).map(url=>url.replace('math-practice.js?v=20261122-math1&','math-practice.js?')),baseline.subjects);
+ for(const mode of Object.keys(win.NTSS_LAZY.subjectFiles))await win.NTSS_LAZY.ensureSubject(mode);assert.deepEqual(urls.splice(0).map(url=>url.replace('math-practice.js?v=20261122-math1&','math-practice.js?').replace('physics-practice.js?v=20261122-physics1&','physics-practice.js?')),baseline.subjects);
  await win.NTSS_LAZY.ensureStudio();assert.deepEqual(urls.splice(0),baseline.studio);
 });
 test('HTML differs from091 only in the lazy loader asset version, retaining strict script CSP',()=>{
- const html=fs.readFileSync('index.html','utf8'),from='lazy-features.js?v=20261122-math1',to='lazy-features.js?v=20261122-round2';assert.equal(html.split(from).length,2);assert.equal(sha(html.replace(from,to).replace('\n#math-answer[type=number]{direction:ltr;text-align:left}\n','')),baseline.indexSha256);
+ const html=fs.readFileSync('index.html','utf8'),from='lazy-features.js?v=20261122-physics1',to='lazy-features.js?v=20261122-round2';assert.equal(html.split(from).length,2);assert.equal(sha(html.replace(from,to).replace('unified-practice.js?v=20261122-physics1','unified-practice.js?v=20261122-round2').replace('\n#math-answer[type=number]{direction:ltr;text-align:left}\n','')),baseline.indexSha256);
  const policy=html.match(/<meta http-equiv="Content-Security-Policy" content="([^"]+)"/)[1],script=policy.match(/script-src ([^;]+)/)[1];const tokens=script.split(/\s+/);assert.ok(!tokens.includes("'unsafe-inline'"));assert.ok(!tokens.includes("'unsafe-eval'"));
 });
 test('Service worker and shared cache namespace remain byte-identical, without a global purge',()=>{
