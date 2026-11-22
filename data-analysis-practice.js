@@ -447,15 +447,15 @@
  }
  };
  function build(g,u,i){
-  if(![1,2].includes(g)||u!==0||!Number.isInteger(i)||i<0||i>5)throw Error("Unknown Data Analysis lesson");
-  const lesson=[1,2,3,4,5,6][i],seeds=decks[lesson],result=[];
+  if(![1,2,3].includes(g)||u!==0||!Number.isInteger(i)||i<0||i>(g===3?4:5))throw Error("Unknown Data Analysis lesson");
+  const lesson=(g===3?[1,3,4,5,6]:[1,2,3,4,5,6])[i],seeds=decks[lesson],contextIndex=(g===3?[0,2,3,4,5]:[0,1,2,3,4,5])[i],result=[];
   // Revisit definitions in two scenario phrasings, deliberately labelled formative practice.
   for(let k=0;k<40;k++){
    const seed=seeds[k%seeds.length],pass=Math.floor(k/seeds.length);
-   const prompt=(contexts[i][pass%2]+": ")+seed[0];
+   const prompt=(contexts[contextIndex][pass%2]+": ")+seed[0];
    const choices=[seed[1],seed[2],seed[3],seed[4]];
    const shift=(k*3+g+i)%4,rotated=choices.slice(shift).concat(choices.slice(0,shift));
-   result.push({mode:"choice",question:prompt,options:rotated,answer:(4-shift)%4,explanation:seed[5],sourceStatus:"Supplementary practice aligned to uploaded lesson "+lesson+" · teacher approval pending",focus:1+k%seeds.length});
+   result.push({mode:"choice",question:prompt,options:rotated,answer:(4-shift)%4,explanation:seed[5],sourceStatus:"Supplementary practice aligned to uploaded topic "+lesson+" · Grade "+g+" lesson "+(i+1)+" · teacher approval pending",focus:1+k%seeds.length});
   }
   for(let j=0;j<10;j++){
    const q=numerical[lesson](j);
@@ -469,7 +469,7 @@
   buildItems:build,title:(g,u,i)=>window.EBDAA_DATA_ANALYSIS_UNITS[g][u].sessions[i].title,
   header:(g,u,i)=>({dir:"ltr",lang:"en",exitLabel:"← Data Analysis lessons",exit:"dataAnalysisBackToUnit()",
     yearLabel:"YEAR "+g+" · DATA ANALYSIS",
-    disclaimer:"Based on Ms. Asmaa Ahmed Abd El-Hadi's supplied slides (Lessons 1 through 6). 40 repeated-concept scenarios and 10 numerical applications; not 50 independent textbook items. Formative practice; teacher verification pending."}),
+    disclaimer:"Based on Ms. Asmaa Ahmed Abd El-Hadi's uploaded grade-specific slide decks. 40 repeated-concept scenarios and 10 numerical applications; not 50 independent textbook items. Formative practice; teacher verification pending."}),
   eyebrow:(q,{cursor})=>["📊 Core concept","🔎 Analyze","🧠 Decide","🧮 Work with data","🎯 Check understanding"][cursor%5],
   beforeControls:q=>"",
  });
