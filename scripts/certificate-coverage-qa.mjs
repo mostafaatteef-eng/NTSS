@@ -1,3 +1,5 @@
+import {createRequire} from "node:module";
+const loadUiEvents=createRequire(import.meta.url)("../test-ui-events.cjs");
 import assert from "node:assert/strict";
 import {readFileSync} from "node:fs";
 import vm from "node:vm";
@@ -34,7 +36,7 @@ for(const [subject,label,fn,file] of subjects){
 const business=read("business-english-practice.js");
 assert.match(business,/EBDA_COMPLETION\.participation\(/);
 assert.match(business,/completeProject/);
-const window={NTSS_ORIGINAL_LOGO:""};
+const window={NTSS_ORIGINAL_LOGO:""};loadUiEvents(window);
 new Function("window",read("lesson-completion.js"))(window);
 const completion=window.EBDA_COMPLETION;
 for(const [subject,label] of subjects){

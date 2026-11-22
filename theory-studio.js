@@ -9,28 +9,10 @@ function reveal(g,u,i){seen.add(key(g,u,i));const n=document.getElementById("ebd
 function hero(g,u,i,heading,topic){return '<div class="theory-hero"><div class="theory-hero__copy"><span class="theory-eyebrow"><span class="theory-dot"></span> THEORY LAB · YEAR '+g+' · UNIT '+(u+1)+'</span><h2>'+esc(heading)+'</h2><p>'+esc(topic)+'</p><div class="theory-tags"><span>Observe</span><span>Understand</span><span>Apply</span></div></div><div class="theory-hero__art" aria-hidden="true"><span class="theory-orbit theory-orbit--one"></span><span class="theory-orbit theory-orbit--two"></span><span class="theory-core">✦</span></div></div>'}
 function yearOne(s,u,i){
 const g=1,k=key(g,u,i),visible=seen.has(k);
-return '<section class="theory-studio theory-studio--focused" aria-label="Understand the lesson concept">'+
-hero(g,u,i,s.title,s.topic)+
-'<div class="theory-spark"><div class="theory-spark__icon" aria-hidden="true">✦</div>'+
-'<div class="theory-spark__content"><span class="theory-mini-label">THE BIG IDEA</span>'+
-'<h3>Why did the experiment behave that way?</h3>'+
-'<p>Think about what changed when you adjusted the input. Then reveal the reasoning.</p>'+
-'<button class="theory-reveal" id="ebda-theory-reveal-'+k+'" type="button" aria-controls="ebda-theory-insight-'+k+'" aria-expanded="'+visible+'" onclick="EBDA_THEORY.reveal(1,'+u+','+i+')">'+(visible?'Explanation revealed ✓':'Show the explanation →')+'</button>'+
-'<div class="theory-revealed" id="ebda-theory-insight-'+k+'" tabindex="-1" '+(visible?'':'hidden')+'><strong>Concept explained</strong><p>'+esc(s.explanation)+'</p></div></div></div>'+
-'<details class="theory-more"><summary>Review the concept in one sentence</summary><p>'+esc(s.topic)+'</p></details>'+
-'</section>'}
+return ("<section class=\"theory-studio theory-studio--focused\" aria-label=\"Understand the lesson concept\">"+(hero(g,u,i,s.title,s.topic))+"<div class=\"theory-spark\"><div class=\"theory-spark__icon\" aria-hidden=\"true\">✦</div><div class=\"theory-spark__content\"><span class=\"theory-mini-label\">THE BIG IDEA</span><h3>Why did the experiment behave that way?</h3><p>Think about what changed when you adjusted the input. Then reveal the reasoning.</p><button class=\"theory-reveal\" id=\"ebda-theory-reveal-"+(k)+"\" type=\"button\" aria-controls=\"ebda-theory-insight-"+(k)+"\" aria-expanded=\""+(visible)+"\" "+window.NTSS_EVENTS.bind("click",function(event){EBDA_THEORY.reveal(1,(u),(i))},"EBDA_THEORY.reveal")+">"+(visible?'Explanation revealed ✓':'Show the explanation →')+"</button><div class=\"theory-revealed\" id=\"ebda-theory-insight-"+(k)+"\" tabindex=\"-1\" "+(visible?'':'hidden')+"><strong>Concept explained</strong><p>"+(esc(s.explanation))+"</p></div></div></div><details class=\"theory-more\"><summary>Review the concept in one sentence</summary><p>"+(esc(s.topic))+"</p></details></section>")}
 function advanced(g,u,i,guide,profile,name){
 const k=key(g,u,i),shown=seen.has(k),focus=guide.focus||name,steps=guide.instructions||[];
-return '<section class="theory-studio theory-studio--focused" aria-label="Discover the lesson concept">'+
-hero(g,u,i,name,focus)+
-'<div class="theory-spark"><div class="theory-spark__icon" aria-hidden="true">✦</div>'+
-'<div class="theory-spark__content"><span class="theory-mini-label">THINK BEFORE YOU TRY</span>'+
-'<h3>What would a successful result look like?</h3>'+
-'<p>Make a prediction. Then compare it with the result you produce in the experiment.</p>'+
-'<button class="theory-reveal" type="button" id="ebda-theory-reveal-'+k+'" aria-controls="ebda-theory-insight-'+k+'" aria-expanded="'+shown+'" onclick="EBDA_THEORY.reveal('+g+','+u+','+i+')">'+(shown?'Prediction guide revealed ✓':'Reveal one clue →')+'</button>'+
-'<div class="theory-revealed" id="ebda-theory-insight-'+k+'" tabindex="-1" '+(shown?'':'hidden')+'><strong>Look for this evidence</strong><p>'+esc(guide.artifact)+'</p></div></div></div>'+
-'<details class="theory-more"><summary>Need a starting point? View the learning steps</summary><ol>'+steps.map(step=>'<li>'+esc(step)+'</li>').join("")+'</ol><p class="muted">Teacher-guide reference: '+esc(profile.source)+'. Exact rubric alignment is pending review.</p></details>'+
-'</section>'}
+return ("<section class=\"theory-studio theory-studio--focused\" aria-label=\"Discover the lesson concept\">"+(hero(g,u,i,name,focus))+"<div class=\"theory-spark\"><div class=\"theory-spark__icon\" aria-hidden=\"true\">✦</div><div class=\"theory-spark__content\"><span class=\"theory-mini-label\">THINK BEFORE YOU TRY</span><h3>What would a successful result look like?</h3><p>Make a prediction. Then compare it with the result you produce in the experiment.</p><button class=\"theory-reveal\" type=\"button\" id=\"ebda-theory-reveal-"+(k)+"\" aria-controls=\"ebda-theory-insight-"+(k)+"\" aria-expanded=\""+(shown)+"\" "+window.NTSS_EVENTS.bind("click",function(event){EBDA_THEORY.reveal((g),(u),(i))},"EBDA_THEORY.reveal")+">"+(shown?'Prediction guide revealed ✓':'Reveal one clue →')+"</button><div class=\"theory-revealed\" id=\"ebda-theory-insight-"+(k)+"\" tabindex=\"-1\" "+(shown?'':'hidden')+"><strong>Look for this evidence</strong><p>"+(esc(guide.artifact))+"</p></div></div></div><details class=\"theory-more\"><summary>Need a starting point? View the learning steps</summary><ol>"+(steps.map(step=>'<li>'+esc(step)+'</li>').join(""))+"</ol><p class=\"muted\">Teacher-guide reference: "+(esc(profile.source))+". Exact rubric alignment is pending review.</p></details></section>")}
 
 function reset(){seen.clear()}
 return {yearOne,advanced,reveal,reset};

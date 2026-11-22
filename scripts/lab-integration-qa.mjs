@@ -23,8 +23,8 @@ try{
    const suffix=lang+'-'+viewport.width+'-g'+g;
    if(g===1)await capture((before?'before':'after')+'-subject-'+suffix+'.png');
    if(before){await p.getByRole('button',{name:'🐍 Open Python Lab',exact:true}).click();await capture('before-lab-'+suffix+'.png');continue}
-   assert.equal(await p.locator('button[onclick="openCodeLab()"]' ).count(),1,'one free practice entry');
-   await p.locator('button[onclick="openCodeLab()"]' ).click();
+   assert.equal(await p.locator('button[data-ntss-action="openCodeLab"]' ).count(),1,'one free practice entry');
+   await p.locator('button[data-ntss-action="openCodeLab"]' ).click();
    assert.equal(await p.locator('.coding-lab [aria-pressed="true"]').count(),2);
    assert.equal(await p.locator('.coding-lab__tasks button').count(),6);
    await p.locator('.practice-focus__exit').click();

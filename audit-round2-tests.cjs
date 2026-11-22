@@ -5,6 +5,7 @@ function setup(){
  const nodes={'studio-editor':lab,'ebda-challenge-editor':editor,'ebda-code-results':result};
  let submitted,confirmations=0,allowReplace=false;
  const window={EBDAA_PERFORMANCE:{'2-1':{engine:'python'},'2-2':{engine:'sql'}},EBDAA_STUDIO:{runPython(code){submitted=code}},confirm(){confirmations++;return allowReplace}};
+ require('./test-ui-events.cjs')(window);
  vm.runInNewContext(fs.readFileSync('code-challenges.js','utf8'),{window,document:{getElementById(id){return nodes[id]}}});
  return {api:window.EBDA_CODE_TESTS,lab,editor,result,get submitted(){return submitted},get confirmations(){return confirmations},allow(){allowReplace=true}};
 }

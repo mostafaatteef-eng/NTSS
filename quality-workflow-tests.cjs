@@ -7,6 +7,7 @@ const read=p=>fs.readFileSync(p,'utf8');
 const parse=p=>assert.doesNotThrow(()=>new vm.Script(read(p)),p);
 function load(file,window={},extra={}){
  const context={window,document:{getElementById(){return null},querySelector(){return null}},...extra};
+ require("./test-ui-events.cjs")(window);
  vm.runInNewContext(read(file),context,{filename:file});
  return window;
 }

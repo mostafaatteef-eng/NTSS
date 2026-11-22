@@ -87,10 +87,10 @@ function build(g,u,i){
 }
 window.EBDAA_MATH_PRACTICE=window.EBDA_PRACTICE_FRAMEWORK.create({
  name:"EBDAA_MATH_PRACTICE",subject:"math",gameKey:"math",learningMode:"mathPractice",contextGames:true,
- locale:"en",inputId:"math-answer",checkId:"math-check",focusClass:"math-focus",back:"mathBackToUnit()",
+ locale:"en",inputId:"math-answer",checkId:"math-check",focusClass:"math-focus",back:()=>mathBackToUnit(),
  buildItems:(g,u,i)=>build(g,u,i),
  title:(g,u,i)=>window.EBDAA_MATH_UNITS[g][u].sessions[i],
- header:g=>({exitLabel:"← All math lessons",exit:"mathBackToUnit()",yearLabel:"YEAR "+g+" · MATHEMATICS",disclaimer:"50 generated formative practice items per lesson, aligned with its supplied curriculum topic. Parameter variants and conceptual checks are not 50 independently authored textbook problems."}),
+ header:g=>({exitLabel:"← All math lessons",exit:()=>mathBackToUnit(),yearLabel:"YEAR "+g+" · MATHEMATICS",disclaimer:"50 generated formative practice items per lesson, aligned with its supplied curriculum topic. Parameter variants and conceptual checks are not 50 independently authored textbook problems."}),
  eyebrow:(q,{g,u})=>escape(window.EBDAA_MATH_UNITS[g][u].title),
  afterControls:(q,{g,u,i,cursor,items})=>window.EBDAA_CONTEXT_GAMES.math([g,u,i].join("-"),cursor,items)+window.EBDAA_CONTEXT_GAMES.report("math",[g,u,i].join("-"),false)
 });

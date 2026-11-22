@@ -21,7 +21,7 @@ test('CSP restricts plugins, framing and forms without breaking current inline U
  assert.match(page,/<meta http-equiv="Content-Security-Policy"/);
  for(const directive of ["object-src 'none'","frame-src 'none'","base-uri 'none'","form-action 'none'","worker-src 'self'"])
   assert.ok(page.includes(directive),directive);
- assert.match(page,/src="coding-labs\.js\?v=20261122-lab1"/);
+ assert.match(page,/src="coding-labs\.js\?v=20261122-round2"/);
 });
 
 test('SQL worker accepts only single SELECT over fictional data',async()=>{

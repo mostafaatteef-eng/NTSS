@@ -33,10 +33,10 @@ function build(g,u,i){
 }
 window.EBDAA_ARABIC_PRACTICE=window.EBDA_PRACTICE_FRAMEWORK.create({
  name:"EBDAA_ARABIC_PRACTICE",subject:"ar",gameKey:"ar",learningMode:"arabicPractice",appliedKey:"ar",contextGames:true,
- locale:"ar",inputId:"practice-answer",checkId:"arabic-check",back:"arabicBackToUnit()",completionArabic:true,
+ locale:"ar",inputId:"practice-answer",checkId:"arabic-check",back:()=>arabicBackToUnit(),completionArabic:true,
  buildItems:(g,u,i)=>build(g,u,i).map(q=>({...q,mode:"choice"})),
  title:(g,u,i)=>window.EBDAA_ARABIC_UNITS[g][u].sessions[i],
- header:g=>({dir:"rtl",lang:"ar",exitLabel:"العودة إلى الدروس",exit:"arabicBackToUnit()",yearLabel:"الصف "+g+" · اللغة العربية",disclaimer:"أُضيفت أسئلة من مضمون بعض دروس القراءة وأسئلة نحوية مخصصة لقواعد بعض الدروس؛ الأسئلة الأخرى مراجعات عامة متكررة. لم تُراجع كل أسئلة الكتاب أكاديميًا بعد."}),
+ header:g=>({dir:"rtl",lang:"ar",exitLabel:"العودة إلى الدروس",exit:()=>arabicBackToUnit(),yearLabel:"الصف "+g+" · اللغة العربية",disclaimer:"أُضيفت أسئلة من مضمون بعض دروس القراءة وأسئلة نحوية مخصصة لقواعد بعض الدروس؛ الأسئلة الأخرى مراجعات عامة متكررة. لم تُراجع كل أسئلة الكتاب أكاديميًا بعد."}),
  eyebrow:(q,{g,u})=>e(q.kind)+" · "+e(window.EBDAA_ARABIC_UNITS[g][u].title)+(q.sourcePage?" · صفحة PDF "+q.sourcePage:""),
  topExtras:(q,{g,u,i})=>window.EBDAA_CONTEXT_GAMES.report("ar",[g,u,i].join("-"),true),
  afterControls:(q,{g,u,i,cursor,items})=>window.EBDAA_CONTEXT_GAMES.matching("ar",[g,u,i].join("-"),cursor,items,true)+window.NTSS_APPLIED.render("ar",[g,u,i].join("-"),cursor,window.EBDAA_ARABIC_UNITS[g][u].sessions[i])

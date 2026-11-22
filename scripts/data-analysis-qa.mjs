@@ -1,9 +1,11 @@
+import {createRequire} from "node:module";
+const loadUiEvents=createRequire(import.meta.url)("../test-ui-events.cjs");
 import assert from "node:assert/strict";
 import {readFileSync} from "node:fs";
 import vm from "node:vm";
 
 const read=path=>readFileSync(path,"utf8");
-const win={};
+const win={};loadUiEvents(win);
 for(const file of ["data-analysis-curriculum.js","unified-practice.js","data-analysis-practice.js","lesson-completion.js"]){
  const source=read(file);
  assert.doesNotThrow(()=>new vm.Script(source,{filename:file}));

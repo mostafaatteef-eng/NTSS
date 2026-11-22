@@ -41,11 +41,11 @@
  }
 window.EBDAA_ECONOMICS_PRACTICE=window.EBDA_PRACTICE_FRAMEWORK.create({
  name:"EBDAA_ECONOMICS_PRACTICE",subject:"economics",gameKey:"economics",learningMode:"economicsPractice",appliedKey:"economics",
- locale:"ar",inputId:"practice-answer",checkId:"economics-check",back:"economicsBackToUnit()",completionArabic:true,
+ locale:"ar",inputId:"practice-answer",checkId:"economics-check",back:()=>economicsBackToUnit(),completionArabic:true,
  checkFill:(q,v)=>String(q.answer).match(/^[0-9]+$/)?Number(String(v).replace(/[٠-٩]/g,x=>"٠١٢٣٤٥٦٧٨٩".indexOf(x)))===Number(q.answer):norm(v)===norm(q.answer),
  buildItems:(g,u,i)=>build(g,u,i).map(q=>q.type==="tf"?{mode:"choice",question:q.prompt,clue:q.clue,options:["صواب","خطأ"],answer:q.answer,explanation:q.explain}:q.type==="fill"?{mode:"fill",question:q.prompt,clue:q.clue,answer:q.answer,explanation:q.explain}:{mode:"choice",question:q.prompt,clue:q.clue,options:q.options,answer:q.answer,explanation:q.explain}),
  title:(g,u,i)=>window.EBDAA_ECONOMICS_UNITS[g][u].sessions[i].title,
- header:g=>({dir:"rtl",lang:"ar",exitLabel:"← العودة إلى الدروس",exit:"economicsBackToUnit()",yearLabel:"الصف الثالث · الاقتصاد",disclaimer:"الأنشطة تعليمية مساندة من مفاهيم الدرس، وتتضمن حسابات تدريبية أصلية وتستخدم إعادة صياغة متعددة للمعلومات الأساسية. لا تُمثل 50 سؤالًا أصليًا مستقلاً من الكتاب، وتحتاج مراجعة المعلم قبل التقييم الرسمي."}),
+ header:g=>({dir:"rtl",lang:"ar",exitLabel:"← العودة إلى الدروس",exit:()=>economicsBackToUnit(),yearLabel:"الصف الثالث · الاقتصاد",disclaimer:"الأنشطة تعليمية مساندة من مفاهيم الدرس، وتتضمن حسابات تدريبية أصلية وتستخدم إعادة صياغة متعددة للمعلومات الأساسية. لا تُمثل 50 سؤالًا أصليًا مستقلاً من الكتاب، وتحتاج مراجعة المعلم قبل التقييم الرسمي."}),
  eyebrow:(q,{cursor})=>["🗺 اكتشف المعلومة","✏️ أكمل المفهوم","🔎 استنتج","⚖️ صواب أم خطأ","🧠 تحدي الذاكرة"][cursor%5]+" · نقطة معرفة",
  beforeControls:q=>'<p style="font-size:18px;line-height:1.8;font-weight:600">'+esc(q.clue)+'</p>',
  afterControls:(q,{g,u,i,cursor})=>window.NTSS_APPLIED.render("economics",[g,u,i].join("-"),cursor,window.EBDAA_ECONOMICS_UNITS[g][u].sessions[i].title)

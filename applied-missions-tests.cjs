@@ -6,6 +6,7 @@ const vm=require('node:vm');
 const source=fs.readFileSync('applied-missions.js','utf8');
 function setup(){
  const window={EBDA_APP_RENDER(){}};
+ require("./test-ui-events.cjs")(window);
  vm.runInNewContext(source,{window});
  return window.NTSS_APPLIED;
 }
@@ -35,7 +36,8 @@ test('Missions only appear at question 15 and 35 and remain collapsed by default
    const html=x.render(subject,'demo',n,title);
    assert.match(html,/<details class="ntss-applied"/);
    assert.match(html,/<summary class="ntss-applied-trigger">/);
-   assert.match(html,/&quot;/,'Inline event arguments must be safely encoded');
+   assert.doesNotMatch(html,/\son(?:click|toggle)=/,'No executable inline event attributes');
+   assert.match(html,/data-ntss-click="ui\d+"/,'Handlers use opaque callback IDs instead of serialized code or arguments');
    assert.equal((html.match(/class="ntss-applied-option/g)||[]).length,3);
   }
  }

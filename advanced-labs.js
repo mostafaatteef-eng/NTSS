@@ -2,7 +2,7 @@
 window.EBDAA_ADVANCED_LAB=function(s,step){
 const index=window.EBDAA_DATA.sessions.findIndex(x=>x.id===s.id),id=s.id;
 const esc=x=>String(x).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const slider=(min,max,value)=>'<label style="display:block;margin:18px 0 7px;font-weight:750" for="lab-range">Explore the parameter: '+value+'</label><input id="lab-range" class="range" type="range" min="'+min+'" max="'+max+'" value="'+value+'" oninput="setLab(this.value)">';
+const slider=(min,max,value)=>("<label style=\"display:block;margin:18px 0 7px;font-weight:750\" for=\"lab-range\">Explore the parameter: "+(value)+"</label><input id=\"lab-range\" class=\"range\" type=\"range\" min=\""+(min)+"\" max=\""+(max)+"\" value=\""+(value)+"\" "+window.NTSS_EVENTS.bind("input",function(event){setLab(this.value)},"setLab")+">");
 const title=(heading,intro)=>'<div class="simlabel">✦ '+heading+'</div><p>'+intro+'</p>';
 const cell=(label,color="#ffeab0")=>'<div class="visual-cell" style="background:'+color+';font-size:17px;min-width:58px">'+esc(label)+'</div>';
 const note=t=>'<p class="muted">'+esc(t)+'</p>';

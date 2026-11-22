@@ -1,3 +1,5 @@
+import {createRequire} from "node:module";
+const loadUiEvents=createRequire(import.meta.url)("../test-ui-events.cjs");
 import assert from "node:assert/strict";
 import {readFileSync} from "node:fs";
 import vm from "node:vm";
@@ -6,7 +8,7 @@ const read=name=>readFileSync(name,"utf8");
 for(const file of ["assessment-enhancements.js","question-factory.js","practice-workshop.js","mistake-review.js","python-lab-worker.js","sql-lab-worker.js","app-main.js"]){
  assert.doesNotThrow(()=>new vm.Script(read(file),{filename:file}),file+" syntax");
 }
-const win={};
+const win={};loadUiEvents(win);
 for(const file of ["grade-catalog.js","curriculum-data.js","performance-map.js","assessment-enhancements.js","question-factory.js"]){
  new Function("window",read(file))(win);
 }
@@ -62,6 +64,7 @@ assert.ok(read("index.html").includes("assessment-enhancements.js"),"Assessment 
   NTSS_APPLIED:{reset(){}},EBDAA_CONTEXT_GAMES:{reset(){}},
   addEventListener(){}
  };
+ loadUiEvents(site);
  for(const path of ["grade-catalog.js","curriculum-data.js","performance-map.js","assessment-enhancements.js","question-factory.js","mastery-engine.js","mistake-review.js","lesson-completion.js","practice-workshop.js"]){
   new Function("window","document","localStorage","setTimeout","clearTimeout",read(path))(site,mockDocument,local,fn=>{if(typeof fn==="function")fn();return 1},()=>{});
  }
