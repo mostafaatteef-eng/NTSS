@@ -10,7 +10,7 @@ function setup(){
 }
 test('Challenge editor is separate, starts blank and preserves scoped drafts safely',()=>{
  const s=setup();let html=s.api.panel(2,1,0);
- assert.match(html,/for="ebda-challenge-editor"/);assert.match(html,/own editor and test data/);
+ assert.match(html,/<section[^>]*dir="ltr"[^>]*lang="en"/);assert.match(html,/for="ebda-challenge-editor"/);assert.match(html,/own editor and test data/);
  assert.match(html,/<textarea[^>]*><\/textarea>/);
  s.api.saveDraft(2,1,0,'SELECT "<mine>";');html=s.api.panel(2,1,0);
  assert.match(html,/SELECT &quot;&lt;mine&gt;&quot;;/);
