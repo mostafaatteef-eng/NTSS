@@ -4,6 +4,14 @@
    question banks and special activity panels as plugins on top of this loop.
    Answers live in memory; checkpoints stay in this browser's local storage only. */
 window.EBDA_PRACTICE_FRAMEWORK=(function(){
+ // Expired drafts are removed on the next site visit, including lazy subjects.
+ try{
+  const prefix="ntss-private-practice-checkpoint-v4",now=Date.now(),ttl=7*24*60*60*1000;
+  for(const k of Object.keys(localStorage))if(k.startsWith(prefix)){
+   try{const v=JSON.parse(localStorage.getItem(k));if(!Number.isFinite(v?.savedAt)||now-v.savedAt>ttl||now<v.savedAt)localStorage.removeItem(k)}catch(_){localStorage.removeItem(k)}
+  }
+ }catch(_){} // Storage may be unavailable; current-session practice still works.
+
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const STR={
  en:{question:"Question",answered:"Answered",streak:"in a row",check:"Check answer",next:"Next question →",last:"Show result",prev:"← Previous",hintBtn:"💡 Need a hint?",hintTitle:"Thinking hint:",correct:"✓ Correct — well done.",wrong:"Not quite — here is why.",wrongSub:"Review the reasoning, then try a new question testing the same concept.",mistake:"Review this mistake",resume:"Continue saved practice on this device",saved:"Name and progress saved only on this device for up to 7 days. Clear saved practice on shared devices.",saveFail:"Could not save. Your browser may block storage.",cleared:"Saved session cleared.",yourAnswer:"Your calculated answer",completed:"Completed",mEyebrow:"SMART MISTAKE REVIEW",mTitle:"A wrong answer is useful evidence",mSub:"Review in steps, then apply the same skill to a new item. This extra question does not change your 50-question order.",mSteps:["Get a diagnostic hint","Show worked explanation","Try a similar problem"],mStep1:"<strong>Step 1 · Find the misconception</strong><p>Identify the quantities, operations or prerequisites in the question. Which part of your approach might be different from the definition?</p>",mStep2:"<strong>Step 2 · Worked reasoning</strong>",mExpected:"Expected answer:",mStep3:"<strong>Step 3 · Transfer your understanding</strong>",mNone:"No separate matching practice item is available for this skill.",mCheck:"Check similar problem",mOk:"Correct — you applied the method.",mNo:"Not yet. Revisit the worked reasoning.",sPath:"Learning path",sStages:["Discover","Understand","Apply","Challenge","Master"],sDone:(n,name)=>"Stage "+n+" · "+name+" — complete",sScore:c=>"You answered "+c+" of 10 correctly in this stage.",sNext:(n,name,a,b)=>"Next: Stage "+n+" · "+name+" — questions "+a+"–"+b+".",sGo:"Continue →"},

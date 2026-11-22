@@ -2,13 +2,6 @@
    This is an unverified practice certificate, not a school-issued credential.
    Names stay in memory and in device-local saved attempts for up to seven days. No server upload. */
 window.EBDA_COMPLETION=(function(){
- // Expired drafts are removed on the next site visit, including lazy subjects.
- try{
-  const prefix="ntss-private-practice-checkpoint-v4",now=Date.now(),ttl=7*24*60*60*1000;
-  for(const k of Object.keys(localStorage))if(k.startsWith(prefix)){
-   try{const v=JSON.parse(localStorage.getItem(k));if(!Number.isFinite(v?.savedAt)||now-v.savedAt>ttl||now<v.savedAt)localStorage.removeItem(k)}catch(_){localStorage.removeItem(k)}
-  }
- }catch(_){} // Storage may be unavailable; current-session practice still works.
  const names=new Map(),shown=new Set(),unbound=new Set(),subjects={da:"Data Analysis",math:"Mathematics",en:"Advanced English",ar:"Arabic Language",de:"German",physics:"Physics STEM",be:"Business English",social:"Social Studies",civics:"National Education",economics:"Economics",ai:"AI & Data Analysis"};
  const esc=x=>String(x??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
  const id=x=>String(x).replace(/[^a-z0-9:_-]/gi,"");
