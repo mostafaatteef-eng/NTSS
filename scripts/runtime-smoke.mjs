@@ -37,6 +37,7 @@ const enter=async(g,u,i)=>{
  await page.getByRole("button",{name:/Explore subject/i}).first().click();
  await page.getByRole("button",{name:/View session index/i}).nth(u).click();
  await page.getByRole("button",{name:/HANDS-ON LAB/i}).nth(i).click();
+ await page.locator('#ebda-lesson-student-name, .advanced-stage-content[data-stage="0"]').first().waitFor();
  if(await page.locator("#ebda-lesson-student-name").count()){
   await page.locator("#ebda-lesson-student-name").fill("QA Student");
   await page.getByRole("button",{name:/Start lesson/i}).click();
