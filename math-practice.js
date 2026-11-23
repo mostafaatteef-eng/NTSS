@@ -20,7 +20,7 @@ function basedOnTopic(title,n){
  if(/degree measure and radian/.test(t))return numeric("Convert "+(a*15)+"° to radians as a multiple of π. Enter the coefficient of π.",a/12,"Degrees × π/180 gives ("+a+"/12)π radians.");
  if(/directed angle/.test(t))return numeric("Find the positive coterminal angle (0° to 360°) for "+(a*30+360)+"°. Enter the angle in degrees.",a*30%360,"Subtract 360° to find an equivalent angle.");
  if(/circular sector/.test(t))return numeric("A sector has radius "+a+" and a central angle of 90°. Find its area as a multiple of π.",a*a/4,"Sector area = (90/360)πr².");
- if(/complex numbers$/.test(t))return numeric("For z="+a+"+"+b+"i, enter the real part.",a,"The real part is the term without i.");
+ if(/^complex numbers$/.test(t))return numeric("For z="+a+"+"+b+"i, enter the real part.",a,"The real part is the term without i.");
  if(/addition and subtraction of complex/.test(t))return numeric("Find the real part of ("+a+"+"+b+"i)+("+c+"+2i).",a+c,"Add the real components.");
  if(/multiplication of complex/.test(t))return numeric("Find the real part of ("+a+"+i)("+b+"−i).",a*b+1,"Multiply: the real terms are ab and −i²=+1.");
  if(/types of roots of a quadratic/.test(t))return numeric("Find the discriminant of x²−"+(a+b)+"x+"+(a*b)+"=0.",(a-b)*(a-b),"The discriminant is B²−4AC = (a−b)².");
@@ -186,6 +186,7 @@ function build(g,u,i){
    const q=n%5===4?conceptual(title,fact,n):basedOnTopic(title,n);
    items.push(Object.assign({id:g+"-"+u+"-"+i+"-"+n+1,source:unit.source},q||conceptual(title,fact,n)));
  }
+ if(g===1&&u===2&&i===1)items=items.map((q,n)=>({...q,id:"complex-add-v1-1-2-1-"+(n+1)}));
  // Shift the start of the question cycle between attempts, without changing correctness.
  return items;
 }
