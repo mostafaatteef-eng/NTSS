@@ -100,3 +100,6 @@ test('Offline support does not cache foreign CDN code, and teacher preview is la
  assert.match(read('learning-browser-qa.cjs'),/setOffline\(true\)/);
  assert.match(read('learning-browser-qa.cjs'),/failure\.json/);
 });
+
+// Mandatory release-control coverage shares this existing CI entry point.
+require('./release-control-tests.cjs');
