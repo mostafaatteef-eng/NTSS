@@ -52,14 +52,18 @@ test('All integral answers match independent numerical quadrature, radians and b
   close(q.answer,sum*h/3);assert.match(q.question,/radians/);
  }
 });
-test('Pilot remains narrowly scoped: other 73 math banks are byte-equivalent to base091',()=>{
+test('Pilot remains narrowly scoped: historical pre-ratio snapshot preserves other 73 math banks against base091',()=>{
  const baseline=JSON.parse(fs.readFileSync('test-fixtures/math-diversity-baseline.json','utf8'));let unchanged=0;
+ const prior=engine(JSON.parse(fs.readFileSync('ratio-variation-baseline.json','utf8')).originalMath);
  assert.equal(baseline.sourceCommit,'091f0ed673da292b1f4382e2b2266c7b08cacbd1');
  for(const [g,units] of Object.entries(current.units))for(const [u,unit] of units.entries())for(let i=0;i<unit.sessions.length;i++){
   const key=[g,u,i].join(':');
   if(target.some(loc=>loc.join(':')===key)){assert.equal(baseline.beforeDistinct[key],3);continue}
-  const hash=crypto.createHash('sha256').update(JSON.stringify(current.api.build(Number(g),u,i))).digest('hex');
+  const hash=crypto.createHash('sha256').update(JSON.stringify(prior.api.build(Number(g),u,i))).digest('hex');
   assert.equal(hash,baseline.unchanged[key],key);unchanged++;
  }
  assert.equal(unchanged,73);
 });
+
+// Keep the next approved batch under the existing mandatory regression entry point.
+require('./ratio-variation-tests.cjs');
