@@ -81,7 +81,7 @@ try{
  if(!await page.locator("#studio-output").textContent().then(t=>t?.includes("Read-only")))throw Error("SQL feedback lost after returning to the code editor");
  // Validate SQL challenge against two independent database fixtures.
  await stage(1,"code");
- await page.locator("#studio-editor").fill("SELECT COUNT(*) AS machine_count FROM machines;");
+ await page.locator("#ebda-challenge-editor").fill("SELECT COUNT(*) AS machine_count FROM machines;");
  await page.getByRole("button",{name:/Run test cases/i}).click();
  await page.waitForFunction(()=>document.querySelector("#ebda-code-results")?.textContent?.includes("2/2 SQL test cases passed"),null,{timeout:90000});
  // Execute Python WASM interpreter in dedicated web worker.
@@ -94,7 +94,7 @@ try{
  if(!pythonOutput.includes("mean: 7.25"))throw Error("Pyodide output invalid");
  // Validate student-defined Python function using three real test inputs.
  await stage(1,"code");
- await page.locator("#studio-editor").fill("def average(values):\n    return sum(values)/len(values)");
+ await page.locator("#ebda-challenge-editor").fill("def average(values):\n    return sum(values)/len(values)");
  await page.getByRole("button",{name:/Run test cases/i}).click();
  await page.waitForFunction(()=>document.querySelector("#ebda-code-results")?.textContent?.includes("3 / 3 Python test cases passed"),null,{timeout:90000});
 
