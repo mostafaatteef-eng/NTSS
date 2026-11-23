@@ -4,7 +4,7 @@ import fs from "node:fs";
 import vm from "node:vm";
 
 // Keep release control mandatory in the production verify job too.
-execFileSync(process.execPath,["--test","release-control-tests.cjs"],{stdio:"inherit"});
+execFileSync(process.execPath,["--test","release-control-tests.cjs","physics-guide-tests.cjs"],{stdio:"inherit"});
 
 const paths=["index.html","ui-events.js","curriculum-data.js","grade-catalog.js","experiments.js","challenge.js","advanced-labs.js","microgames.js","missions-data.js","performance-map.js","session-guides.js","lab-specialists.js","numeric-challenges.js","question-factory.js","assessment-enhancements.js","mastery-engine.js","mistake-review.js","practice-workshop.js","ntss-original-logo.js","lesson-completion.js","coding-labs.js","question-bank-audit.js","case-labs.js","scenario-labs.js","practical-rubrics.js","visual-playground.js","code-challenges.js","concept-visualizer.js","lesson-puzzles.js","theory-studio.js","lab-studio.js","learning-support.js","learning-concepts.js","applied-missions.js","context-mini-games.js","gamified-questions.js","learning-journey.js","quest-path.js","i18n.js","progress-map.js","lazy-features.js","practice-ui.js","app-main.js"];
 for(const name of paths)assert.ok(fs.existsSync(name),name+" must exist");
