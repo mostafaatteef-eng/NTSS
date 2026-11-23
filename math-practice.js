@@ -75,6 +75,41 @@ function conceptual(title,fact,n){
  return select(stems[n%10]+" "+(correct?fact:"It is not true that: "+fact),["True","False"],correct?0:1,
  "The reference rule is: "+fact+" The extra negation makes the displayed statement false when present.");
 }
+// Reviewed Year 1 ratio/variation batch: five task families, ten variants each.
+// Sources: OpenStax Elementary Algebra 2e 8.7 and 8.9; Contemporary Mathematics 5.4.
+// These broaden the task demands; only Year 1 / Unit 1 / lessons 0..2 are selected.
+function ratioVariation(g,u,i){
+ if(g!==1||u!==0||i<0||i>2)return null;
+const out=[];
+function add(lesson,family,difficulty,question,answer,explanation,options){const qs=out.filter(q=>q.lesson===lesson);out.push({id:`ratio-v1-1-0-${{ratio:0,direct:1,inverse:2}[lesson]}-${qs.length+1}`,lesson,family,difficulty,question,answer,explanation,mode:options?'choice':'number',...(options?{options}:{})});}
+// Original supplementary examples, not copied publisher questions. All quantities positive.
+for(let j=0;j<10;j++){
+ const p=j+2,q=j+3,m=j+2;
+ add('ratio','simplify','D1',`Simplify ${p*m}:${q*m}. Enter the first term of the simplest ratio.`,p,`The common factor is ${m}; division gives ${p}:${q}.`);
+ const x=j+2, k=(j%4)+2;
+ add('ratio','missing-term','D2',`Complete ${x}/3 = z/${3*k}. Enter z.`,x*k,`Multiply numerator and denominator by ${k}.`);
+ const opts=[`${p+1}:${q}`,`${p*2}:${q*2}`,`${p}:${q+1}`,`${q}:${p}`];const shift=j%4;const rot=opts.slice(shift).concat(opts.slice(0,shift));
+ add('ratio','equivalence','D1',`Which ratio is equivalent to ${p}:${q}?`,(1-shift+4)%4,`Multiply both terms by 2 to obtain ${p*2}:${q*2}.`,rot);
+ add('ratio','same-unit-comparison','D2',`Compare ${j+2} m with ${(j+3)*50} cm. Express the first length divided by the second length, as a decimal rounded to 3 places.`,Number(((j+2)*100/((j+3)*50)).toFixed(3)),`Convert metres to centimetres first, then divide ${(j+2)*100} by ${(j+3)*50}.`);
+ add('ratio','divide-in-ratio','D3',`A total of ${(p+q)*m} counters is split between box A and box B in the ratio ${p}:${q}. How many counters go in box A?`,p*m,`There are ${p+q} equal parts. Each part is ${m}; box A receives ${p} parts.`);
+ const K=[1,2,4,5,0.5,1.5,3,6,2.5,7][j],X=j+2,Y=K*X,X2=j+4;
+ add('direct','constant','D1',`y varies directly with x. If x=${X} and y=${Y}, find the constant k in y=kx.`,K,`k=y/x=${Y}/${X}=${K}.`);
+ add('direct','forward','D1',`y=${K}x. Find y when x=${X2}.`,K*X2,`Substitute x=${X2} into y=${K}x.`);
+ add('direct','reverse','D2',`y varies directly with x. If y=${Y} when x=${X}, find x when y=${K*X2}.`,X2,`The constant is ${K}. Solve ${K*X2}=${K}x.`);
+ const good=j%2===0;const Ys=[K*2,K*4,K*6+(good?0:1)];
+ add('direct','table-evidence','D2',`For x values 2, 4, 6, the y values are ${Ys.join(', ')}. Do all three pairs follow one direct-variation model?`,good?0:1,good?`Each y/x ratio equals ${K}.`:`The final y/x ratio differs from the first two.`,['Yes','No']);
+ add('direct','constant-rate-context','D3',`A cable machine produces ${Y} metres of cable in ${X} minutes at a constant rate, with no start-up delay or waste. How many metres does it produce in ${X2} minutes?`,K*X2,`Rate=${Y}/${X}=${K} m/min. Multiply by ${X2}.`);
+ const C=[12,24,36,48,60,72,84,96,108,120][j],A=[2,3,4,6,5,8,7,12,9,10][j],B=C/A,Z=A*3;
+ add('inverse','constant','D1',`y varies inversely with x. If x=${A} and y=${B}, find the constant k in xy=k.`,C,`k=xy=${A}×${B}=${C}.`);
+ add('inverse','forward','D1',`xy=${C}. Find y when x=${A}.`,B,`y=${C}/${A}=${B}.`);
+ add('inverse','reverse','D2',`y varies inversely with x. If x=${A} and y=${B}, find x when y=${B/2}.`,A*2,`xy=${C}; hence x=${C}/${B/2}=${A*2}.`);
+ const invGood=j%2===1;const vs=[C/2,C/4,C/6+(invGood?0:1)];
+ add('inverse','table-evidence','D2',`For x values 2, 4, 6, y values are ${vs.join(', ')}. Do all three pairs follow one inverse-variation model?`,invGood?0:1,invGood?`Every product xy equals ${C}.`:`The third product differs from ${C}.`,['Yes','No']);
+ add('inverse','fixed-distance-context','D3',`A vehicle travels a fixed route at a constant ${A} km/h, taking ${B} h. On a second uninterrupted journey over the same route, its constant speed is ${Z} km/h. How many hours does it take? Round to 3 decimal places.`,Number((C/Z).toFixed(3)),`Distance=${A}×${B}=${C} km, then time=${C}/${Z} h. For a fixed route, speed and time vary inversely.`);
+}
+return out.filter(q=>q.lesson===["ratio","direct","inverse"][i]);
+}
+
 // Narrow review pilot: original generated exercises using standard formula facts.
 // Sources: https://openstax.org/books/precalculus-2e/pages/7-5-solving-trigonometric-equations
 // https://openstax.org/books/precalculus-2e/pages/7-3-double-angle-half-angle-and-reduction-formulas
@@ -141,6 +176,8 @@ function diversifiedPilot(g,u,i){
 }
 
 function build(g,u,i){
+ const reviewed=ratioVariation(g,u,i);
+ if(reviewed)return reviewed.map(q=>Object.assign({source:window.EBDAA_MATH_UNITS[g][u].source},q));
  const pilot=diversifiedPilot(g,u,i);
  if(pilot)return pilot.map((q,n)=>Object.assign({id:g+"-"+u+"-"+i+"-"+(n+1),source:window.EBDAA_MATH_UNITS[g][u].source},q));
  const unit=window.EBDAA_MATH_UNITS[g][u],title=unit.sessions[i],fact=factFor(g,u,i);
