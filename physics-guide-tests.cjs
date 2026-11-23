@@ -41,6 +41,6 @@ test('Source-grounded questions have explicit units/source and preserve existing
 test('Current physics source is exact reviewed candidate; only physics and loader asset URLs change',()=>{
  const b=JSON.parse(fs.readFileSync('test-fixtures/physics-guide-baseline.json'));
  assert.equal(require('node:crypto').createHash('sha256').update(fs.readFileSync('physics-practice.js')).digest('hex'),b.candidateSha256);
- assert.equal(fs.readFileSync('index.html','utf8').replace('lazy-features.js?v=20261123-complex1','lazy-features.js?v=20261123-guide1').replace('lazy-features.js?v=20261123-guide1','lazy-features.js?v=20261123-ratio1'),b.baseIndex);
- assert.equal(fs.readFileSync('lazy-features.js','utf8').replace('math-practice.js?v=20261123-complex1','math-practice.js?v=20261123-ratio1').replace('physics-practice.js?v=20261123-guide1','physics-practice.js?v=20261122-physics1'),b.baseLoader);
+ assert.equal(fs.readFileSync('index.html','utf8').replace('lazy-features.js?v=20261123-complex2','lazy-features.js?v=20261123-complex1').replace('lazy-features.js?v=20261123-complex1','lazy-features.js?v=20261123-guide1').replace('lazy-features.js?v=20261123-guide1','lazy-features.js?v=20261123-ratio1'),b.baseIndex);
+ assert.equal(fs.readFileSync('lazy-features.js','utf8').replace('math-practice.js?v=20261123-complex2','math-practice.js?v=20261123-complex1').replace('math-practice.js?v=20261123-complex1','math-practice.js?v=20261123-ratio1').replace('physics-practice.js?v=20261123-guide1','physics-practice.js?v=20261122-physics1'),b.baseLoader);
 });

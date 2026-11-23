@@ -12,7 +12,7 @@ function factFor(g,u,i){const offsets={1:0,2:3,3:7};return window.EBDAA_MATH_FAC
 function numeric(text,answer,explanation){return {question:text,answer:Number(answer),explanation,mode:"number"}}
 function select(text,options,answer,explanation){return {question:text,options,answer,explanation,mode:"choice"}}
 function basedOnTopic(title,n){
- const t=title.toLowerCase(),a=2+n%13,b=2+(Math.floor(n/13)%11),c=3+(Math.floor(n/7)%9),which=n%3;
+ const t=title.toLowerCase(),a=2+n%13,b=2+(Math.floor(n/13)%11),c=3+(Math.floor(n/7)%9),which=n%4;
  if(/ratio and proportion/.test(t))return numeric("Simplify the ratio "+(a*3)+":"+(a*5)+". Enter the first term of its simplest form.",3,"Divide both terms by "+a+": 3:5.");
  if(/direct proportion|direct variation/.test(t))return numeric("y varies directly with x. If y="+(a*3)+" when x="+a+", what is y when x="+b+"?",3*b,"The constant y/x is 3, so y=3x.");
  if(/inverse proportion|inverse variation/.test(t))return numeric("y varies inversely with x. If x="+a+" and y="+(b*4)+", find y when x="+(a*2)+".",2*b,"The product xy stays constant. Doubling x halves y.");
@@ -21,7 +21,12 @@ function basedOnTopic(title,n){
  if(/directed angle/.test(t))return numeric("Find the positive coterminal angle (0° to 360°) for "+(a*30+360)+"°. Enter the angle in degrees.",a*30%360,"Subtract 360° to find an equivalent angle.");
  if(/circular sector/.test(t))return numeric("A sector has radius "+a+" and a central angle of 90°. Find its area as a multiple of π.",a*a/4,"Sector area = (90/360)πr².");
  if(/^complex numbers$/.test(t))return numeric("For z="+a+"+"+b+"i, enter the real part.",a,"The real part is the term without i.");
- if(/addition and subtraction of complex/.test(t))return numeric("Find the real part of ("+a+"+"+b+"i)+("+c+"+2i).",a+c,"Add the real components.");
+ if(/addition and subtraction of complex/.test(t)){
+  if(which===0)return numeric("Find the real part of ("+a+"+"+b+"i)+("+c+"+2i).",a+c,"Add the real components.");
+  if(which===1)return numeric("Find the imaginary part of ("+a+"+"+b+"i)+("+c+"+2i).",b+2,"Add the imaginary components.");
+  if(which===2)return numeric("Find the real part of ("+a+"+"+b+"i)−("+c+"+2i).",a-c,"Subtract the real components.");
+  return numeric("Find the imaginary part of ("+a+"+"+b+"i)−("+c+"+2i).",b-2,"Subtract the imaginary components.");
+ }
  if(/multiplication of complex/.test(t))return numeric("Find the real part of ("+a+"+i)("+b+"−i).",a*b+1,"Multiply: the real terms are ab and −i²=+1.");
  if(/types of roots of a quadratic/.test(t))return numeric("Find the discriminant of x²−"+(a+b)+"x+"+(a*b)+"=0.",(a-b)*(a-b),"The discriminant is B²−4AC = (a−b)².");
  if(/linear inequalities$/.test(t))return numeric("Solve 2x+"+a+" < "+(a+2*b)+". What is the upper boundary of x?",b,"Subtract "+a+" and divide by 2: x < "+b+".");
@@ -186,7 +191,7 @@ function build(g,u,i){
    const q=n%5===4?conceptual(title,fact,n):basedOnTopic(title,n);
    items.push(Object.assign({id:g+"-"+u+"-"+i+"-"+n+1,source:unit.source},q||conceptual(title,fact,n)));
  }
- if(g===1&&u===2&&i===1)items=items.map((q,n)=>({...q,id:"complex-add-v1-1-2-1-"+(n+1)}));
+ if(g===1&&u===2&&i===1)items=items.map((q,n)=>({...q,id:"complex-addsub-v2-1-2-1-"+(n+1)}));
  // Shift the start of the question cycle between attempts, without changing correctness.
  return items;
 }
