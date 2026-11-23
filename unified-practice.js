@@ -56,6 +56,13 @@ function create(cfg){
   answers[cursor]={value:v,checked:false,correct:false};
   if(q.mode==="choice"||q.mode==="slider")refresh();else{const b=document.getElementById(cfg.checkId);if(b)b.disabled=String(v??"").trim()==="";scheduleSave()}
  }
+ function writeExact(v){
+  const q=current(),a=rec();if(!cfg.sliderExact||q?.mode!=="slider"||a?.checked)return;
+  const value=String(v).slice(0,110);answers[cursor]={value,checked:false,correct:false};
+  const range=document.getElementById(cfg.inputId);if(range&&value.trim()!==""&&Number.isFinite(Number(value)))range.value=value;
+  const label=document.querySelector('label[for="'+cfg.inputId+'"]');if(label)label.textContent=cfg.sliderLabel?cfg.sliderLabel(q,value):S.yourAnswer+": "+value;
+  const button=document.getElementById(cfg.checkId);if(button)button.disabled=value.trim()==="";scheduleSave();
+ }
  function gameChoose(j){answer(j)}
  function write(v){answer(String(v).slice(0,cfg.fillLimit||110))}
  function tolerance(q){return cfg.tolerance?cfg.tolerance(q):0.005}
@@ -170,7 +177,8 @@ function create(cfg){
   if(q.mode==="fill")return ("<label for=\""+(cfg.inputId)+"\">"+(S.yourAnswer)+"</label><input id=\""+(cfg.inputId)+"\" type=\"text\" dir=\"auto\" value=\""+(esc(a?.value??""))+"\" "+(dis)+" "+window.NTSS_EVENTS.bind("input",function(event){window[name].write(this.value)})+" style=\"display:block;width:100%;max-width:480px;padding:14px;border:1px solid #d9e1dd;border-radius:12px\">");
   if(q.mode==="slider"){
    const max=Math.max(20,Math.ceil(Math.abs(Number(q.answer))*1.8)+1);
-   return ("<label for=\""+(cfg.inputId)+"\">"+(cfg.sliderLabel?cfg.sliderLabel(q,a?.value):S.yourAnswer+": "+esc(a?.value??""))+"</label><input id=\""+(cfg.inputId)+"\" type=\"range\" min=\"0\" max=\""+(max)+"\" step=\"0.1\" value=\""+(esc(a?.value??"0"))+"\" "+(dis)+" "+window.NTSS_EVENTS.bind("input",function(event){window[name].write(this.value)})+" style=\"display:block;width:100%;margin:18px 0\">");
+   const exact=cfg.sliderExact?("<label for=\""+cfg.inputId+"-exact\">"+(locale()==="ar"?"أو اكتب القيمة الدقيقة":"Or enter the exact value")+"</label><input id=\""+cfg.inputId+"-exact\" type=\"number\" inputmode=\"decimal\" step=\"any\" dir=\"ltr\" value=\""+esc(a?.value??"")+"\" "+dis+" "+window.NTSS_EVENTS.bind("input",function(event){window[name].writeExact(this.value)})+" style=\"display:block;width:100%;max-width:280px;min-height:48px;font-size:16px;padding:12px;border:1px solid #d6d7d8;border-radius:12px;text-align:left\">"):"";
+   return ("<label for=\""+(cfg.inputId)+"\">"+(cfg.sliderLabel?cfg.sliderLabel(q,a?.value):S.yourAnswer+": "+esc(a?.value??""))+"</label><input id=\""+(cfg.inputId)+"\" type=\"range\" min=\"0\" max=\""+(max)+"\" step=\""+(Number.isFinite(cfg.sliderStep)&&cfg.sliderStep>0?cfg.sliderStep:0.1)+"\" value=\""+(esc(a?.value??"0"))+"\" "+(dis)+" "+window.NTSS_EVENTS.bind("input",function(event){window[name].write(this.value)})+" style=\"display:block;width:100%;margin:18px 0\">"+exact);
   }
   return ("<label for=\""+(cfg.inputId)+"\">"+(S.yourAnswer)+"</label><input id=\""+(cfg.inputId)+"\" type=\"number\" step=\"any\" inputmode=\"decimal\" value=\""+(esc(a?.value??""))+"\" "+(dis)+" "+window.NTSS_EVENTS.bind("input",function(event){window[name].write(this.value)})+" style=\"display:block;max-width:280px;width:100%;margin:12px 0;padding:14px;border:1px solid #d6d7d8;border-radius:12px\">");
  }
@@ -204,7 +212,7 @@ function create(cfg){
  function continueStage(){pendingStage=null;refresh();scrollTop()}
  function progress(){return {position:done?50:cursor+1,answered:answered(),total:50,finished:done}}
  const api={
-  start,render,restart,answer,choose:answer,respond:answer,select:answer,write,setInput:write,gameChoose,check,next,prev,previous:prev,move,submitOrNext,showHint,
+  start,render,restart,answer,writeExact,choose:answer,respond:answer,select:answer,write,setInput:write,gameChoose,check,next,prev,previous:prev,move,submitOrNext,showHint,
   saveCheckpoint,clearCheckpoint,resumeCheckpoint,hasCheckpoint:()=>!!saved(),progress,currentQuestion:current,continueStage,
   mistakeAdvance,mistakeType,mistakeChoose,mistakeCheck,
   build:(gg,uu,ii)=>cfg.buildItems(gg,uu,ii),
