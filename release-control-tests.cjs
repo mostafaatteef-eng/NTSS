@@ -6,7 +6,7 @@ const crypto=require('node:crypto');
 const publisher='deploy-pages.yml';
 // Freeze the reviewed gate, triggers, job-level permissions and curated artifact.
 // Intentional future gate changes require review of this baseline too.
-const reviewedGateHash='08fc772650b183adec9634253819d1ed6bd24aed389c898528d72f12c50d7fd6';
+const reviewedGateHash='7d782980730822eb04f62e2ef6be8a54a701568ec9d1542deac492afee0931af';
 const hash=text=>crypto.createHash('sha256').update(text).digest('hex');
 function check(workflows){
  assert.ok(!Object.hasOwn(workflows,'static.yml'),'Retired ungated publisher must not return');
@@ -33,4 +33,15 @@ test('Release control rejects a removed gate dependency or runtime assertion ste
 });
 test('Release control rejects alternate deploy permissions and Pages actions',()=>{
  for(const source of ['permissions: write-all','permissions:\n  "pages": "write"','permissions:\n  id-token: write','steps:\n  - uses: actions/deploy-pages@v5','steps:\n  - uses: actions/upload-pages-artifact@v3'])assert.throws(()=>check({...current(),'alternate.yml':source}));
+});
+
+test('Pages upload and deploy select exactly the current run attempt',()=>{
+ const text=current()[publisher];
+ const upload=text.match(/name: (github-pages-.*)/)[1];
+ const deploy=text.match(/artifact_name: (github-pages-.*)/)[1];
+ assert.equal(upload,'github-pages-${{ github.run_id }}-${{ github.run_attempt }}');
+ assert.equal(deploy,upload);
+ const expand=(run,attempt)=>upload.replace('${{ github.run_id }}',run).replace('${{ github.run_attempt }}',attempt);
+ const artifacts=[{name:expand('100','1')},{name:expand('100','2')},{name:expand('101','1')}];
+ for(const [run,attempt] of [['100','1'],['100','2'],['101','1']])assert.equal(artifacts.filter(a=>a.name===expand(run,attempt)).length,1);
 });
