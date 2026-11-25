@@ -37,12 +37,36 @@ function basedOnTopic(title,n){
  if(/logarithm/.test(t))return numeric("Evaluate log₂("+(Math.pow(2,1+n%8))+").",1+n%8,"The logarithm asks for the exponent of 2.");
  if(/trigonometric identities/.test(t))return numeric("If sin²θ="+a+"/"+(a+b)+" and sin²θ+cos²θ=1, find cos²θ as a decimal (3 places).",Number((b/(a+b)).toFixed(3)),"Use the Pythagorean identity and subtract from 1.");
  if(/trigonometric equations/.test(t))return select("For 0°≤θ<360°, which is one solution of sin θ=0?",["180°","90°","45°","60°"],0,"The sine of 180° is zero.");
- if(/sine law and the cosine law|solving triangles|applications on solving triangle/.test(t))return numeric("In a right triangle, the legs are "+(a*3)+" and "+(a*4)+". What is the hypotenuse?",5*a,"Pythagoras gives √(9a²+16a²)=5a.");
+ if(/sine law and the cosine law/.test(t)){
+  if(which===0)return numeric("In triangle ABC, angle A = 30° and angle B = 45°. Side a = "+a+" is opposite angle A. Use the sine law to find side b. Round to 3 decimal places.",Number((a*Math.SQRT2).toFixed(3)),"Sine law: b = a·sin B/sin A = "+a+"·sin 45°/sin 30°.");
+  if(which===1)return numeric("In triangle ABC, angle A = 45° and angle B = 60°. Side a = "+a+" is opposite angle A. Use the sine law to find side b. Round to 3 decimal places.",Number((a*Math.sin(Math.PI/3)/Math.SQRT1_2).toFixed(3)),"Sine law: b = a·sin B/sin A = "+a+"·sin 60°/sin 45°.");
+  if(which===2)return numeric("In triangle ABC, sides a = "+a+" and b = "+b+" enclose angle C = 60°. Use the cosine law to find side c. Round to 3 decimal places.",Number(Math.sqrt(a*a+b*b-a*b).toFixed(3)),"Cosine law: c² = a²+b²−2ab·cos C with cos 60° = 0.5.");
+  return numeric("In triangle ABC, sides a = "+a+" and b = "+b+" enclose angle C = 120°. Use the cosine law to find side c. Round to 3 decimal places.",Number(Math.sqrt(a*a+b*b+a*b).toFixed(3)),"Cosine law: c² = a²+b²−2ab·cos C with cos 120° = −0.5.");
+ }
+ if(/solving triangles|applications on solving triangle/.test(t))return numeric("In a right triangle, the legs are "+(a*3)+" and "+(a*4)+". What is the hypotenuse?",5*a,"Pythagoras gives √(9a²+16a²)=5a.");
  if(/sum and the difference of two angles/.test(t))return numeric("Find sin(30°+60°).",1,"sin(90°)=1.");
  if(/double an angle/.test(t))return numeric("If sin θ=0.6 and cos θ=0.8, find sin(2θ).",0.96,"Use sin(2θ)=2 sinθ cosθ.");
  if(/rate of change/.test(t))return numeric("For f(x)=x², find the average rate of change between x="+a+" and x="+(a+b)+".",2*a+b,"[f(a+b)−f(a)]/b = 2a+b.");
  if(/higher derivatives/.test(t))return numeric("For f(x)="+a+"x³, find f''(x) when x="+b+".",6*a*b,"f'=3ax²; f''=6ax.");
- if(/derivative|differentiation|chain rule/.test(t)&&!/implicit|parametric/.test(t))return numeric("For f(x)="+a+"x²+"+b+"x, calculate f'("+c+").",2*a*c+b,"Differentiate term by term: f'(x)=2ax+b.");
+ if(/derivative of the product of two functions/.test(t)){
+  if(which===0)return numeric("For f(x)=(x²+"+a+")("+b+"x+1), calculate f'(1).",a*b+3*b+2,"Product rule: (fg)' = f'g + fg', so f'(x) = 2x("+b+"x+1) + "+b+"(x²+"+a+").");
+  if(which===1)return numeric("For f(x)="+a+"x³("+b+"x−"+c+"), calculate f'(1).",a*(4*b-3*c),"Product rule or expand first: f(x) = "+(a*b)+"x⁴−"+(a*c)+"x³, so f'(x) = 4·"+(a*b)+"x³−3·"+(a*c)+"x².");
+  if(which===2)return numeric("For f(x)=("+a+"x+"+b+")(x²+"+c+"), calculate f'(0).",a*c,"Product rule: f'(x) = "+a+"(x²+"+c+") + 2x("+a+"x+"+b+"); at x = 0 only "+a+"·"+c+" remains.");
+  return numeric("For f(x)=x²("+a+"x+"+b+"), calculate f'(1).",3*a+2*b,"Product rule: f'(x) = 2x("+a+"x+"+b+") + "+a+"x².");
+ }
+ if(/derivative of the quotient of two functions/.test(t)){
+  if(which===0)return numeric("For f(x)=(x²+"+a+")/x², calculate f'(1).",-2*a,"Quotient rule: f'(x) = (2x·x²−2x(x²+"+a+"))/x⁴ = −"+(2*a)+"/x³.");
+  if(which===1)return numeric("For f(x)=("+a+"x)/(x+"+b+"), calculate f'(0). Round to 3 decimal places.",Number((a/b).toFixed(3)),"Quotient rule: f'(x) = "+a+"·"+b+"/(x+"+b+")².");
+  if(which===2)return numeric("For f(x)=("+a+"x²)/(x+"+b+"), calculate f'("+b+"). Round to 3 decimal places.",Number((3*a/4).toFixed(3)),"Quotient rule: f'(x) = ("+a+"x²+2·"+a+"·"+b+"x)/(x+"+b+")²; at x = "+b+" this is 3·"+a+"/4.");
+  return numeric("For f(x)=(x+"+a+")/x², calculate f'(1).",-(2*a+1),"Quotient rule: f'(x) = (x²−2x(x+"+a+"))/x⁴ = −(x+2·"+a+")/x³.");
+ }
+ if(/chain rule/.test(t)){
+  if(which===0)return numeric("For f(x)=("+a+"x+"+b+")², calculate f'(1).",2*a*(a+b),"Chain rule: f'(x) = 2("+a+"x+"+b+")·"+a+".");
+  if(which===1)return numeric("For f(x)=("+a+"x+"+b+")³, calculate f'(0).",3*a*b*b,"Chain rule: f'(x) = 3("+a+"x+"+b+")²·"+a+".");
+  if(which===2)return numeric("For f(x)=(x²+"+a+")³, calculate f'(1).",6*(1+a)*(1+a),"Chain rule: f'(x) = 3(x²+"+a+")²·2x.");
+  return numeric("For f(x)=("+a+"x²+"+b+")², calculate f'(1).",4*a*(a+b),"Chain rule: f'(x) = 2("+a+"x²+"+b+")·"+(2*a)+"x.");
+ }
+ if(/derivative|differentiation/.test(t)&&!/implicit|parametric/.test(t))return numeric("For f(x)="+a+"x²+"+b+"x, calculate f'("+c+").",2*a*c+b,"Differentiate term by term: f'(x)=2ax+b.");
  if(/parametric differentiation/.test(t))return numeric("If x=t and y="+a+"t², find dy/dx at t="+b+".",2*a*b,"(dy/dt)/(dx/dt) = 2at.");
  if(/implicit differentiation/.test(t))return numeric("If x²+y²="+(a*a+b*b)+", find dy/dx at (x,y)=("+a+","+b+"). Enter to 3 decimal places.",Number((-a/b).toFixed(3)),"Differentiating yields 2x+2y y'=0, so y'=−x/y.");
  if(/vectors/.test(t)&&!/product/.test(t))return numeric("Find the magnitude of vector ("+(3*a)+","+(4*a)+").",5*a,"Magnitude = √(x²+y²), using a 3-4-5 triangle.");
@@ -62,7 +86,12 @@ function basedOnTopic(title,n){
  if(/linear systems using an inverse|linear equations using inverse/.test(t))return numeric("Solve the system x+y="+(a+b)+" and x−y="+(a-b)+". Find x.",a,"Add the equations and divide by 2.");
  if(/indefinite integral/.test(t))return numeric("If F'(x)="+(2*a)+"x, what is F("+b+")−F(0)?",a*b*b,"An antiderivative is ax²+C; the constant cancels.");
  if(/integration of trigonometric/.test(t))return numeric("For F(x)=−cos(x), find F'(0).",0,"The derivative is sin(x), and sin(0)=0.");
- if(/integration by parts/.test(t))return numeric("Evaluate ∫ from 0 to 1 of "+a+"x dx.",a/2,"An antiderivative is ax²/2, evaluated from 0 to 1.");
+ if(/integration by parts/.test(t)){
+  if(which===0)return numeric("Angles are in radians. Evaluate ∫ from 0 to π of "+a+"·x·sin(x) dx using integration by parts. Round to 3 decimal places.",Number((a*Math.PI).toFixed(3)),"∫x·sin(x)dx = −x·cos(x)+sin(x); over 0 to π this is π, times "+a+".");
+  if(which===1)return numeric("Angles are in radians. Evaluate ∫ from 0 to π/2 of "+a+"·x·cos(x) dx using integration by parts. Round to 3 decimal places.",Number((a*(Math.PI/2-1)).toFixed(3)),"∫x·cos(x)dx = x·sin(x)+cos(x); over 0 to π/2 this is π/2−1, times "+a+".");
+  if(which===2)return numeric("Evaluate ∫ from 0 to 1 of "+a+"·x·e^x dx using integration by parts.",a,"∫x·e^x dx = x·e^x−e^x; over 0 to 1 this is 1, times "+a+".");
+  return numeric("Evaluate ∫ from 0 to 1 of "+a+"·x²·e^x dx using integration by parts. Round to 3 decimal places.",Number((a*(Math.E-2)).toFixed(3)),"By parts twice: ∫x²·e^x dx = e^x(x²−2x+2); over 0 to 1 this is e−2, times "+a+".");
+ }
  if(/integration by substitution/.test(t))return numeric("Evaluate ∫ from 0 to 1 of 2(x+"+a+") dx.",2*a+1,"The integral is (x+a)² evaluated from 0 to 1.");
  if(/definite integration/.test(t))return numeric("Evaluate ∫ from 0 to "+b+" of "+a+" dx.",a*b,"Integral of a constant equals height × interval width.");
  if(/area in the plane/.test(t))return numeric("Find the area under y="+a+" from x=0 to x="+b+".",a*b,"The region is a rectangle of height a and width b.");
@@ -192,6 +221,11 @@ function build(g,u,i){
    items.push(Object.assign({id:g+"-"+u+"-"+i+"-"+n+1,source:unit.source},q||conceptual(title,fact,n)));
  }
  if(g===1&&u===2&&i===1)items=items.map((q,n)=>({...q,id:"complex-addsub-v2-1-2-1-"+(n+1)}));
+ if(g===2&&u===1&&i===2)items=items.map((q,n)=>({...q,id:"sinelaw-v1-2-1-2-"+(n+1)}));
+ if(g===2&&u===2&&i===2)items=items.map((q,n)=>({...q,id:"productrule-v1-2-2-2-"+(n+1)}));
+ if(g===2&&u===2&&i===3)items=items.map((q,n)=>({...q,id:"quotientrule-v1-2-2-3-"+(n+1)}));
+ if(g===2&&u===2&&i===4)items=items.map((q,n)=>({...q,id:"chainrule-v1-2-2-4-"+(n+1)}));
+ if(g===3&&u===2&&i===2)items=items.map((q,n)=>({...q,id:"byparts-v1-3-2-2-"+(n+1)}));
  // Shift the start of the question cycle between attempts, without changing correctness.
  return items;
 }
