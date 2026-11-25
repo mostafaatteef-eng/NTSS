@@ -155,7 +155,7 @@ try{
  const runtimePage=await browser.newPage({viewport:{width:820,height:900},serviceWorkers:"block",ignoreHTTPSErrors:true});
  await runtimePage.goto(url,{waitUntil:"load"});
  const runtime=await runtimePage.evaluate(async()=>{
-  const py=window.EBDAA_QUESTION_FACTORY.all(3,0,0).find(q=>q.mode==="live-code"&&q.engine==="python"&&q.codeTask.tests?.some(([expr])=>expr.startsWith("average(")));
+  const py=[[3,0,0],[3,5,0],[1,0,0]].map(([g,u,i])=>window.EBDAA_QUESTION_FACTORY.all(g,u,i).find(q=>q.mode==="live-code"&&q.engine==="python"&&q.codeTask.tests?.some(([expr])=>expr.startsWith("average(")))).find(Boolean);
   const sql=window.EBDAA_QUESTION_FACTORY.all(2,2,0).find(q=>q.mode==="live-code"&&q.engine==="sql");
   if(!py||!sql)throw Error("Missing reference coding challenges for browser QA");
   const execute=(q,code)=>new Promise(resolve=>window.NTSS_ASSESSMENT.run(q,code,resolve));

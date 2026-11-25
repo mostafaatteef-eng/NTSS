@@ -17,6 +17,7 @@ window.NTSS_ASSESSMENT=(function(){
  ];
  function enhance(all,g,u,i){
   return all.map((base,index)=>{
+   if(base.bank)return base;
    const slot=index%10,cycle=Math.floor(index/10);
    if(slot===4){
     const label=String(base.title||"")+" "+String(base.unit||"");
