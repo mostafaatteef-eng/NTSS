@@ -148,7 +148,19 @@ v=>A("A dataset includes "+v+" personal fields. Mask 2. Unmasked personal fields
 v=>A("Two groups have error rates "+v+"% and "+(v+2)+"%. Difference in percentage points?",2,"Subtract rates."),
 v=>A("A permission review needs "+v+" approvals. One approval pending. Confirmed approvals?",v-1,"Subtract pending approval."),
 v=>A("A risk matrix has "+v+" risk items and closes 2. Open items?",v-2,"Subtract closed risks.")
-]
+],
+statistics:[
+v=>A("What is the mean of "+v+", "+(v+2)+", "+(v+4)+"?",v+2,"Three equally spaced values average to the middle value."),
+v=>A("What is the median of "+(v-1)+", "+v+", "+(v+4)+"?",v,"The median is the middle value after ordering."),
+v=>A("What is the range of "+v+", "+(v+1)+", "+(v+4)+"?",4,"Range = maximum - minimum = "+(v+4)+" - "+v+" = 4."),
+v=>A("In a class of 10 students, "+v+" passed. What is the probability a randomly picked student passed? Enter a decimal to 1 place.",Number((v/10).toFixed(1)),"Probability = favorable outcomes / all outcomes."),
+v=>A("If P(pass) = "+(v/10).toFixed(1)+", what is P(fail)? Enter a decimal to 1 place.",Number((1-v/10).toFixed(1)),"Complement rule: P(fail) = 1 - P(pass)."),
+v=>A("A score is "+(v+4)+" when the mean is "+v+" and the standard deviation is 2. What is the z-score?",2,"z = (x - mean) / sd = ("+(v+4)+" - "+v+") / 2 = 2."),
+v=>A("A one-sample t-test uses a sample of "+v+" observations. What are the degrees of freedom?",v-1,"For a one-sample t-test, df = n - 1."),
+v=>A("What is the standard deviation of the identical values "+v+", "+v+", "+v+"?",0,"Identical values have no spread, so the standard deviation is 0."),
+v=>A("A game pays "+(2*v)+" points with probability 0.5 and 0 otherwise. What is the expected value?",v,"Expected value = 0.5 x "+(2*v)+" + 0.5 x 0 = "+v+"."),
+v=>A("A student answers "+v+" of 10 questions correctly. What percentage is that?",10*v,"Percentage = correct / total x 100.")
+],
 };
 F.agriculture=[...F.ml.slice(0,5),...F.ai.slice(5,10)];
 const workflow={
@@ -172,7 +184,10 @@ function all(g,u,i){
  const title=g===1?window.EBDAA_DATA.sessions.filter(x=>x.unit===u+1)[i]?.title:grade.subjects[0].units[u].sessions[i];
  if(!title)return [];
  let family=fam(g,u);const rules=F[family]||F.ai,questions=[];
- for(let variant=0;variant<5;variant++)for(let skill=0;skill<10;skill++){
+ const authored=(window.EBDAA_G3_BANKS&&window.EBDAA_G3_BANKS[g+"-"+(u+1)+"-"+(i+1)])||null;
+ const need=authored?Math.max(0,50-authored.length):50;
+ gen: for(let variant=0;variant<5;variant++)for(let skill=0;skill<10;skill++){
+  if(questions.length>=need)break gen;
   const value=4+variant+((i+skill)%3);
   const item=rules[skill](value);const no=variant*10+skill+1;
   const heading=["Mini case","Data calculation","Code / logic check","Reasoning challenge","Review sprint"][variant];
@@ -228,7 +243,14 @@ function all(g,u,i){
     question:stem,answer:correct,mode:renderMode,options,
     explanation:item.why,sourceStatus:"Authored parameterized practice, associated with unit topic; requires lesson-level instructor review.",parameter:value,focus:skill+1});
  }
- return window.NTSS_ASSESSMENT?.enhance(questions,g,u,i)||questions;
+ let out=questions;
+ if(authored){
+  const items=authored.map((q,ix)=>({bank:true,id:g+"-"+(u+1)+"-"+(i+1)+"-B"+(ix+1),number:ix+1,title,unit:unitName,
+   heading:"📘 Official question bank",question:q.q,answer:q.a,mode:q.mode,options:q.options||null,
+   explanation:q.why||"",sourceStatus:q.src,parameter:null,focus:null}));
+  out=items.concat(questions).map((q,ix)=>(q.number=ix+1,q));
+ }
+ return window.NTSS_ASSESSMENT?.enhance(out,g,u,i)||out;
 }
 return {all,templates:F};
 })();
